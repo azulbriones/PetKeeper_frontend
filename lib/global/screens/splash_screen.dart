@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pet_keeper_front/login.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/login_page.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   _navigateForward() async {
     await Future.delayed(Duration(milliseconds: 2000), () {});
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => Login()));
+        context, MaterialPageRoute(builder: (context) => LoginPage()));
   }
 
   @override

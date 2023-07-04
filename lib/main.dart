@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<UserCubit>(create: (_) => di.sl<UserCubit>()),
       ],
       child: MaterialApp(
-        title: 'Group Chat',
+        title: 'PetKeeper',
         onGenerateRoute: OnGenerateRoute.route,
         debugShowCheckedModeBanner: false,
         initialRoute: "/",

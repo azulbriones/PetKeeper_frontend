@@ -1,8 +1,4 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:pet_keeper_front/email_verify_user.dart';
-import 'package:pet_keeper_front/register.dart';
-import 'package:pet_keeper_front/reset_password.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
