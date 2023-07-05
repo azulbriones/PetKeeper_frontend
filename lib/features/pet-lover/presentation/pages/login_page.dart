@@ -1,8 +1,13 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/auth/auth_cubit.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/credential/credential_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/email_verify_user_page.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/register_page.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/reset_password_page.dart';
+import 'package:pet_keeper_front/global/common/common.dart';
+import 'package:pet_keeper_front/global/pages/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -45,6 +50,48 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: BlocConsumer<CredentialCubit, CredentialState>(
+        builder: (context, credentialState) {
+          if (credentialState is CredentialLoading) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (credentialState is CredentialSuccess) {
+            return BlocBuilder<AuthCubit, AuthState>(
+              builder: (context, authState) {
+                if (authState is Authenticated) {
+                  return HomePage(
+                    uid: authState.uid,
+                  );
+                } else {
+                  return _bodyWidget();
+                }
+              },
+            );
+          }
+
+          return _bodyWidget();
+        },
+        listener: (context, credentialState) {
+          if (credentialState is CredentialSuccess) {
+            BlocProvider.of<AuthCubit>(context).loggedIn();
+          }
+
+          if (credentialState is CredentialFailure) {
+            toast("wrong email please check");
+            //toast
+            //alertDialog
+            ///SnackBar
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _bodyWidget() {
     double baseWidth = 375;
     double fem = MediaQuery.of(context).size.width / baseWidth;
     return Scaffold(
@@ -273,15 +320,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       toggleLoading();
-                      Future.delayed(const Duration(seconds: 2), () {
-                        toggleLoading();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EmailVerifyUserPage(),
-                          ),
-                        );
-                      });
+                      _submitLogin();
                     },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all<Color>(
@@ -387,5 +426,21 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     );
+  }
+
+  void _submitLogin() {
+    if (_emailController.text.isEmpty) {
+      toast("Enter Your Email");
+      return;
+    }
+
+    if (_passwordController.text.isEmpty) {
+      toast("Enter Your Password");
+      return;
+    }
+
+    BlocProvider.of<CredentialCubit>(context).signInSubmit(
+        email: _emailController.text, password: _passwordController.text);
+    toggleLoading();
   }
 }

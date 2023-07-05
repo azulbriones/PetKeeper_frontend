@@ -35,6 +35,10 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        title: const Text('PetKeeper'),
+      ),
       body: BlocBuilder<SingleUserCubit, SingleUserState>(
         builder: (context, singleUserState) {
           if (singleUserState is SingleUserLoaded) {
@@ -71,68 +75,74 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _bodyWidget(PetLoverEntity currentUser) {
     _nameController.value = TextEditingValue(text: "${currentUser.name}");
     _emailController.value = TextEditingValue(text: "${currentUser.email}");
-    print('CURRENT USER PROFILE: ${currentUser}');
-    return Container(
-      margin: EdgeInsets.all(15),
-      child: Column(
-        children: [
-          InkWell(
-            onTap: () {
-              getImage();
-            },
-            child: Container(
-              height: 80,
-              width: 80,
-              child: NetworkImageWidget(
-                imageFile: _image,
-                borderRadiusImageFile: 50,
-                imageFileBoxFit: BoxFit.cover,
-                placeHolderBoxFit: BoxFit.cover,
-                networkImageBoxFit: BoxFit.cover,
-                imageUrl: currentUser.profileUrl,
-                progressIndicatorBuilder: Center(
-                  child: CircularProgressIndicator(),
+
+    return SingleChildScrollView(
+      child: Container(
+        margin: const EdgeInsets.all(15.0),
+        child: Column(
+          children: [
+            InkWell(
+              onTap: () {
+                getImage();
+              },
+              child: Container(
+                height: 100,
+                width: 100,
+                child: ClipOval(
+                  child: NetworkImageWidget(
+                    imageFile: _image,
+                    borderRadiusImageFile: 50,
+                    imageFileBoxFit: BoxFit.cover,
+                    placeHolderBoxFit: BoxFit.cover,
+                    networkImageBoxFit: BoxFit.cover,
+                    imageUrl: currentUser.profileUrl,
+                    progressIndicatorBuilder: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    placeHolder: "assets/images/profile_default.png",
+                  ),
                 ),
-                placeHolder: "assets/images/profile_default.png",
               ),
             ),
-          ),
-          SizedBox(
-            height: 14,
-          ),
-          Text(
-            'Remove profile photo',
-            style: TextStyle(
-                color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w400),
-          ),
-          SizedBox(
-            height: 14,
-          ),
-          TextFieldContainer(
-            hintText: "username",
-            prefixIcon: Icons.person,
-            controller: _nameController,
-          ),
-          SizedBox(
-            height: 14,
-          ),
-          AbsorbPointer(
-            child: TextFieldContainer(
-              hintText: "email",
-              prefixIcon: Icons.alternate_email,
-              controller: _emailController,
+            SizedBox(
+              height: 14,
             ),
-          ),
-          SizedBox(
-            height: 14,
-          ),
-          ContainerButton(
-            title: "Update Profile",
-            onTap: () {
-              _updateProfile(currentUser.id!);
-            },
-          )
-        ],
+            Text(
+              'Remove profile photo',
+              style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400),
+            ),
+            SizedBox(
+              height: 14,
+            ),
+            TextFieldContainer(
+              hintText: "username",
+              prefixIcon: Icons.person,
+              controller: _nameController,
+            ),
+            SizedBox(
+              height: 14,
+            ),
+            AbsorbPointer(
+              child: TextFieldContainer(
+                hintText: "email",
+                prefixIcon: Icons.alternate_email,
+                controller: _emailController,
+              ),
+            ),
+            SizedBox(
+              height: 14,
+            ),
+            ContainerButton(
+              title: "Update Profile",
+              onTap: () {
+                _updateProfile(currentUser.id!);
+              },
+            )
+          ],
+        ),
       ),
     );
   }

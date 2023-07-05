@@ -21,7 +21,7 @@ class PetLoverModel extends PetLoverEntity {
     return PetLoverModel(
         name: snapshotMap['name'],
         profileUrl: snapshotMap['profileUrl'],
-        id: snapshotMap['uid'],
+        id: snapshotMap['id'],
         email: snapshotMap['email']);
   }
 
