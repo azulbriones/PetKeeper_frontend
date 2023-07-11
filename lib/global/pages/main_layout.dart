@@ -17,7 +17,7 @@ class MainLayout extends StatefulWidget {
 
 class _MainLayoutState extends State<MainLayout> {
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
-
+  final PageController _pageController = PageController();
   int _currentIndex = 0;
 
   @override
@@ -30,10 +30,21 @@ class _MainLayoutState extends State<MainLayout> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   void _onTabTapped(int index) {
     setState(() {
       _currentIndex = index;
     });
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
@@ -47,30 +58,6 @@ class _MainLayoutState extends State<MainLayout> {
 
           return const Center(
             child: CircularProgressIndicator(),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _bodyLayout(PetLoverEntity currentUser) {
-    return Scaffold(
-      body: Navigator(
-        key: _navigatorKey,
-        onGenerateRoute: (RouteSettings settings) {
-          return MaterialPageRoute(
-            builder: (BuildContext context) {
-              switch (_currentIndex) {
-                case 0:
-                  return HomePage();
-                case 1:
-                  return StrayPets();
-                case 2:
-                  return ToAdoptPets();
-                default:
-                  return HomePage();
-              }
-            },
           );
         },
       ),
@@ -90,6 +77,24 @@ class _MainLayoutState extends State<MainLayout> {
             icon: Icon(Icons.pets),
             label: 'To Adopt',
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _bodyLayout(PetLoverEntity currentUser) {
+    return Scaffold(
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (int index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        children: [
+          HomePage(),
+          StrayPets(),
+          ToAdoptPets(),
         ],
       ),
     );
