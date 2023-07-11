@@ -8,6 +8,7 @@ import 'package:pet_keeper_front/features/pet-lover/presentation/pages/register_
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/reset_password_page.dart';
 import 'package:pet_keeper_front/global/common/common.dart';
 import 'package:pet_keeper_front/global/pages/home_page.dart';
+import 'package:pet_keeper_front/global/pages/main_layout.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -63,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
             return BlocBuilder<AuthCubit, AuthState>(
               builder: (context, authState) {
                 if (authState is Authenticated) {
-                  return HomePage(
+                  return MainLayout(
                     uid: authState.uid,
                   );
                 } else {

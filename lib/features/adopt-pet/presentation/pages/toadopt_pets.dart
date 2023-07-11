@@ -1,5 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:network_image/network_image.dart';
+import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
 
 class ToAdoptPets extends StatefulWidget {
   const ToAdoptPets({super.key});
@@ -54,71 +59,79 @@ class _ToAdoptPetsState extends State<ToAdoptPets> {
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: BlocBuilder<SingleUserCubit, SingleUserState>(
+        builder: (context, singleUserState) {
+          if (singleUserState is SingleUserLoaded) {
+            return _bodyWidget(singleUserState.currentUser);
+          }
+
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _bodyWidget(PetLoverEntity currentUser) {
     double baseWidth = 375;
     double fem = MediaQuery.of(context).size.width / baseWidth;
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        title: const Text('PetKeeper'),
+        actions: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 15.0),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ProfilePage(),
+                      ),
+                    );
+                  },
+                  child: SizedBox(
+                    height: 40,
+                    width: 40,
+                    child: ClipOval(
+                      child: NetworkImageWidget(
+                        borderRadiusImageFile: 50,
+                        placeHolderBoxFit: BoxFit.cover,
+                        networkImageBoxFit: BoxFit.cover,
+                        imageUrl: currentUser.profileUrl,
+                        progressIndicatorBuilder: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        placeHolder: "assets/images/profile_default.png",
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
       backgroundColor: Colors.white,
       body: Column(
         children: [
           Container(
             width: 375 * fem,
-            height: 100 * fem,
-            decoration: BoxDecoration(
-              color: Colors.indigo[900],
-            ),
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 40.0),
-                    child: Center(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                'PetKepper',
-                                style: TextStyle(
-                                    fontSize: 26.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: CircleAvatar(
-                                radius: 25,
-                                backgroundImage:
-                                    AssetImage('assets/images/pp.png'),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            width: 375 * fem,
             height: 50 * fem,
             color: Colors.indigo[400],
             child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25.0),
+              padding: EdgeInsets.symmetric(horizontal: 18.0),
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 12.0),
+                padding: EdgeInsets.symmetric(vertical: 15.0),
                 child: Text(
                   'Mascotas en adopción',
                   style: TextStyle(
-                      fontSize: 20.0,
+                      fontSize: 18.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.white),
                 ),

@@ -1,12 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pet_keeper_front/features/adopt-pet/presentation/pages/toadopt_pets.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/auth/auth_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/credential/credential_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/user/user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/login_page.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
+import 'package:pet_keeper_front/features/stray-pet/presentation/pages/stray_pets.dart';
 import 'package:pet_keeper_front/global/pages/home_page.dart';
+import 'package:pet_keeper_front/global/pages/main_layout.dart';
 import 'package:pet_keeper_front/on_generate_route.dart';
 import 'features/injection_container.dart' as di;
 
@@ -45,16 +49,13 @@ class MyApp extends StatelessWidget {
             return BlocBuilder<AuthCubit, AuthState>(
               builder: (context, authState) {
                 if (authState is Authenticated) {
-                  print('Authstate: ${authState.toString()}');
-                  return HomePage(
-                    uid: authState.uid,
-                  );
+                  return MainLayout(uid: authState.uid);
                 } else {
                   return const LoginPage();
                 }
               },
             );
-          }
+          },
         },
       ),
     );

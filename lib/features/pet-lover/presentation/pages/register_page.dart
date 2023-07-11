@@ -6,6 +6,7 @@ import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/credentia
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_keeper_front/global/pages/home_page.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/auth/auth_cubit.dart';
+import 'package:pet_keeper_front/global/pages/main_layout.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -75,7 +76,7 @@ class _RegisterPageState extends State<RegisterPage> {
             return BlocBuilder<AuthCubit, AuthState>(
               builder: (context, authState) {
                 if (authState is Authenticated) {
-                  return HomePage(
+                  return MainLayout(
                     uid: authState.uid,
                   );
                 } else {
