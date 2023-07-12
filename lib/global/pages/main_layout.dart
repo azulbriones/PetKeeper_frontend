@@ -6,6 +6,7 @@ import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_us
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/user/user_cubit.dart';
 import 'package:pet_keeper_front/features/stray-pet/presentation/pages/stray_pets.dart';
 import 'package:pet_keeper_front/global/pages/home_page.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 
 class MainLayout extends StatefulWidget {
   final String uid;
@@ -16,7 +17,6 @@ class MainLayout extends StatefulWidget {
 }
 
 class _MainLayoutState extends State<MainLayout> {
-  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   final PageController _pageController = PageController();
   int _currentIndex = 0;
 
@@ -40,11 +40,7 @@ class _MainLayoutState extends State<MainLayout> {
     setState(() {
       _currentIndex = index;
     });
-    _pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
+    _pageController.jumpToPage(index);
   }
 
   @override
@@ -61,26 +57,38 @@ class _MainLayoutState extends State<MainLayout> {
           );
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.pets),
-            label: 'Stray Pets',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.pets),
-            label: 'To Adopt',
-          ),
-        ],
+      bottomNavigationBar: GNav(
+        tabs: tabItems,
+        selectedIndex: _currentIndex,
+        onTabChange: _onTabTapped,
+        gap: 5,
+        activeColor: Colors.indigo,
+        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+        color: Colors.grey,
+        iconSize: 30,
+        backgroundColor: Colors.white,
       ),
     );
   }
+
+  final List<GButton> tabItems = const [
+    GButton(
+      icon: Icons.home,
+      text: 'Home',
+    ),
+    GButton(
+      icon: Icons.search,
+      text: 'Stray Pets',
+    ),
+    GButton(
+      icon: Icons.pets,
+      text: 'To Adopt',
+    ),
+    GButton(
+      icon: Icons.foundation,
+      text: 'Foundations',
+    ),
+  ];
 
   Widget _bodyLayout(PetLoverEntity currentUser) {
     return Scaffold(
@@ -95,6 +103,7 @@ class _MainLayoutState extends State<MainLayout> {
           HomePage(),
           StrayPets(),
           ToAdoptPets(),
+          HomePage(),
         ],
       ),
     );
