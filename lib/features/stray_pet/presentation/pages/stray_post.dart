@@ -158,12 +158,22 @@ class _StrayPostState extends State<StrayPost> {
                       height: 15.0,
                     ),
                     if (_image != null)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12.0),
-                        child: Image.file(
-                          _image!,
-                          fit: BoxFit.cover,
-                        ),
+                      Stack(
+                        children: [
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 12.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12.0),
+                            child: Image.file(
+                              _image!,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ],
                       ),
                     SizedBox(
                       height: 15.0,
