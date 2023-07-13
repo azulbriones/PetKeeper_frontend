@@ -47,7 +47,7 @@ class _ProfilePageState extends State<ProfilePage> {
             return _bodyWidget(singleUserState.currentUser);
           }
 
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         },
@@ -99,7 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     networkImageBoxFit: BoxFit.cover,
                     imageUrl: currentUser.profileUrl,
                     progressIndicatorBuilder: Center(
-                      child: CircularProgressIndicator(),
+                      child: const CircularProgressIndicator(),
                     ),
                     placeHolder: "assets/images/profile_default.png",
                   ),
@@ -109,7 +109,7 @@ class _ProfilePageState extends State<ProfilePage> {
             SizedBox(
               height: 14,
             ),
-            Text(
+            const Text(
               'Remove profile photo',
               style: TextStyle(
                   color: Colors.blue,
@@ -150,6 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
               title: "Logout",
               onTap: () {
                 BlocProvider.of<AuthCubit>(context).loggedOut();
+                Navigator.pop(context);
               },
             ),
           ],
