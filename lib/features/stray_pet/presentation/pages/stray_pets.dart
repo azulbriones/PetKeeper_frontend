@@ -83,45 +83,6 @@ class _StrayPetsState extends State<StrayPets> {
     double baseWidth = 375;
     double fem = MediaQuery.of(context).size.width / baseWidth;
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0.0,
-        title: const Text('PetKeeper'),
-        actions: [
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 15.0),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ProfilePage(),
-                      ),
-                    );
-                  },
-                  child: SizedBox(
-                    height: 40,
-                    width: 40,
-                    child: ClipOval(
-                      child: NetworkImageWidget(
-                        borderRadiusImageFile: 50,
-                        placeHolderBoxFit: BoxFit.cover,
-                        networkImageBoxFit: BoxFit.cover,
-                        imageUrl: currentUser.profileUrl,
-                        progressIndicatorBuilder: const Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                        placeHolder: "assets/images/profile_default.png",
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          )
-        ],
-      ),
       backgroundColor: Colors.white,
       body: Column(
         children: [
@@ -292,8 +253,24 @@ class _StrayPetsState extends State<StrayPets> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => const StrayPost(),
+                            PageRouteBuilder(
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      const StrayPost(),
+                              transitionsBuilder: (context, animation,
+                                  secondaryAnimation, child) {
+                                var begin = const Offset(1.0, 0.0);
+                                var end = Offset.zero;
+                                var curve = Curves.ease;
+
+                                var tween = Tween(begin: begin, end: end)
+                                    .chain(CurveTween(curve: curve));
+
+                                return SlideTransition(
+                                  position: animation.drive(tween),
+                                  child: child,
+                                );
+                              },
                             ),
                           );
                         },

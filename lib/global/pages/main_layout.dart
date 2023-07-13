@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:network_image/network_image.dart';
 import 'package:pet_keeper_front/features/adopt-pet/presentation/pages/toadopt_pets.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/user/user_cubit.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
 import 'package:pet_keeper_front/features/stray_pet/presentation/pages/stray_pets.dart';
 import 'package:pet_keeper_front/global/pages/home_page.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -92,6 +94,60 @@ class _MainLayoutState extends State<MainLayout> {
 
   Widget _bodyLayout(PetLoverEntity currentUser) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        title: const Text('PetKeeper'),
+        actions: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 15.0),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const ProfilePage(),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                          var begin = const Offset(1.0, 0.0);
+                          var end = Offset.zero;
+                          var curve = Curves.ease;
+
+                          var tween = Tween(begin: begin, end: end)
+                              .chain(CurveTween(curve: curve));
+
+                          return SlideTransition(
+                            position: animation.drive(tween),
+                            child: child,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  child: SizedBox(
+                    height: 40,
+                    width: 40,
+                    child: ClipOval(
+                      child: NetworkImageWidget(
+                        borderRadiusImageFile: 50,
+                        placeHolderBoxFit: BoxFit.cover,
+                        networkImageBoxFit: BoxFit.cover,
+                        imageUrl: currentUser.profileUrl,
+                        progressIndicatorBuilder: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        placeHolder: "assets/images/profile_default.png",
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
       body: PageView(
         controller: _pageController,
         onPageChanged: (int index) {
