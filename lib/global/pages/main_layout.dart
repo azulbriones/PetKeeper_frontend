@@ -4,7 +4,7 @@ import 'package:pet_keeper_front/features/adopt-pet/presentation/pages/toadopt_p
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/user/user_cubit.dart';
-import 'package:pet_keeper_front/features/stray-pet/presentation/pages/stray_pets.dart';
+import 'package:pet_keeper_front/features/stray_pet/presentation/pages/stray_pets.dart';
 import 'package:pet_keeper_front/global/pages/home_page.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 

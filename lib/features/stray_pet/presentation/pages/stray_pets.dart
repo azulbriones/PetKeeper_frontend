@@ -5,7 +5,7 @@ import 'package:network_image/network_image.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
-import 'package:pet_keeper_front/features/stray-pet/presentation/pages/stray_post.dart';
+import 'package:pet_keeper_front/features/stray_pet/presentation/pages/stray_post.dart';
 
 class StrayPets extends StatefulWidget {
   const StrayPets({super.key});
