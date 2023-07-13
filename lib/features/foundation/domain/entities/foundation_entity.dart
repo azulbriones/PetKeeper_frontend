@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-class PetLoverEntity extends Equatable {
+class FoundationEntity extends Equatable {
   final String? name;
   final String? email;
   final String? id;
@@ -8,14 +8,13 @@ class PetLoverEntity extends Equatable {
   final String? password;
   final String? type;
 
-  const PetLoverEntity({
-    this.name,
-    this.email,
-    this.id,
-    this.profileUrl,
-    this.password,
-    this.type,
-  });
+  const FoundationEntity(
+      {this.name,
+      this.email,
+      this.id,
+      this.profileUrl,
+      this.password,
+      this.type});
 
   @override
   // TODO: implement props

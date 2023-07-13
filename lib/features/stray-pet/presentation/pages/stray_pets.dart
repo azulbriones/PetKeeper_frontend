@@ -5,6 +5,7 @@ import 'package:network_image/network_image.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
+import 'package:pet_keeper_front/features/stray-pet/presentation/pages/stray_post.dart';
 
 class StrayPets extends StatefulWidget {
   const StrayPets({super.key});
@@ -128,11 +129,11 @@ class _StrayPetsState extends State<StrayPets> {
             width: 375 * fem,
             height: 50 * fem,
             color: Colors.indigo[400],
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 18.0),
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0),
-                child: Text(
+                padding: EdgeInsets.symmetric(vertical: 15.0 * fem),
+                child: const Text(
                   'Mascotas extraviadas',
                   style: TextStyle(
                       fontSize: 18.0,
@@ -289,7 +290,12 @@ class _StrayPetsState extends State<StrayPets> {
                       padding: const EdgeInsets.only(right: 25.0),
                       child: FloatingActionButton(
                         onPressed: () {
-                          // Acción al presionar el botón flotante
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const StrayPost(),
+                            ),
+                          );
                         },
                         child: const Icon(Icons.add),
                       ),

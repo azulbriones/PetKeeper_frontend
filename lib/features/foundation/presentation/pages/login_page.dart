@@ -1,56 +1,45 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
-import 'package:pet_keeper_front/global/common/common.dart';
-import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/credential/credential_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pet_keeper_front/global/pages/home_page.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/auth/auth_cubit.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/credential/credential_cubit.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/email_verify_user_page.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/register_page.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/reset_password_page.dart';
+import 'package:pet_keeper_front/global/common/common.dart';
+import 'package:pet_keeper_front/global/pages/home_page.dart';
 import 'package:pet_keeper_front/global/pages/main_layout.dart';
 
-class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _LoginPageState extends State<LoginPage> {
   bool isPasswordVisible = false;
-  bool isPassword2Visible = false;
   bool isLoading = false;
   late TextEditingController _passwordController;
-  late TextEditingController _password2Controller;
   late TextEditingController _emailController;
-  late TextEditingController _usernameController;
 
   @override
   void initState() {
     super.initState();
     _passwordController = TextEditingController();
-    _password2Controller = TextEditingController();
     _emailController = TextEditingController();
-    _usernameController = TextEditingController();
   }
 
   @override
   void dispose() {
     _passwordController.dispose();
-    _password2Controller.dispose();
     _emailController.dispose();
-    _usernameController.dispose();
     super.dispose();
   }
 
   void togglePasswordVisibility() {
     setState(() {
       isPasswordVisible = !isPasswordVisible;
-    });
-  }
-
-  void togglePassword2Visibility() {
-    setState(() {
-      isPassword2Visible = !isPassword2Visible;
     });
   }
 
@@ -63,11 +52,10 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: BlocConsumer<CredentialCubit, CredentialState>(
         builder: (context, credentialState) {
           if (credentialState is CredentialLoading) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(),
             );
           }
@@ -147,16 +135,19 @@ class _RegisterPageState extends State<RegisterPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Center(
-                        child: Image.asset(
-                          'assets/images/logo.png',
-                          width: 140 * fem,
-                          height: 140 * fem,
-                          fit: BoxFit.contain,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Center(
+                          child: Image.asset(
+                            'assets/images/logo.png',
+                            width: 140 * fem,
+                            height: 140 * fem,
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       ),
                       const Text(
-                        'Regístrate',
+                        'Bienvenido de nuevo!',
                         style: TextStyle(
                             fontSize: 26.0,
                             fontWeight: FontWeight.bold,
@@ -166,51 +157,41 @@ class _RegisterPageState extends State<RegisterPage> {
                         height: 5,
                       ),
                       const Text(
-                        'Rellena el formulario con tus datos',
+                        'Inicia sesión con tu correo electrónico y contraseña',
                         style: TextStyle(fontSize: 18.0, color: Colors.white),
                       ),
                       SizedBox(
-                        height: 10,
+                        height: 20,
                       ),
-                      TextField(
-                        controller: _usernameController,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(
-                            Icons.person,
-                            color: Colors.white,
-                          ),
-                          contentPadding: const EdgeInsets.all(12.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                            borderSide: const BorderSide(
-                              color: Color.fromARGB(132, 255, 255, 255),
-                              width: 0,
+                      RichText(
+                        text: TextSpan(
+                          text: 'No tienes una cuenta?',
+                          style: const TextStyle(color: Colors.white),
+                          children: [
+                            const WidgetSpan(
+                              child: SizedBox(
+                                  width: 5), // Espacio en blanco como widget
                             ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                            borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              width: 2,
+                            TextSpan(
+                              text: 'Crear una cuenta',
+                              style: TextStyle(
+                                  color: Colors.purple[100],
+                                  fontWeight: FontWeight.bold),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => RegisterPage(),
+                                    ),
+                                  );
+                                },
                             ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                            borderSide: const BorderSide(
-                              color: Color.fromARGB(132, 255, 255, 255),
-                              width: 0,
-                            ),
-                          ),
-                          hintText: 'Nombre de usuario',
-                          hintStyle: const TextStyle(
-                              color: Color.fromARGB(161, 255, 255, 255)),
-                          filled: true,
-                          fillColor: const Color.fromARGB(132, 255, 255, 255),
+                          ],
                         ),
                       ),
                       SizedBox(
-                        height: 10,
+                        height: 20,
                       ),
                       TextField(
                         controller: _emailController,
@@ -222,14 +203,14 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           contentPadding: const EdgeInsets.all(12.0),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.0),
+                            borderRadius: BorderRadius.circular(15.0),
                             borderSide: const BorderSide(
                               color: Color.fromARGB(132, 255, 255, 255),
                               width: 0,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.0),
+                            borderRadius: BorderRadius.circular(15.0),
                             borderSide: const BorderSide(
                               color: Color.fromARGB(255, 255, 255, 255),
                               width: 2,
@@ -250,7 +231,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                       ),
                       SizedBox(
-                        height: 10,
+                        height: 20,
                       ),
                       TextField(
                         controller: _passwordController,
@@ -279,14 +260,14 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.0),
+                            borderRadius: BorderRadius.circular(15.0),
                             borderSide: const BorderSide(
                               color: Color.fromARGB(255, 255, 255, 255),
                               width: 2,
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.0),
+                            borderRadius: BorderRadius.circular(15.0),
                             borderSide: const BorderSide(
                               color: Color.fromARGB(132, 255, 255, 255),
                               width: 0,
@@ -300,61 +281,11 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                       ),
                       SizedBox(
-                        height: 10,
-                      ),
-                      TextField(
-                        controller: _password2Controller,
-                        obscureText: !isPassword2Visible,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(
-                            Icons.lock,
-                            color: Colors.white,
-                          ),
-                          suffixIcon: GestureDetector(
-                            onTap: togglePasswordVisibility,
-                            child: Icon(
-                              isPassword2Visible
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                              color: Colors.white,
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.all(12.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                            borderSide: const BorderSide(
-                              color: Color.fromARGB(132, 255, 255, 255),
-                              width: 0,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                            borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              width: 2,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                            borderSide: const BorderSide(
-                              color: Color.fromARGB(132, 255, 255, 255),
-                              width: 0,
-                            ),
-                          ),
-                          hintText: 'Confirmar contraseña',
-                          hintStyle: const TextStyle(
-                              color: Color.fromARGB(161, 255, 255, 255)),
-                          filled: true,
-                          fillColor: const Color.fromARGB(132, 255, 255, 255),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
+                        height: 20,
                       ),
                       RichText(
                         text: TextSpan(
-                          text: 'Ya tienes una cuenta?',
+                          text: 'Olvidaste tu contraseña?',
                           style: const TextStyle(color: Colors.white),
                           children: [
                             const WidgetSpan(
@@ -362,13 +293,18 @@ class _RegisterPageState extends State<RegisterPage> {
                                   width: 5), // Espacio en blanco como widget
                             ),
                             TextSpan(
-                              text: 'Iniciar sesión',
+                              text: 'Restablecer contraseña',
                               style: TextStyle(
                                   color: Colors.purple[100],
                                   fontWeight: FontWeight.bold),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  Navigator.pop(context);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ResetPasswordPage(),
+                                    ),
+                                  );
                                 },
                             ),
                           ],
@@ -385,7 +321,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       toggleLoading();
-                      _submitSignUp();
+                      _submitLogin();
                     },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all<Color>(
@@ -493,39 +429,19 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  void _submitSignUp() async {
-    if (_usernameController.text.isEmpty) {
-      toast("Enter username");
-      return;
-    }
-
+  void _submitLogin() {
     if (_emailController.text.isEmpty) {
-      toast("Enter email");
+      toast("Enter Your Email");
       return;
     }
 
     if (_passwordController.text.isEmpty) {
-      toast("Enter password");
+      toast("Enter Your Password");
       return;
     }
 
-    if (_password2Controller.text.isEmpty) {
-      toast("Enter again password");
-      return;
-    }
-
-    if (_passwordController.text != _password2Controller.text) {
-      toast("both password must be same");
-      return;
-    }
-
-    BlocProvider.of<CredentialCubit>(context).signUpSubmit(
-        user: PetLoverEntity(
-      name: _usernameController.text,
-      profileUrl: "",
-      email: _emailController.text,
-      password: _passwordController.text,
-    ));
+    BlocProvider.of<CredentialCubit>(context).signInSubmit(
+        email: _emailController.text, password: _passwordController.text);
     toggleLoading();
   }
 }

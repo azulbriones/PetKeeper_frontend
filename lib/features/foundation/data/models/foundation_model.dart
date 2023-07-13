@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pet_keeper_front/features/foundation/domain/entities/foundation_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 
-class PetLoverModel extends PetLoverEntity {
-  PetLoverModel({
+class FoundationModel extends FoundationEntity {
+  FoundationModel({
     String? name,
     String? email,
     String? id,
@@ -17,10 +18,10 @@ class PetLoverModel extends PetLoverEntity {
           type: type,
         );
 
-  factory PetLoverModel.fromSnapshot(DocumentSnapshot snapshot) {
+  factory FoundationModel.fromSnapshot(DocumentSnapshot snapshot) {
     var snapshotMap = snapshot.data() as Map<String, dynamic>;
 
-    return PetLoverModel(
+    return FoundationModel(
       name: snapshotMap['name'],
       profileUrl: snapshotMap['profileUrl'],
       id: snapshotMap['id'],

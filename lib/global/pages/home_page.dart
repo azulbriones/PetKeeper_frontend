@@ -91,11 +91,11 @@ class _HomePageState extends State<HomePage> {
               width: 375 * fem,
               height: 50 * fem,
               color: Colors.indigo[400],
-              child: const Padding(
+              child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 18.0),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 15.0),
-                  child: Text(
+                  padding: EdgeInsets.symmetric(vertical: 15.0 * fem),
+                  child: const Text(
                     'Inicio',
                     style: TextStyle(
                         fontSize: 18.0,

@@ -1,13 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:pet_keeper_front/features/pet-lover/data/datasources/firebase_datasource/pet_lover_firebase_datasource.dart';
+import 'package:pet_keeper_front/features/foundation/data/datasources/firebase_datasource/foundation_firebase_datasource.dart';
+import 'package:pet_keeper_front/features/foundation/data/models/foundation_model.dart';
+import 'package:pet_keeper_front/features/foundation/domain/entities/foundation_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/data/models/pet_lover_model.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 
-class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
+class FoundationFirebaseDataSourceImpl implements FoundationFirebaseDataSource {
   final FirebaseAuth auth;
   final FirebaseFirestore firestore;
-  PetLoverFirebaseDataSourceImpl({required this.firestore, required this.auth});
+  FoundationFirebaseDataSourceImpl(
+      {required this.firestore, required this.auth});
 
   @override
   Future<void> forgotPassword(String email) async {
@@ -15,7 +18,7 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
   }
 
   @override
-  Stream<List<PetLoverEntity>> getAllUsers(PetLoverEntity user) {
+  Stream<List<FoundationEntity>> getAllUsers(FoundationEntity user) {
     final userCollection = firestore.collection("users");
 
     return userCollection
@@ -23,20 +26,20 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
         .snapshots()
         .map((querySnapshot) {
       return querySnapshot.docs
-          .map((e) => PetLoverModel.fromSnapshot(e))
+          .map((e) => FoundationModel.fromSnapshot(e))
           .toList();
     });
   }
 
   @override
-  Future<void> getCreateCurrentUser(PetLoverEntity user) async {
+  Future<void> getCreateCurrentUser(FoundationEntity user) async {
     final userCollection = firestore.collection("users");
 
     final id = await getCurrentId();
 
     userCollection.doc(id).get().then((userDoc) {
       if (!userDoc.exists) {
-        final newUser = PetLoverModel(
+        final newUser = FoundationModel(
           email: user.email,
           id: id,
           profileUrl: user.profileUrl,
@@ -55,7 +58,7 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
   Future<String> getCurrentId() async => auth.currentUser!.uid;
 
   @override
-  Stream<List<PetLoverEntity>> getSingleUser(PetLoverEntity user) {
+  Stream<List<FoundationEntity>> getSingleUser(FoundationEntity user) {
     final userCollection = firestore.collection("users");
     print('CURRENT ID: ${user.id}');
 
@@ -65,13 +68,13 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
         .snapshots()
         .map((querySnapshot) {
       return querySnapshot.docs
-          .map((e) => PetLoverModel.fromSnapshot(e))
+          .map((e) => FoundationModel.fromSnapshot(e))
           .toList();
     });
   }
 
   @override
-  Future<void> getUpdateUser(PetLoverEntity user) async {
+  Future<void> getUpdateUser(FoundationEntity user) async {
     final userCollection = firestore.collection("users");
 
     Map<String, dynamic> userInformation = Map();
@@ -92,7 +95,7 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
   }
 
   @override
-  Future<void> signIn(PetLoverEntity user) async {
+  Future<void> signIn(FoundationEntity user) async {
     await auth.signInWithEmailAndPassword(
         email: user.email!, password: user.password!);
   }
@@ -103,7 +106,7 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
   }
 
   @override
-  Future<void> signUp(PetLoverEntity user) async {
+  Future<void> signUp(FoundationEntity user) async {
     try {
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -121,7 +124,7 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
         'email': user.email,
         'profileUrl': '',
         'id': userCredential.user!.uid,
-        'type': 'petlover',
+        'type': 'foundation',
       });
 
       // El documento se creó correctamente

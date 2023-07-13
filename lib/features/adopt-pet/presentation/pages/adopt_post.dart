@@ -1,0 +1,486 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:network_image/network_image.dart';
+import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/auth/auth_cubit.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/user/user_cubit.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
+import 'package:pet_keeper_front/global/common/common.dart';
+import 'package:pet_keeper_front/global/theme/style.dart';
+import 'package:pet_keeper_front/global/widgets/container/container_button.dart';
+import 'package:pet_keeper_front/global/widgets/container/container_button_secondary.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+
+class AdoptPost extends StatefulWidget {
+  const AdoptPost({super.key});
+
+  @override
+  State<AdoptPost> createState() => _AdoptPostState();
+}
+
+class _AdoptPostState extends State<AdoptPost> {
+  late TextEditingController _petName;
+  late TextEditingController _petRace;
+  late TextEditingController _petOwner;
+  late TextEditingController _petPlace;
+  late TextEditingController _petDesc;
+  String buttonTitle = 'Seleccionar imagen';
+  File? _image;
+  final DateTime _postDate = DateTime.now();
+  bool isLoading = false;
+  bool _isColorChanged = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _petName = TextEditingController();
+    _petRace = TextEditingController();
+    _petOwner = TextEditingController();
+    _petDesc = TextEditingController();
+    _petPlace = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _petName.dispose();
+    _petRace.dispose();
+    _petOwner.dispose();
+    _petDesc.dispose();
+    _petPlace.dispose();
+    _image = null;
+    super.dispose();
+  }
+
+  void toggleLoading() {
+    setState(() {
+      isLoading = !isLoading;
+      _isColorChanged = !_isColorChanged;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: BlocBuilder<SingleUserCubit, SingleUserState>(
+        builder: (context, singleUserState) {
+          if (singleUserState is SingleUserLoaded) {
+            return _bodyWidget(singleUserState.currentUser);
+          }
+
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _bodyWidget(PetLoverEntity currentUser) {
+    double baseWidth = 375;
+    double fem = MediaQuery.of(context).size.width / baseWidth;
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        title: const Text('PetKeeper'),
+        actions: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 15.0),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ProfilePage(),
+                      ),
+                    );
+                  },
+                  child: SizedBox(
+                    height: 40,
+                    width: 40,
+                    child: ClipOval(
+                      child: NetworkImageWidget(
+                        borderRadiusImageFile: 50,
+                        placeHolderBoxFit: BoxFit.cover,
+                        networkImageBoxFit: BoxFit.cover,
+                        imageUrl: currentUser.profileUrl,
+                        progressIndicatorBuilder: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        placeHolder: "assets/images/profile_default.png",
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Column(
+          children: [
+            Container(
+              width: 375 * fem,
+              height: 50 * fem,
+              color: lightPrimaryColor,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 18.0),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 15.0 * fem),
+                  child: const Text(
+                    'Crear publicación de adopción',
+                    style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: ListView(
+                  children: <Widget>[
+                    SizedBox(
+                      height: 15.0,
+                    ),
+                    if (_image != null)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12.0),
+                        child: Image.file(
+                          _image!,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    SizedBox(
+                      height: 15.0,
+                    ),
+                    ContainerButton(
+                      title: buttonTitle,
+                      onTap: () async {
+                        final picker = ImagePicker();
+                        final pickedFile =
+                            await picker.pickImage(source: ImageSource.gallery);
+
+                        setState(() {
+                          if (pickedFile != null) {
+                            _image = File(pickedFile.path);
+                            buttonTitle = 'Cambiar imagen';
+                          } else {
+                            print('No se seleccionó ninguna imagen.');
+                          }
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      height: 15.0,
+                    ),
+                    TextField(
+                      controller: _petName,
+                      style: const TextStyle(color: Colors.black87),
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(
+                          Icons.pets,
+                          color: Colors.indigo,
+                        ),
+                        contentPadding: const EdgeInsets.all(12.0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.indigo,
+                            width: 0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.indigo,
+                            width: 2,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.grey,
+                            width: 1,
+                          ),
+                        ),
+                        hintText: 'Nombre de la mascota',
+                        hintStyle: const TextStyle(
+                          color: Colors.grey,
+                        ),
+                        filled: true,
+                        fillColor: const Color.fromARGB(132, 255, 255, 255),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15.0,
+                    ),
+                    TextField(
+                      controller: _petRace,
+                      style: const TextStyle(color: Colors.black87),
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(
+                          Icons.type_specimen,
+                          color: Colors.indigo,
+                        ),
+                        contentPadding: const EdgeInsets.all(12.0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.indigo,
+                            width: 0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.indigo,
+                            width: 2,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.grey,
+                            width: 1,
+                          ),
+                        ),
+                        hintText: 'Raza de la mascota',
+                        hintStyle: const TextStyle(
+                          color: Colors.grey,
+                        ),
+                        filled: true,
+                        fillColor: const Color.fromARGB(132, 255, 255, 255),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15.0,
+                    ),
+                    TextField(
+                      controller: _petOwner,
+                      style: const TextStyle(color: Colors.black87),
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(
+                          Icons.person,
+                          color: Colors.indigo,
+                        ),
+                        contentPadding: const EdgeInsets.all(12.0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.indigo,
+                            width: 0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.indigo,
+                            width: 2,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.grey,
+                            width: 1,
+                          ),
+                        ),
+                        hintText: 'Nombre del dueño',
+                        hintStyle: const TextStyle(
+                          color: Colors.grey,
+                        ),
+                        filled: true,
+                        fillColor: const Color.fromARGB(132, 255, 255, 255),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15.0,
+                    ),
+                    TextField(
+                      controller: _petPlace,
+                      style: const TextStyle(color: Colors.black87),
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(
+                          Icons.place,
+                          color: Colors.indigo,
+                        ),
+                        contentPadding: const EdgeInsets.all(12.0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.indigo,
+                            width: 0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.indigo,
+                            width: 2,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.grey,
+                            width: 1,
+                          ),
+                        ),
+                        hintText: 'Lugar de residencia',
+                        hintStyle: const TextStyle(
+                          color: Colors.grey,
+                        ),
+                        filled: true,
+                        fillColor: const Color.fromARGB(132, 255, 255, 255),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15.0,
+                    ),
+                    TextField(
+                      controller: _petDesc,
+                      maxLines:
+                          null, // Permite que el campo de entrada se expanda automáticamente
+                      keyboardType: TextInputType
+                          .multiline, // Permite varias líneas de texto
+                      textInputAction: TextInputAction.newline,
+                      style: const TextStyle(color: Colors.black87),
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(
+                          Icons.info,
+                          color: Colors.indigo,
+                        ),
+                        contentPadding: const EdgeInsets.all(12.0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.indigo,
+                            width: 0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.indigo,
+                            width: 2,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.grey,
+                            width: 1,
+                          ),
+                        ),
+                        hintText: 'Descripción',
+                        hintStyle: const TextStyle(
+                          color: Colors.grey,
+                        ),
+                        filled: true,
+                        fillColor: const Color.fromARGB(132, 255, 255, 255),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15.0,
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        toggleLoading();
+                        _submitPost();
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12.0),
+                        child: AnimatedContainer(
+                          duration: const Duration(seconds: 2),
+                          color:
+                              _isColorChanged ? Colors.black87 : Colors.indigo,
+                          alignment: Alignment.center,
+                          height: 44,
+                          width: MediaQuery.of(context).size.width,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Visibility(
+                                visible: !isLoading,
+                                child: const Text(
+                                  'Crear publicación',
+                                  style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white),
+                                ),
+                              ),
+                              Visibility(
+                                visible: isLoading,
+                                child: const SizedBox(
+                                  width: 25,
+                                  height: 25,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30.0,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _submitPost() {
+    if (_image == null) {
+      toast("Selecciona una imagen");
+      toggleLoading();
+      return;
+    }
+    if (_petName.text.isEmpty) {
+      toast("Inserta el nombre de la mascota");
+      toggleLoading();
+      return;
+    }
+
+    if (_petRace.text.isEmpty) {
+      toast("Inserta una raza");
+      toggleLoading();
+      return;
+    }
+
+    if (_petOwner.text.isEmpty) {
+      toast("Inserta un dueño");
+      toggleLoading();
+      return;
+    }
+
+    if (_petDesc.text.isEmpty) {
+      toast("Inserta una descripción");
+      toggleLoading();
+      return;
+    }
+
+    // BlocProvider.of<CredentialCubit>(context).signInSubmit(
+    //     email: _emailController.text, password: _passwordController.text);
+    // toggleLoading();
+  }
+}
