@@ -51,6 +51,9 @@ dependencies:
   syncfusion_flutter_datepicker: ^22.1.38
   dio: ^5.2.1+1
   http: ^1.1.0
+  connectivity_plus: ^4.0.0
+  shared_preferences: ^2.1.1
+  intl: ^0.18.1
   
 
 dev_dependencies:

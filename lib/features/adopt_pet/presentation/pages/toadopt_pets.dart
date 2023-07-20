@@ -1,19 +1,16 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:network_image/network_image.dart';
+import 'package:pet_keeper_front/features/adopt_pet/presentation/pages/adopt_post.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
-import 'package:pet_keeper_front/features/stray_pet/presentation/bloc/stray_pet_bloc.dart';
-import 'package:pet_keeper_front/features/stray_pet/presentation/pages/stray_post.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
 
-class StrayPets extends StatefulWidget {
-  const StrayPets({super.key});
+class ToAdoptPets extends StatefulWidget {
+  const ToAdoptPets({super.key});
 
   @override
-  State<StrayPets> createState() => _StrayPetsState();
+  State<ToAdoptPets> createState() => _ToAdoptPetsState();
 }
 
 class Post {
@@ -22,9 +19,8 @@ class Post {
   String owner;
   String info;
   String fotoUrl;
-  String strayDate;
-  String strayPlace;
-  String bounty;
+  String postDate;
+  String postPlace;
 
   Post({
     required this.nombre,
@@ -32,13 +28,23 @@ class Post {
     required this.owner,
     required this.info,
     required this.fotoUrl,
-    required this.strayDate,
-    required this.strayPlace,
-    required this.bounty,
+    required this.postDate,
+    required this.postPlace,
   });
 }
 
-class _StrayPetsState extends State<StrayPets> {
+class _ToAdoptPetsState extends State<ToAdoptPets> {
+  String? selectedCountry;
+
+  List<String> countries = [
+    'Argentina',
+    'Brasil',
+    'Chile',
+    'Colombia',
+    'Perú',
+    'México',
+  ];
+
   List<Post> mascotas = [
     Post(
       nombre: 'Max',
@@ -47,9 +53,8 @@ class _StrayPetsState extends State<StrayPets> {
       info:
           'Hola, esta es mi mascota, la extravié en aaaaaaaaaaaaaaaaaaaaaaaaaaaaafffffffffgggggggg',
       fotoUrl: 'assets/images/dog1.png',
-      strayDate: '14/12/2020',
-      strayPlace: 'Tuxtla Gutierrez',
-      bounty: '3,000',
+      postDate: '14/12/2020',
+      postPlace: 'Tuxtla Gutierrez',
     ),
     Post(
       nombre: 'Luna',
@@ -57,43 +62,11 @@ class _StrayPetsState extends State<StrayPets> {
       owner: 'Emilio 2',
       info: 'Hola, esta es mi mascota, la extravié en',
       fotoUrl: 'assets/images/dog2.png',
-      strayDate: '23/06/2021',
-      strayPlace: 'Suchiapa',
-      bounty: '2,000',
+      postDate: '23/06/2021',
+      postPlace: 'Suchiapa',
     ),
     // Agrega más objetos de mascota con diferentes datos
   ];
-
-  late StreamSubscription<ConnectivityResult> subscription;
-
-  @override
-  void initState() {
-    super.initState();
-
-    subscription = Connectivity()
-        .onConnectivityChanged
-        .listen((ConnectivityResult result) {
-      if (result == ConnectivityResult.wifi) {
-        context.read<StrayPetBloc>().add(GetAllStrayPets());
-        ScaffoldMessenger.of(context).clearSnackBars();
-      } else {
-        const snackBar = SnackBar(
-          content: Text(
-            'Se perdió la conectividad Wi-Fi',
-            style: TextStyle(),
-          ),
-          duration: Duration(days: 365),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    subscription.cancel();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +101,7 @@ class _StrayPetsState extends State<StrayPets> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0 * fem),
                 child: const Text(
-                  'Mascotas extraviadas',
+                  'Mascotas en adopción',
                   style: TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,
@@ -137,37 +110,33 @@ class _StrayPetsState extends State<StrayPets> {
               ),
             ),
           ),
-
-          // BlocBuilder<StrayPetBloc, StrayPetState>(builder: (context, state) {
-          //   if (state is LoadingAllStrayPets) {
-          //     return const Center(
-          //       child: CircularProgressIndicator(),
-          //     );
-          //   } else if (state is LoadedAllStrayPets) {
-          //     return SingleChildScrollView(
-          //       child: Column(
-          //           children: state.allStrayPets.map((pets) {
-          //         return Container(
-          //           margin: EdgeInsets.all(5),
-          //           padding: EdgeInsets.all(5),
-          //           color: Colors.black12,
-          //           child: ListTile(
-          //             leading: Text(pets.id.toString()),
-          //             title: Text(pets.petName!),
-          //           ),
-          //         );
-          //       }).toList()),
-          //     );
-          //   } else if (state is Error) {
-          //     return Center(
-          //       child: Text(state.error,
-          //           style: const TextStyle(color: Colors.red)),
-          //     );
-          //   } else {
-          //     return Container();
-          //   }
-          // }),
-
+          Container(
+            width: 375 * fem,
+            height: 60 * fem,
+            color: Colors.white,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 18.0),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 5.0 * fem),
+                child: DropdownButton<String>(
+                  value: selectedCountry,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedCountry = newValue;
+                    });
+                  },
+                  items:
+                      countries.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  hint: const Text('Seleccione un estado'),
+                ),
+              ),
+            ),
+          ),
           Expanded(
             child: Stack(
               children: [
@@ -201,7 +170,7 @@ class _StrayPetsState extends State<StrayPets> {
                                 radius: 40,
                                 backgroundImage: AssetImage(mascota.fotoUrl),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 15,
                               ),
                               Expanded(
@@ -229,22 +198,9 @@ class _StrayPetsState extends State<StrayPets> {
                                           ),
                                           Expanded(
                                             child: Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                '\$${mascota.bounty}',
-                                                style: const TextStyle(
-                                                  color: Colors.green,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Align(
                                               alignment: Alignment.centerRight,
                                               child: Text(
-                                                mascota.strayDate,
+                                                mascota.postDate,
                                                 style: TextStyle(
                                                   color: Colors.indigo.shade400,
                                                   fontSize: 12,
@@ -272,7 +228,7 @@ class _StrayPetsState extends State<StrayPets> {
                                             child: Align(
                                               alignment: Alignment.centerRight,
                                               child: Text(
-                                                mascota.strayPlace,
+                                                mascota.postPlace,
                                                 style: TextStyle(
                                                   color: Colors.indigo.shade400,
                                                   fontSize: 12,
@@ -282,7 +238,7 @@ class _StrayPetsState extends State<StrayPets> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 5,
                                       ),
                                       Flexible(
@@ -320,7 +276,7 @@ class _StrayPetsState extends State<StrayPets> {
                             PageRouteBuilder(
                               pageBuilder:
                                   (context, animation, secondaryAnimation) =>
-                                      const StrayPost(),
+                                      const AdoptPost(),
                               transitionsBuilder: (context, animation,
                                   secondaryAnimation, child) {
                                 var begin = const Offset(1.0, 0.0);
