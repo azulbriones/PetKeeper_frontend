@@ -20,7 +20,7 @@ class MainLayout extends StatefulWidget {
 
 class _MainLayoutState extends State<MainLayout> {
   final PageController _pageController = PageController();
-  int _currentIndex = 0;
+  int _currentIndex = 2;
 
   @override
   void initState() {
@@ -65,7 +65,7 @@ class _MainLayoutState extends State<MainLayout> {
         onTabChange: _onTabTapped,
         gap: 5,
         activeColor: Colors.indigo,
-        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
         color: Colors.grey,
         iconSize: 30,
         backgroundColor: Colors.white,
@@ -75,12 +75,16 @@ class _MainLayoutState extends State<MainLayout> {
 
   final List<GButton> tabItems = const [
     GButton(
-      icon: Icons.home,
-      text: 'Home',
+      icon: Icons.chat,
+      text: 'Chats',
     ),
     GButton(
       icon: Icons.search,
       text: 'Stray Pets',
+    ),
+    GButton(
+      icon: Icons.home,
+      text: 'Home',
     ),
     GButton(
       icon: Icons.pets,
@@ -158,6 +162,7 @@ class _MainLayoutState extends State<MainLayout> {
         children: [
           HomePage(),
           StrayPets(),
+          HomePage(),
           ToAdoptPets(),
           HomePage(),
         ],

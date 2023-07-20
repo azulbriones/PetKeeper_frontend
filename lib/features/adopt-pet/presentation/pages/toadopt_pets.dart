@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:network_image/network_image.dart';
@@ -35,6 +34,17 @@ class Post {
 }
 
 class _ToAdoptPetsState extends State<ToAdoptPets> {
+  String? selectedCountry;
+
+  List<String> countries = [
+    'Argentina',
+    'Brasil',
+    'Chile',
+    'Colombia',
+    'Perú',
+    'México',
+  ];
+
   List<Post> mascotas = [
     Post(
       nombre: 'Max',
@@ -100,6 +110,33 @@ class _ToAdoptPetsState extends State<ToAdoptPets> {
               ),
             ),
           ),
+          Container(
+            width: 375 * fem,
+            height: 60 * fem,
+            color: Colors.white,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 18.0),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 5.0 * fem),
+                child: DropdownButton<String>(
+                  value: selectedCountry,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedCountry = newValue;
+                    });
+                  },
+                  items:
+                      countries.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  hint: const Text('Seleccione un estado'),
+                ),
+              ),
+            ),
+          ),
           Expanded(
             child: Stack(
               children: [
@@ -133,7 +170,7 @@ class _ToAdoptPetsState extends State<ToAdoptPets> {
                                 radius: 40,
                                 backgroundImage: AssetImage(mascota.fotoUrl),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 15,
                               ),
                               Expanded(
@@ -201,7 +238,7 @@ class _ToAdoptPetsState extends State<ToAdoptPets> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 5,
                                       ),
                                       Flexible(
