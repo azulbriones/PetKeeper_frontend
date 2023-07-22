@@ -13,7 +13,7 @@ import 'package:pet_keeper_front/features/adopt_pet/domain/use_cases/update_post
 part 'adopt_pet_event.dart';
 part 'adopt_pet_state.dart';
 
-class StrayPetBloc extends Bloc<AdoptPetEvent, AdoptPetState> {
+class AdoptPetBloc extends Bloc<AdoptPetEvent, AdoptPetState> {
   final UpdatePostUseCase updatePostUseCase;
   final GetAllPostsUseCase getAllPostsUseCase;
   final GetPostDetailUseCase getPostDetailUseCase;
@@ -24,7 +24,7 @@ class StrayPetBloc extends Bloc<AdoptPetEvent, AdoptPetState> {
   final CreatePostUseCase createPostUseCase;
   final DeletePostUseCase deletePostUseCase;
 
-  StrayPetBloc({
+  AdoptPetBloc({
     required this.updatePostUseCase,
     required this.getAllPostsUseCase,
     required this.getPostDetailUseCase,

@@ -24,7 +24,7 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
       'reward': strayPetData.reward,
       'age': strayPetData.age,
       'description': strayPetData.description,
-      'status': 'losted',
+      'status': 'lost',
     };
 
     var request =
@@ -183,18 +183,16 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
 
   @override
   Future<StrayPetModel> getPostDetail(int postId) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? access = prefs.getString('access');
-
-    var url = Uri.https(apiURL, '/$postId');
-    var headers = {'Authorization': 'Bearer $access'};
-
-    var response = await http.get(url, headers: headers);
+    var url = Uri.http(apiURL, '/strays-pets/$postId');
+    var response = await http.get(url);
+    print('URL DE DETAIL: ${url}');
 
     if (response.statusCode == 200) {
       var reponseData = convert.jsonDecode(response.body);
+      print(convert.jsonDecode(response.body));
       return StrayPetModel.fromJson(reponseData['pay_load']);
     } else {
+      print('error');
       throw Exception();
     }
   }
@@ -322,7 +320,7 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
     var headers = {'Authorization': '', 'Content-Type': 'application/json'};
 
     final body = {
-      'status': 'founded',
+      'status': 'found',
       'rescuerId': strayPet.rescuerId,
       'rescuerName': strayPet.rescuerName
     };

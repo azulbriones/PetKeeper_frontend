@@ -39,6 +39,7 @@ class StrayPetBloc extends Bloc<StrayPetEvent, StrayPetState> {
     required this.deletePostUseCase,
   }) : super(InitialState()) {
     on<StrayPetEvent>((event, emit) async {
+      print('EL EVENTO ES: ${event}');
       if (event is GetAllStrayPets) {
         try {
           emit(LoadingAllStrayPets());
@@ -51,7 +52,7 @@ class StrayPetBloc extends Bloc<StrayPetEvent, StrayPetState> {
         try {
           emit(LoadingDetailStrayPet());
           StrayPet postDetail =
-              await getPostDetailUseCase.execute(event.strayPetId);
+              await getPostDetailUseCase.execute(event.strayPetId!);
           emit(LoadedDetailStrayPet(strayPet: postDetail));
         } catch (e) {
           emit(Error(error: e.toString()));

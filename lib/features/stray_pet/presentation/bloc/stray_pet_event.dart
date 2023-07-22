@@ -18,7 +18,7 @@ class CreateStrayPet extends StrayPetEvent {
 }
 
 class GetDetailStrayPet extends StrayPetEvent {
-  final int strayPetId;
+  final int? strayPetId;
 
   GetDetailStrayPet({required this.strayPetId});
 }

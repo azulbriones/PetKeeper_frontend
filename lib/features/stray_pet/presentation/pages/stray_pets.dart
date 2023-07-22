@@ -17,28 +17,6 @@ class StrayPets extends StatefulWidget {
   State<StrayPets> createState() => _StrayPetsState();
 }
 
-class Post {
-  String nombre;
-  String raza;
-  String owner;
-  String info;
-  String fotoUrl;
-  String strayDate;
-  String strayPlace;
-  String bounty;
-
-  Post({
-    required this.nombre,
-    required this.raza,
-    required this.owner,
-    required this.info,
-    required this.fotoUrl,
-    required this.strayDate,
-    required this.strayPlace,
-    required this.bounty,
-  });
-}
-
 class _StrayPetsState extends State<StrayPets> {
   String? selectedCountry;
   String? selectedCity;
@@ -49,31 +27,6 @@ class _StrayPetsState extends State<StrayPets> {
 
   List<String> cities = [
     'Tuxtla Gutiérrez',
-  ];
-
-  List<Post> mascotas = [
-    Post(
-      nombre: 'Max',
-      raza: 'Labrador',
-      owner: 'Emilio',
-      info:
-          'Hola, esta es mi mascota, la extravié en aaaaaaaaaaaaaaaaaaaaaaaaaaaaafffffffffgggggggg',
-      fotoUrl: 'assets/images/dog1.png',
-      strayDate: '14/12/2020',
-      strayPlace: 'Tuxtla Gutierrez',
-      bounty: '3,000',
-    ),
-    Post(
-      nombre: 'Luna',
-      raza: 'Golden Retriever',
-      owner: 'Emilio 2',
-      info: 'Hola, esta es mi mascota, la extravié en',
-      fotoUrl: 'assets/images/dog2.png',
-      strayDate: '23/06/2021',
-      strayPlace: 'Suchiapa',
-      bounty: '2,000',
-    ),
-    // Agrega más objetos de mascota con diferentes datos
   ];
 
   late StreamSubscription<ConnectivityResult> subscription;
@@ -215,214 +168,206 @@ class _StrayPetsState extends State<StrayPets> {
               ),
             ),
           ),
-
-          // BlocBuilder<StrayPetBloc, StrayPetState>(builder: (context, state) {
-          //   if (state is LoadingAllStrayPets) {
-          //     return const Center(
-          //       child: CircularProgressIndicator(),
-          //     );
-          //   } else if (state is LoadedAllStrayPets) {
-          //     return SingleChildScrollView(
-          //       child: Column(
-          //           children: state.allStrayPets.map((pets) {
-          //         return Container(
-          //           margin: EdgeInsets.all(5),
-          //           padding: EdgeInsets.all(5),
-          //           color: Colors.black12,
-          //           child: ListTile(
-          //             leading: Text(pets.id.toString()),
-          //             title: Text(pets.petName!),
-          //           ),
-          //         );
-          //       }).toList()),
-          //     );
-          //   } else if (state is Error) {
-          //     return Center(
-          //       child: Text(state.error,
-          //           style: const TextStyle(color: Colors.red)),
-          //     );
-          //   } else {
-          //     return Container();
-          //   }
-          // }),
-
           Expanded(
             child: Stack(
               children: [
-                ListView.builder(
-                  itemCount: mascotas.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    Post mascota = mascotas[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              PageRouteBuilder(
-                                pageBuilder:
-                                    (context, animation, secondaryAnimation) =>
-                                        const StrayPostView(),
-                                transitionsBuilder: (context, animation,
-                                    secondaryAnimation, child) {
-                                  var begin = const Offset(1.0, 0.0);
-                                  var end = Offset.zero;
-                                  var curve = Curves.easeInOut;
+                BlocBuilder<StrayPetBloc, StrayPetState>(
+                    builder: (context, state) {
+                  if (state is LoadingAllStrayPets) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (state is LoadedAllStrayPets) {
+                    return SingleChildScrollView(
+                      child: Column(
+                          children: state.allStrayPets.map((pets) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                print('ID DEL POST ENVIADO: ${pets.id}');
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    pageBuilder: (context, animation,
+                                            secondaryAnimation) =>
+                                        StrayPostView(id: pets.id),
+                                    transitionsBuilder: (context, animation,
+                                        secondaryAnimation, child) {
+                                      var begin = const Offset(1.0, 0.0);
+                                      var end = Offset.zero;
+                                      var curve = Curves.easeInOut;
 
-                                  var tween = Tween(begin: begin, end: end)
-                                      .chain(CurveTween(curve: curve));
+                                      var tween = Tween(begin: begin, end: end)
+                                          .chain(CurveTween(curve: curve));
 
-                                  return SlideTransition(
-                                    position: animation.drive(tween),
-                                    child: child,
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                          child: Container(
-                            height: 100,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 3,
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 5),
-                                ),
-                              ],
-                            ),
-                            margin: EdgeInsets.all(8),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 40,
-                                    backgroundImage:
-                                        AssetImage(mascota.fotoUrl),
+                                      return SlideTransition(
+                                        position: animation.drive(tween),
+                                        child: child,
+                                      );
+                                    },
                                   ),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 5.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Text(
-                                                    mascota.nombre,
-                                                    style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 16,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Text(
-                                                    '\$${mascota.bounty}',
-                                                    style: const TextStyle(
-                                                      color: Colors.green,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.centerRight,
-                                                  child: Text(
-                                                    mascota.strayDate,
-                                                    style: TextStyle(
-                                                      color: Colors
-                                                          .indigo.shade400,
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Text(
-                                                    mascota.owner,
-                                                    style: const TextStyle(
-                                                      color: Colors.grey,
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.centerRight,
-                                                  child: Text(
-                                                    mascota.strayPlace,
-                                                    style: TextStyle(
-                                                      color: Colors
-                                                          .indigo.shade400,
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Flexible(
-                                            child: Text(
-                                              mascota.info,
-                                              style: const TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 2,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                );
+                              },
+                              child: Container(
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 3,
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 5),
                                     ),
+                                  ],
+                                ),
+                                margin: EdgeInsets.all(8),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 40,
+                                        // backgroundImage: NetworkImage(
+                                        //   pets.petImage.toString(),
+                                        // ),
+                                        foregroundImage: AssetImage(
+                                            'assets/images/pet_default2.jpg'),
+                                      ),
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 5.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      child: Text(
+                                                        pets.petName.toString(),
+                                                        style: const TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 16,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      child: Text(
+                                                        '\$${pets.reward}',
+                                                        style: const TextStyle(
+                                                          color: Colors.green,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      child: Text(
+                                                        pets.lostedDate
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                          color: Colors
+                                                              .indigo.shade400,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      child: Text(
+                                                        pets.ownerName
+                                                            .toString(),
+                                                        style: const TextStyle(
+                                                          color: Colors.grey,
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      child: Text(
+                                                        pets.address.toString(),
+                                                        style: TextStyle(
+                                                          color: Colors
+                                                              .indigo.shade400,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Flexible(
+                                                child: Text(
+                                                  pets.description.toString(),
+                                                  style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 12,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 2,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
+                        );
+                      }).toList()),
                     );
-                  },
-                ),
+                  } else if (state is Error) {
+                    return Center(
+                      child: Text(state.error,
+                          style: const TextStyle(color: Colors.red)),
+                    );
+                  } else {
+                    return Container();
+                  }
+                }),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Padding(
