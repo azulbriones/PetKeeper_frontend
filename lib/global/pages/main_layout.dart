@@ -54,7 +54,7 @@ class _MainLayoutState extends State<MainLayout> {
             return _bodyLayout(singleUserState.currentUser);
           }
 
-          return const Center(
+          return Center(
             child: CircularProgressIndicator(),
           );
         },
@@ -117,7 +117,7 @@ class _MainLayoutState extends State<MainLayout> {
                             (context, animation, secondaryAnimation, child) {
                           var begin = const Offset(1.0, 0.0);
                           var end = Offset.zero;
-                          var curve = Curves.ease;
+                          var curve = Curves.easeInOut;
 
                           var tween = Tween(begin: begin, end: end)
                               .chain(CurveTween(curve: curve));
@@ -159,7 +159,7 @@ class _MainLayoutState extends State<MainLayout> {
             _currentIndex = index;
           });
         },
-        children: [
+        children: const [
           HomePage(),
           StrayPets(),
           HomePage(),

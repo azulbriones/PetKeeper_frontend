@@ -116,13 +116,12 @@ class _HomePageState extends State<HomePage>
                           height: 100,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            border: Border.all(color: Colors.indigo.shade400),
                             borderRadius: BorderRadius.circular(10.0),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 1,
-                                blurRadius: 10,
+                                spreadRadius: 3,
+                                blurRadius: 8,
                                 offset: const Offset(0, 5),
                               ),
                             ],
@@ -218,13 +217,12 @@ class _HomePageState extends State<HomePage>
                           height: 100,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            border: Border.all(color: Colors.indigo.shade400),
                             borderRadius: BorderRadius.circular(10.0),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 1,
-                                blurRadius: 10,
+                                spreadRadius: 3,
+                                blurRadius: 8,
                                 offset: const Offset(0, 5),
                               ),
                             ],
@@ -256,7 +254,7 @@ class _HomePageState extends State<HomePage>
                                               child: Align(
                                                 alignment: Alignment.center,
                                                 child: Text(
-                                                  'Mascotas extravíadas',
+                                                  'Mascotas en adopción',
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,

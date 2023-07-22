@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:network_image/network_image.dart';
 import 'package:pet_keeper_front/features/adopt-pet/presentation/pages/adopt_post.dart';
+import 'package:pet_keeper_front/features/adopt-pet/presentation/pages/adopt_post_view.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
+import 'package:pet_keeper_front/global/theme/style.dart';
 
 class ToAdoptPets extends StatefulWidget {
   const ToAdoptPets({super.key});
@@ -35,14 +37,14 @@ class Post {
 
 class _ToAdoptPetsState extends State<ToAdoptPets> {
   String? selectedCountry;
+  String? selectedCity;
 
   List<String> countries = [
-    'Argentina',
-    'Brasil',
-    'Chile',
-    'Colombia',
-    'Perú',
-    'México',
+    'Chiapas',
+  ];
+
+  List<String> cities = [
+    'Tuxtla Gutiérrez',
   ];
 
   List<Post> mascotas = [
@@ -112,27 +114,66 @@ class _ToAdoptPetsState extends State<ToAdoptPets> {
           ),
           Container(
             width: 375 * fem,
-            height: 60 * fem,
-            color: Colors.white,
+            height: 40 * fem,
+            color: Colors.grey.shade400,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 18.0),
+              padding: const EdgeInsets.symmetric(horizontal: 18.0),
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 5.0 * fem),
-                child: DropdownButton<String>(
-                  value: selectedCountry,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedCountry = newValue;
-                    });
-                  },
-                  items:
-                      countries.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  hint: const Text('Seleccione un estado'),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    DropdownButton<String>(
+                      value: selectedCountry,
+                      iconEnabledColor: Colors.black87,
+                      style: const TextStyle(color: Colors.black87),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedCountry = newValue;
+                        });
+                      },
+                      items: countries
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: const TextStyle(color: Colors.black87),
+                          ),
+                        );
+                      }).toList(),
+                      hint: const Text(
+                        'Seleccione un estado',
+                        style: TextStyle(color: Colors.black87),
+                      ),
+                    ),
+                    selectedCountry != null
+                        ? DropdownButton<String>(
+                            value: selectedCity,
+                            iconEnabledColor: Colors.black87,
+                            style: const TextStyle(color: Colors.black87),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedCity = newValue;
+                              });
+                            },
+                            items: cities
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  style: const TextStyle(color: Colors.black87),
+                                ),
+                              );
+                            }).toList(),
+                            hint: const Text(
+                              'Seleccione un municipio',
+                              style: TextStyle(color: Colors.black87),
+                            ),
+                          )
+                        : Container(),
+                  ],
                 ),
               ),
             ),
@@ -145,118 +186,154 @@ class _ToAdoptPetsState extends State<ToAdoptPets> {
                   itemBuilder: (BuildContext context, int index) {
                     Post mascota = mascotas[index];
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Container(
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.indigo.shade400),
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 1,
-                              blurRadius: 10,
-                              offset: Offset(0, 5),
-                            ),
-                          ],
-                        ),
-                        margin: EdgeInsets.all(8),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 40,
-                                backgroundImage: AssetImage(mascota.fotoUrl),
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        const AdoptPostView(),
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
+                                  var begin = const Offset(1.0, 0.0);
+                                  var end = Offset.zero;
+                                  var curve = Curves.easeInOut;
+
+                                  var tween = Tween(begin: begin, end: end)
+                                      .chain(CurveTween(curve: curve));
+
+                                  return SlideTransition(
+                                    position: animation.drive(tween),
+                                    child: child,
+                                  );
+                                },
                               ),
-                              const SizedBox(
-                                width: 15,
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 5.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                mascota.nombre,
-                                                style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Align(
-                                              alignment: Alignment.centerRight,
-                                              child: Text(
-                                                mascota.postDate,
-                                                style: TextStyle(
-                                                  color: Colors.indigo.shade400,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                mascota.owner,
-                                                style: const TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Align(
-                                              alignment: Alignment.centerRight,
-                                              child: Text(
-                                                mascota.postPlace,
-                                                style: TextStyle(
-                                                  color: Colors.indigo.shade400,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 5,
-                                      ),
-                                      Flexible(
-                                        child: Text(
-                                          mascota.info,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 2,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                            );
+                          },
+                          child: Container(
+                            height: 100,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 3,
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 5),
                                 ),
+                              ],
+                            ),
+                            margin: const EdgeInsets.all(8),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 40,
+                                    backgroundImage:
+                                        AssetImage(mascota.fotoUrl),
+                                  ),
+                                  const SizedBox(
+                                    width: 15,
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Text(
+                                                    mascota.nombre,
+                                                    style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.centerRight,
+                                                  child: Text(
+                                                    mascota.postDate,
+                                                    style: TextStyle(
+                                                      color: Colors
+                                                          .indigo.shade400,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Text(
+                                                    mascota.owner,
+                                                    style: const TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.centerRight,
+                                                  child: Text(
+                                                    mascota.postPlace,
+                                                    style: TextStyle(
+                                                      color: Colors
+                                                          .indigo.shade400,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          Flexible(
+                                            child: Text(
+                                              mascota.info,
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 12,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
@@ -281,7 +358,7 @@ class _ToAdoptPetsState extends State<ToAdoptPets> {
                                   secondaryAnimation, child) {
                                 var begin = const Offset(1.0, 0.0);
                                 var end = Offset.zero;
-                                var curve = Curves.ease;
+                                var curve = Curves.easeInOut;
 
                                 var tween = Tween(begin: begin, end: end)
                                     .chain(CurveTween(curve: curve));
