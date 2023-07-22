@@ -1,44 +1,58 @@
-import 'package:pet_keeper_front/features/stray_pet/data/datasources/api_datasource/stray_pet_api_data_source.dart';
-import 'package:pet_keeper_front/features/stray_pet/data/models/stray_pet_model.dart';
+import 'package:pet_keeper_front/features/stray_pet/data/datasources/api_datasource/stray_pet_remote_data_source.dart';
+import 'package:pet_keeper_front/features/stray_pet/domain/entities/stray_pet.dart';
 import 'package:pet_keeper_front/features/stray_pet/domain/repositories/stray_pet_repository.dart';
 
 class StrayPetRepositoryImpl implements StrayPetRepository {
-  final StrayPetApiDataSource _apiDataSource;
+  final StrayPetRemoteDataSource strayPetRemoteDataSource;
 
-  StrayPetRepositoryImpl(this._apiDataSource);
-
+  StrayPetRepositoryImpl({required this.strayPetRemoteDataSource});
   @override
-  Future<List<StrayPetModel>> getAllPets() {
-    return _apiDataSource.getAllPets();
+  Future<List<StrayPet>> createPost(StrayPet strayPet) async {
+    return await strayPetRemoteDataSource.createPost(strayPet);
   }
 
   @override
-  Future<StrayPetModel> getPetById(int id) {
-    return _apiDataSource.getPetById(id);
+  Future<String> deletePost(int postId) async {
+    return await strayPetRemoteDataSource.deletePost(postId);
   }
 
   @override
-  Future<void> addNewPet(StrayPetModel strayPetModel) {
-    return _apiDataSource.addNewPet(strayPetModel);
+  Future<List<StrayPet>> getAllPosts() async {
+    return await strayPetRemoteDataSource.getAllPosts();
   }
 
   @override
-  Future<void> deletePet(int id) {
-    return _apiDataSource.deletePet(id);
+  Future<List<StrayPet>> getPostByOwnerId(int ownerId) async {
+    return await strayPetRemoteDataSource.getPostByOwnerId(ownerId);
   }
 
   @override
-  Future<List<StrayPetModel>> getPetsByOwnerId(int ownerId) {
-    return _apiDataSource.getPetsByOwnerId(ownerId);
+  Future<List<StrayPet>> getPostByRescuerId(int rescuerId) async {
+    return await strayPetRemoteDataSource.getPostByRescuerId(rescuerId);
   }
 
   @override
-  Future<List<StrayPetModel>> getPetsByRescuerId(int rescuerId) {
-    return _apiDataSource.getPetsByRescuerId(rescuerId);
+  Future<StrayPet> getPostDetail(int postId) async {
+    return await strayPetRemoteDataSource.getPostDetail(postId);
   }
 
   @override
-  Future<void> updatePet(int id, StrayPetModel pet) {
-    return _apiDataSource.updatePet(id, pet);
+  Future<List<StrayPet>> getPostsByAddress(String address) async {
+    return await strayPetRemoteDataSource.getPostsByAddress(address);
+  }
+
+  @override
+  Future<List<StrayPet>> getPostsByLostedDate(String lostedDate) async {
+    return await strayPetRemoteDataSource.getPostsByLostedDate(lostedDate);
+  }
+
+  @override
+  Future<List<StrayPet>> getPostsByStatus(String status) async {
+    return await strayPetRemoteDataSource.getPostsByStatus(status);
+  }
+
+  @override
+  Future<String> updatePost(StrayPet strayPet) async {
+    return await strayPetRemoteDataSource.updatePost(strayPet);
   }
 }
