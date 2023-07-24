@@ -12,7 +12,7 @@ import 'package:pet_keeper_front/global/theme/style.dart';
 import 'package:pet_keeper_front/global/widgets/container/container_button.dart';
 
 class StrayPostView extends StatefulWidget {
-  final int? id;
+  final String? id;
   const StrayPostView({Key? key, required this.id}) : super(key: key);
 
   @override
@@ -249,7 +249,7 @@ class _StrayPostViewState extends State<StrayPostView> {
                                       width: 15.0,
                                     ),
                                     Text(
-                                      state.strayPet.lostedDate.toString(),
+                                      state.strayPet.lostDate.toString(),
                                       style: const TextStyle(
                                         fontSize: 12,
                                         color: Colors.grey,

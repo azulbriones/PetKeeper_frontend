@@ -39,18 +39,21 @@ class MyApp extends StatelessWidget {
         BlocProvider<UserCubit>(create: (_) => di.sl<UserCubit>()),
         BlocProvider<StrayPetBloc>(
           create: (BuildContext context) => StrayPetBloc(
-            createPostUseCase: usecaseConfig.createPostUseCase!,
-            deletePostUseCase: usecaseConfig.deletePostUseCase!,
-            getAllPostsUseCase: usecaseConfig.getAllPostsUseCase!,
-            getPostDetailUseCase: usecaseConfig.getPostDetailUseCase!,
-            getPostsByAddressUseCase: usecaseConfig.getPostsByAddressUseCase!,
-            getPostsByLostedDateUseCase:
-                usecaseConfig.getPostsByLostedDateUseCase!,
-            getPostsByOwnerIdUseCase: usecaseConfig.getPostsByOwnerIdUseCase!,
-            getPostsByRescuerIdUseCase:
-                usecaseConfig.getPostsByRescuerIdUseCase!,
-            getPostsByStatusUseCase: usecaseConfig.getPostsByStatusUseCase!,
-            updatePostUseCase: usecaseConfig.updatePostUseCase!,
+            createStrayPetUseCase: usecaseConfig.createStrayPetUseCase!,
+            deleteStrayPetUseCase: usecaseConfig.deleteStrayPetUseCase!,
+            getAllStrayPetsUseCase: usecaseConfig.getAllStrayPetsUseCase!,
+            getStrayPetByIdUseCase: usecaseConfig.getStrayPetByIdUseCase!,
+            getStrayPetByLocationUseCase:
+                usecaseConfig.getStrayPetByLocationUseCase!,
+            getStrayPetsByLostDateUseCase:
+                usecaseConfig.getStrayPetsByLostDateUseCase!,
+            getStrayPetsByOwnerIdUseCase:
+                usecaseConfig.getStrayPetsByOwnerIdUseCase!,
+            getStrayPetsByRescuerIdUseCase:
+                usecaseConfig.getStrayPetsByRescuerIdUseCase!,
+            getStrayPetsByStatusUseCase:
+                usecaseConfig.getStrayPetsByStatusUseCase!,
+            updateStrayPetUseCase: usecaseConfig.updateStrayPetUseCase!,
           ),
         ),
       ],
