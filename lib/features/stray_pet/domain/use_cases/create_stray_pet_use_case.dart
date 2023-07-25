@@ -6,7 +6,6 @@ class CreateStrayPetUseCase {
 
   CreateStrayPetUseCase(this.strayPetRepository);
   Future<List<StrayPet>> execute(StrayPet strayPet) async {
-    print("usecase");
     return await strayPetRepository.createStrayPet(strayPet);
   }
 }

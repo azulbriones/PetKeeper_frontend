@@ -45,7 +45,7 @@ class StrayPetRepositoryImpl implements StrayPetRepository {
   }
 
   @override
-  Future<List<StrayPet>> getStrayPetsByLostDate(DateTime lostDate) async {
+  Future<List<StrayPet>> getStrayPetsByLostDate(String lostDate) async {
     return await strayPetRemoteDataSource.getStrayPetsByLostDate(lostDate);
   }
 

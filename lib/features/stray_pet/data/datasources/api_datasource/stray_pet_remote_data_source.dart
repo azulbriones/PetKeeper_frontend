@@ -12,6 +12,6 @@ abstract class StrayPetRemoteDataSource {
   Future<List<StrayPetModel>> getStrayPetsByOwnerId(String ownerId);
   Future<List<StrayPetModel>> getStrayPetsByRescuerId(String rescuerId);
   Future<List<StrayPetModel>> getStrayPetsByLocation(String location);
-  Future<List<StrayPetModel>> getStrayPetsByLostDate(DateTime lostDate);
+  Future<List<StrayPetModel>> getStrayPetsByLostDate(String lostDate);
   Future<List<StrayPetModel>> getStrayPetsByStatus(String status);
 }

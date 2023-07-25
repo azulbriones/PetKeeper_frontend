@@ -9,7 +9,6 @@ import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_us
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
 import 'package:pet_keeper_front/features/stray_pet/presentation/bloc/stray_pet_bloc.dart';
 import 'package:pet_keeper_front/global/theme/style.dart';
-import 'package:pet_keeper_front/global/widgets/container/container_button.dart';
 
 class StrayPostView extends StatefulWidget {
   final String? id;

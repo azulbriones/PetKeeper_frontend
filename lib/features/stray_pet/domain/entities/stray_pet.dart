@@ -15,6 +15,7 @@ class StrayPet {
   final String? ownerName;
   final dynamic lostDate;
   final dynamic createdAt;
+  final dynamic payment;
 
   StrayPet({
     this.id,
@@ -33,6 +34,7 @@ class StrayPet {
     this.rescuerId,
     this.rescuerName,
     this.createdAt,
+    this.payment,
   });
 
   factory StrayPet.fromJson(Map<String, dynamic> json) {
@@ -53,6 +55,7 @@ class StrayPet {
       rescuerId: json['rescuer_id'],
       rescuerName: json['rescuer_name'],
       createdAt: json['createdAt'],
+      payment: json['payment']
     );
   }
 
@@ -74,6 +77,7 @@ class StrayPet {
       'owner_name': ownerName,
       'lost_date': lostDate,
       'created_at': createdAt,
+      'payment': payment
     };
   }
 }

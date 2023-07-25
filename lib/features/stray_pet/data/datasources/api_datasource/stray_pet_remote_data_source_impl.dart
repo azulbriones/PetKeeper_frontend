@@ -12,7 +12,7 @@ String apiURL = serverURL;
 class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
   @override
   Future<List<StrayPetModel>> createStrayPet(StrayPet strayPet) async {
-    var url = Uri.https(apiURL, '/');
+    var url = Uri.https(apiURL, '/strayPets/');
 
     final data = {
       'pet_name': strayPet.petName,
@@ -29,6 +29,7 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
       'owner_name': strayPet.ownerName,
       'lost_date': strayPet.lostDate,
       'created_at': strayPet.createdAt,
+      'payment': strayPet.payment
     };
 
     var request =
@@ -72,7 +73,6 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
   @override
   Future<List<StrayPetModel>> getAllStrayPets() async {
     var url = Uri.http(apiURL, '/strayPets/');
-    print(url);
 
     var response = await http.get(url);
 
@@ -91,7 +91,7 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
 
   @override
   Future<StrayPetModel> getStrayPetById(String petId) async {
-    var url = Uri.parse('http://$apiURL/strayPets/$petId');
+    var url = Uri.http(apiURL, '/strayPets/$petId');
 
     var response = await http.get(url);
 
@@ -108,7 +108,7 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
 
   @override
   Future<List<StrayPetModel>> getStrayPetsByRescuerId(String rescuerId) async {
-    var url = Uri.parse('$apiURL/strayPets?rescuer_id=$rescuerId');
+    var url = Uri.http(apiURL, '/strayPets?rescuer_id=$rescuerId');
 
     var response = await http.get(url);
 
@@ -126,7 +126,7 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
 
   @override
   Future<List<StrayPetModel>> getStrayPetsByOwnerId(String ownerId) async {
-    var url = Uri.parse('$apiURL/strayPets?owner_id=$ownerId');
+    var url = Uri.http(apiURL, '/strayPets?owner_id=$ownerId');
 
     var response = await http.get(url);
 
@@ -144,7 +144,7 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
 
   @override
   Future<List<StrayPetModel>> getStrayPetsByLocation(String location) async {
-    var url = Uri.parse('$apiURL/strayPets?location=$location');
+    var url = Uri.http(apiURL, '/strayPets?location=$location');
     var headers = {'Content-Type': 'application/json'};
 
     var request = http.Request('GET', url);
@@ -166,9 +166,8 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
   }
 
   @override
-  Future<List<StrayPetModel>> getStrayPetsByLostDate(DateTime lostDate) async {
-    var url =
-        Uri.parse('$apiURL/strayPets?lost_date=${lostDate.toIso8601String()}');
+  Future<List<StrayPetModel>> getStrayPetsByLostDate(String lostDate) async {
+    var url = Uri.http(apiURL, '/strayPets?lost_date=$lostDate');
     var headers = {'Content-Type': 'application/json'};
 
     var request = http.Request('GET', url);
@@ -215,12 +214,12 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
   @override
   Future<StrayPetModel> updateStrayPet(
       StrayPet strayPet, File? newImage) async {
-    var url = Uri.parse('$apiURL/${strayPet.id}');
+    var url = Uri.http(apiURL, '/${strayPet.id}');
     var headers = {'Content-Type': 'application/json'};
 
     var jsonBody = jsonEncode(strayPet.toJson()); // Convertir a JSON
 
-    var request = http.MultipartRequest('PATCH', url);
+    var request = http.MultipartRequest('UPDATE', url);
     request.headers.addAll(headers);
 
     // Agregar el nuevo archivo de imagen si se proporciona

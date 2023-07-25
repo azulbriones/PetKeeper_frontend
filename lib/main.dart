@@ -45,17 +45,17 @@ class MyApp extends StatelessWidget {
             deleteStrayPetUseCase: usecaseConfig.deleteStrayPetUseCase!,
             getAllStrayPetsUseCase: usecaseConfig.getAllStrayPetsUseCase!,
             getStrayPetByIdUseCase: usecaseConfig.getStrayPetByIdUseCase!,
-            // getStrayPetByLocationUseCase:
-            //     usecaseConfig.getStrayPetByLocationUseCase!,
-            // getStrayPetsByLostDateUseCase:
-            //     usecaseConfig.getStrayPetsByLostDateUseCase!,
-            // getStrayPetsByOwnerIdUseCase:
-            //     usecaseConfig.getStrayPetsByOwnerIdUseCase!,
-            // getStrayPetsByRescuerIdUseCase:
-            //     usecaseConfig.getStrayPetsByRescuerIdUseCase!,
-            // getStrayPetsByStatusUseCase:
-            //     usecaseConfig.getStrayPetsByStatusUseCase!,
-            // updateStrayPetUseCase: usecaseConfig.updateStrayPetUseCase!,
+            getStrayPetByLocationUseCase:
+                usecaseConfig.getStrayPetByLocationUseCase!,
+            getStrayPetsByLostDateUseCase:
+                usecaseConfig.getStrayPetsByLostDateUseCase!,
+            getStrayPetsByOwnerIdUseCase:
+                usecaseConfig.getStrayPetsByOwnerIdUseCase!,
+            getStrayPetsByRescuerIdUseCase:
+                usecaseConfig.getStrayPetsByRescuerIdUseCase!,
+            getStrayPetsByStatusUseCase:
+                usecaseConfig.getStrayPetsByStatusUseCase!,
+            updateStrayPetUseCase: usecaseConfig.updateStrayPetUseCase!,
           ),
         ),
       ],
