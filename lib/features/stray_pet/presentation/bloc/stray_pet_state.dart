@@ -36,7 +36,7 @@ class CreatedStrayPet extends StrayPetState {
 }
 
 class DeleteStrayPet extends StrayPetState {
-  final int strayPetId;
+  final String strayPetId;
 
   DeleteStrayPet({required this.strayPetId});
 }

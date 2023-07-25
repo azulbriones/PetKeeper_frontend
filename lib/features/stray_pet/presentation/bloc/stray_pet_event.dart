@@ -5,7 +5,7 @@ abstract class StrayPetEvent {}
 class GetAllStrayPets extends StrayPetEvent {}
 
 class CreateStrayPet extends StrayPetEvent {
-  final int userid;
+  final String userid;
   final String username;
   final String description;
   final String date;
@@ -18,7 +18,7 @@ class CreateStrayPet extends StrayPetEvent {
 }
 
 class GetDetailStrayPet extends StrayPetEvent {
-  final int? strayPetId;
+  final String? strayPetId;
 
   GetDetailStrayPet({required this.strayPetId});
 }

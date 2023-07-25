@@ -40,6 +40,7 @@ class _StrayPetsState extends State<StrayPets> {
         .listen((ConnectivityResult result) {
       if (result == ConnectivityResult.wifi) {
         context.read<StrayPetBloc>().add(GetAllStrayPets());
+        print("cc");
         ScaffoldMessenger.of(context).clearSnackBars();
       } else {
         const snackBar = SnackBar(
@@ -272,7 +273,8 @@ class _StrayPetsState extends State<StrayPets> {
                                                       alignment:
                                                           Alignment.centerLeft,
                                                       child: Text(
-                                                        '\$${pets.reward}',
+                                                        // '\$${pets.reward}',
+                                                        '2',
                                                         style: const TextStyle(
                                                           color: Colors.green,
                                                           fontWeight:
@@ -287,7 +289,7 @@ class _StrayPetsState extends State<StrayPets> {
                                                       alignment:
                                                           Alignment.centerRight,
                                                       child: Text(
-                                                        pets.lostedDate
+                                                        pets.lostDate
                                                             .toString(),
                                                         style: TextStyle(
                                                           color: Colors

@@ -1,55 +1,79 @@
-import 'dart:io';
-
 class StrayPet {
-  final int? id;
-  final String? petName;
-  final File? petImage;
+  final dynamic id;
+  final String petName;
+  final dynamic petImage;
   final String? petBreed;
-  final int? ownerId;
-  final String? ownerName;
-  final String? address;
-  final String? lostedDate;
-  final int? reward;
-  final int? age;
-  final String? description;
-  final String? status;
-  final int? rescuerId;
+  final dynamic age;
+  final String description;
+  final String location;
+  final String address;
+  final String status;
+  final dynamic reward;
+  final String? rescuerId;
   final String? rescuerName;
-  final String? createdDate;
+  final String? ownerId;
+  final String? ownerName;
+  final dynamic lostDate;
+  final dynamic createdAt;
 
   StrayPet({
     this.id,
-    this.petName,
-    this.petImage,
-    // this.age,
+    required this.petName,
+    required this.petImage,
     this.petBreed,
     this.ownerId,
     this.ownerName,
-    this.address,
-    this.lostedDate,
+    required this.location,
+    required this.address,
+    required this.lostDate,
     this.age,
     this.reward,
-    this.description,
-    this.status,
+    required this.description,
+    required this.status,
     this.rescuerId,
     this.rescuerName,
-    this.createdDate,
+    this.createdAt,
   });
-}
 
-    // this.id,
-    // required this.petName,
-    // required this.petImage,
-    // // this.age,
-    // required this.petBreed,
-    // required this.ownerId,
-    // required this.ownerName,
-    // required this.address,
-    // required this.lostedDate,
-    // this.age,
-    // this.reward,
-    // required this.description,
-    // required this.status,
-    // this.rescuerId,
-    // this.rescuerName,
-    // this.createdDate,
+  factory StrayPet.fromJson(Map<String, dynamic> json) {
+    return StrayPet(
+      id: json['id'],
+      petName: json['pet_name'],
+      petImage: json['pet_image'],
+      petBreed: json['pet_breed'],
+      ownerId: json['owner_id'],
+      ownerName: json['owner_name'],
+      address: json['address'],
+      location: json['location'],
+      lostDate: json['lost_date'],
+      reward: json['reward'],
+      age: json['age'],
+      description: json['description'],
+      status: json['status'],
+      rescuerId: json['rescuer_id'],
+      rescuerName: json['rescuer_name'],
+      createdAt: json['createdAt'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'pet_name': petName,
+      'pet_image': petImage,
+      'pet_breed': petBreed,
+      'age': age,
+      'description': description,
+      'location': location,
+      'address': address,
+      'status': status,
+      'reward': reward,
+      'rescuer_id': rescuerId,
+      'rescuer_name': rescuerName,
+      'owner_id': ownerId,
+      'owner_name': ownerName,
+      'lost_date': lostDate,
+      'created_at': createdAt,
+    };
+  }
+}

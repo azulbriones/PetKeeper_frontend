@@ -1,14 +1,16 @@
+import 'dart:io';
+
 import 'package:pet_keeper_front/features/stray_pet/domain/entities/stray_pet.dart';
 
 abstract class StrayPetRepository {
-  Future<List<StrayPet>> createPost(StrayPet strayPet);
-  Future<List<StrayPet>> getAllPosts();
-  Future<StrayPet> getPostDetail(int postId);
-  Future<String> updatePost(StrayPet strayPet);
-  Future<String> deletePost(int postId);
-  Future<List<StrayPet>> getPostByOwnerId(int ownerId);
-  Future<List<StrayPet>> getPostByRescuerId(int rescuerId);
-  Future<List<StrayPet>> getPostsByAddress(String address);
-  Future<List<StrayPet>> getPostsByLostedDate(String lostedDate);
-  Future<List<StrayPet>> getPostsByStatus(String status);
+  Future<List<StrayPet>> createStrayPet(StrayPet strayPet);
+  Future<List<StrayPet>> getAllStrayPets();
+  Future<StrayPet> getStrayPetById(String petId);
+  Future<StrayPet> updateStrayPet(StrayPet strayPet, File petImage);
+  Future<String> deleteStrayPet(String petId);
+  Future<List<StrayPet>> getStrayPetsByOwnerId(String ownerId);
+  Future<List<StrayPet>> getStrayPetsByRescuerId(String rescuerId);
+  Future<List<StrayPet>> getStrayPetsByLocation(String location);
+  Future<List<StrayPet>> getStrayPetsByLostDate(DateTime lostDate);
+  Future<List<StrayPet>> getStrayPetsByStatus(String status);
 }
