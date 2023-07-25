@@ -24,11 +24,12 @@ class _StrayPostViewState extends State<StrayPostView> {
 
   @override
   void initState() {
-    super.initState();
     print('ID DEL POST RECIBIDO: ${widget.id}');
+    context.read<StrayPetBloc>().add(GetDetailStrayPet(strayPetId: widget.id));
     subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
+      print('La conexion es: $result');
       if (result == ConnectivityResult.wifi) {
         context
             .read<StrayPetBloc>()
@@ -45,6 +46,7 @@ class _StrayPostViewState extends State<StrayPostView> {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     });
+    super.initState();
   }
 
   @override
@@ -149,10 +151,13 @@ class _StrayPostViewState extends State<StrayPostView> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12.0),
                             child: Image(
-                              image: NetworkImage(
-                                state.strayPet.petImage.toString(),
-                              ),
                               fit: BoxFit.cover,
+                              image: state.strayPet.petImage.toString() != ''
+                                  ? NetworkImage(
+                                      state.strayPet.petImage.toString(),
+                                    )
+                                  : const NetworkImage(
+                                      'https://firebasestorage.googleapis.com/v0/b/petkeeper-c0f97.appspot.com/o/adopt_pet.jpg?alt=media&token=1a7b93a4-44f9-4a02-bab2-cbcec4253f37'),
                             ),
                           ),
                         ),
@@ -316,7 +321,7 @@ class _StrayPostViewState extends State<StrayPostView> {
                       ),
                     );
                   } else {
-                    return Text(state.toString());
+                    return Container();
                   }
                 }),
               ),

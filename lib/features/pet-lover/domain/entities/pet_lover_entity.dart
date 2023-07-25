@@ -7,6 +7,11 @@ class PetLoverEntity extends Equatable {
   final String? profileUrl;
   final String? password;
   final String? type;
+  final dynamic certFile;
+  final String? info;
+  final String? payInfo;
+  final String? address;
+  final String? location;
 
   const PetLoverEntity({
     this.name,
@@ -15,6 +20,11 @@ class PetLoverEntity extends Equatable {
     this.profileUrl,
     this.password,
     this.type,
+    this.certFile,
+    this.info,
+    this.payInfo,
+    this.address,
+    this.location,
   });
 
   @override
@@ -26,5 +36,10 @@ class PetLoverEntity extends Equatable {
         profileUrl,
         password,
         type,
+        certFile,
+        info,
+        payInfo,
+        address,
+        location,
       ];
 }

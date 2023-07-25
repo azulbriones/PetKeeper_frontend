@@ -496,26 +496,31 @@ class _RegisterPageState extends State<RegisterPage> {
   void _submitSignUp() async {
     if (_usernameController.text.isEmpty) {
       toast("Enter username");
+      toggleLoading();
       return;
     }
 
     if (_emailController.text.isEmpty) {
       toast("Enter email");
+      toggleLoading();
       return;
     }
 
     if (_passwordController.text.isEmpty) {
       toast("Enter password");
+      toggleLoading();
       return;
     }
 
     if (_password2Controller.text.isEmpty) {
       toast("Enter again password");
+      toggleLoading();
       return;
     }
 
     if (_passwordController.text != _password2Controller.text) {
       toast("both password must be same");
+      toggleLoading();
       return;
     }
 

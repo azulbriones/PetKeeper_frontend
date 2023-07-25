@@ -18,12 +18,12 @@ class UseCaseConfig {
   DeleteStrayPetUseCase? deleteStrayPetUseCase;
   GetAllStrayPetsUseCase? getAllStrayPetsUseCase;
   GetStrayPetByIdUseCase? getStrayPetByIdUseCase;
-  GetStrayPetByLocationUseCase? getStrayPetByLocationUseCase;
-  GetStrayPetsByLostDateUseCase? getStrayPetsByLostDateUseCase;
-  GetStrayPetsByOwnerIdUseCase? getStrayPetsByOwnerIdUseCase;
-  GetStrayPetsByRescuerIdUseCase? getStrayPetsByRescuerIdUseCase;
-  GetStrayPetsByStatusUseCase? getStrayPetsByStatusUseCase;
-  UpdateStrayPetUseCase? updateStrayPetUseCase;
+  // GetStrayPetByLocationUseCase? getStrayPetByLocationUseCase;
+  // GetStrayPetsByLostDateUseCase? getStrayPetsByLostDateUseCase;
+  // GetStrayPetsByOwnerIdUseCase? getStrayPetsByOwnerIdUseCase;
+  // GetStrayPetsByRescuerIdUseCase? getStrayPetsByRescuerIdUseCase;
+  // GetStrayPetsByStatusUseCase? getStrayPetsByStatusUseCase;
+  // UpdateStrayPetUseCase? updateStrayPetUseCase;
 
   UseCaseConfig() {
     strayPetDatasourceImpl = StrayPetRemoteDataSourceImpl();
@@ -33,16 +33,16 @@ class UseCaseConfig {
     deleteStrayPetUseCase = DeleteStrayPetUseCase(strayPetRepositoryImpl!);
     getAllStrayPetsUseCase = GetAllStrayPetsUseCase(strayPetRepositoryImpl!);
     getStrayPetByIdUseCase = GetStrayPetByIdUseCase(strayPetRepositoryImpl!);
-    getStrayPetByLocationUseCase =
-        GetStrayPetByLocationUseCase(strayPetRepositoryImpl!);
-    getStrayPetsByLostDateUseCase =
-        GetStrayPetsByLostDateUseCase(strayPetRepositoryImpl!);
-    getStrayPetsByOwnerIdUseCase =
-        GetStrayPetsByOwnerIdUseCase(strayPetRepositoryImpl!);
-    getStrayPetsByRescuerIdUseCase =
-        GetStrayPetsByRescuerIdUseCase(strayPetRepositoryImpl!);
-    getStrayPetsByStatusUseCase =
-        GetStrayPetsByStatusUseCase(strayPetRepositoryImpl!);
-    updateStrayPetUseCase = UpdateStrayPetUseCase(strayPetRepositoryImpl!);
+    // getStrayPetByLocationUseCase =
+    //     GetStrayPetByLocationUseCase(strayPetRepositoryImpl!);
+    // getStrayPetsByLostDateUseCase =
+    //     GetStrayPetsByLostDateUseCase(strayPetRepositoryImpl!);
+    // getStrayPetsByOwnerIdUseCase =
+    //     GetStrayPetsByOwnerIdUseCase(strayPetRepositoryImpl!);
+    // getStrayPetsByRescuerIdUseCase =
+    //     GetStrayPetsByRescuerIdUseCase(strayPetRepositoryImpl!);
+    // getStrayPetsByStatusUseCase =
+    //     GetStrayPetsByStatusUseCase(strayPetRepositoryImpl!);
+    // updateStrayPetUseCase = UpdateStrayPetUseCase(strayPetRepositoryImpl!);
   }
 }

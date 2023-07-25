@@ -27,3 +27,13 @@ class UserFailure extends UserState {
   @override
   List<Object> get props => [];
 }
+
+class ErrorUser extends UserState {
+  final String error;
+
+  ErrorUser({required this.error});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => throw UnimplementedError();
+}

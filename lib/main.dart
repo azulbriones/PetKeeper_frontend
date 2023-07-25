@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/auth/auth_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/credential/credential_cubit.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/foundation/foundation_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/user/user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/login_page.dart';
@@ -37,23 +38,24 @@ class MyApp extends StatelessWidget {
         BlocProvider<CredentialCubit>(create: (_) => di.sl<CredentialCubit>()),
         BlocProvider<SingleUserCubit>(create: (_) => di.sl<SingleUserCubit>()),
         BlocProvider<UserCubit>(create: (_) => di.sl<UserCubit>()),
+        BlocProvider<FoundationCubit>(create: (_) => di.sl<FoundationCubit>()),
         BlocProvider<StrayPetBloc>(
           create: (BuildContext context) => StrayPetBloc(
             createStrayPetUseCase: usecaseConfig.createStrayPetUseCase!,
             deleteStrayPetUseCase: usecaseConfig.deleteStrayPetUseCase!,
             getAllStrayPetsUseCase: usecaseConfig.getAllStrayPetsUseCase!,
             getStrayPetByIdUseCase: usecaseConfig.getStrayPetByIdUseCase!,
-            getStrayPetByLocationUseCase:
-                usecaseConfig.getStrayPetByLocationUseCase!,
-            getStrayPetsByLostDateUseCase:
-                usecaseConfig.getStrayPetsByLostDateUseCase!,
-            getStrayPetsByOwnerIdUseCase:
-                usecaseConfig.getStrayPetsByOwnerIdUseCase!,
-            getStrayPetsByRescuerIdUseCase:
-                usecaseConfig.getStrayPetsByRescuerIdUseCase!,
-            getStrayPetsByStatusUseCase:
-                usecaseConfig.getStrayPetsByStatusUseCase!,
-            updateStrayPetUseCase: usecaseConfig.updateStrayPetUseCase!,
+            // getStrayPetByLocationUseCase:
+            //     usecaseConfig.getStrayPetByLocationUseCase!,
+            // getStrayPetsByLostDateUseCase:
+            //     usecaseConfig.getStrayPetsByLostDateUseCase!,
+            // getStrayPetsByOwnerIdUseCase:
+            //     usecaseConfig.getStrayPetsByOwnerIdUseCase!,
+            // getStrayPetsByRescuerIdUseCase:
+            //     usecaseConfig.getStrayPetsByRescuerIdUseCase!,
+            // getStrayPetsByStatusUseCase:
+            //     usecaseConfig.getStrayPetsByStatusUseCase!,
+            // updateStrayPetUseCase: usecaseConfig.updateStrayPetUseCase!,
           ),
         ),
       ],

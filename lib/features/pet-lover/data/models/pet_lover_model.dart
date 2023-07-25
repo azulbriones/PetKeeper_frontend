@@ -9,12 +9,22 @@ class PetLoverModel extends PetLoverEntity {
     String? status,
     String? profileUrl,
     String? type,
+    dynamic certFile,
+    String? info,
+    String? payInfo,
+    String? address,
+    String? location,
   }) : super(
           name: name,
           email: email,
           id: id,
           profileUrl: profileUrl,
           type: type,
+          certFile: certFile,
+          info: info,
+          payInfo: payInfo,
+          address: address,
+          location: location,
         );
 
   factory PetLoverModel.fromSnapshot(DocumentSnapshot snapshot) {
@@ -26,6 +36,11 @@ class PetLoverModel extends PetLoverEntity {
       id: snapshotMap['id'],
       email: snapshotMap['email'],
       type: snapshotMap['type'],
+      certFile: snapshotMap['certFile'],
+      info: snapshotMap['info'],
+      payInfo: snapshotMap['payInfo'],
+      address: snapshotMap['address'],
+      location: snapshotMap['location'],
     );
   }
 
@@ -36,6 +51,11 @@ class PetLoverModel extends PetLoverEntity {
       "id": id,
       "profileUrl": profileUrl,
       "type": type,
+      "certFile": certFile,
+      "info": info,
+      "payInfo": payInfo,
+      "address": address,
+      "location": location,
     };
   }
 }

@@ -15,36 +15,37 @@ part 'stray_pet_event.dart';
 part 'stray_pet_state.dart';
 
 class StrayPetBloc extends Bloc<StrayPetEvent, StrayPetState> {
-  final UpdateStrayPetUseCase updateStrayPetUseCase;
+  // final UpdateStrayPetUseCase updateStrayPetUseCase;
   final GetAllStrayPetsUseCase getAllStrayPetsUseCase;
   final GetStrayPetByIdUseCase getStrayPetByIdUseCase;
-  final GetStrayPetByLocationUseCase getStrayPetByLocationUseCase;
-  final GetStrayPetsByLostDateUseCase getStrayPetsByLostDateUseCase;
-  final GetStrayPetsByOwnerIdUseCase getStrayPetsByOwnerIdUseCase;
-  final GetStrayPetsByRescuerIdUseCase getStrayPetsByRescuerIdUseCase;
-  final GetStrayPetsByStatusUseCase getStrayPetsByStatusUseCase;
+  // final GetStrayPetByLocationUseCase getStrayPetByLocationUseCase;
+  // final GetStrayPetsByLostDateUseCase getStrayPetsByLostDateUseCase;
+  // final GetStrayPetsByOwnerIdUseCase getStrayPetsByOwnerIdUseCase;
+  // final GetStrayPetsByRescuerIdUseCase getStrayPetsByRescuerIdUseCase;
+  // final GetStrayPetsByStatusUseCase getStrayPetsByStatusUseCase;
   final CreateStrayPetUseCase createStrayPetUseCase;
   final DeleteStrayPetUseCase deleteStrayPetUseCase;
 
   StrayPetBloc({
-    required this.updateStrayPetUseCase,
+    // required this.updateStrayPetUseCase,
     required this.getAllStrayPetsUseCase,
     required this.getStrayPetByIdUseCase,
-    required this.getStrayPetByLocationUseCase,
-    required this.getStrayPetsByLostDateUseCase,
-    required this.getStrayPetsByOwnerIdUseCase,
-    required this.getStrayPetsByRescuerIdUseCase,
-    required this.getStrayPetsByStatusUseCase,
+    // required this.getStrayPetByLocationUseCase,
+    // required this.getStrayPetsByLostDateUseCase,
+    // required this.getStrayPetsByOwnerIdUseCase,
+    // required this.getStrayPetsByRescuerIdUseCase,
+    // required this.getStrayPetsByStatusUseCase,
     required this.createStrayPetUseCase,
     required this.deleteStrayPetUseCase,
   }) : super(InitialState()) {
     on<StrayPetEvent>((event, emit) async {
+      print('El evento es: $event');
       if (event is GetAllStrayPets) {
         try {
           emit(LoadingAllStrayPets());
           List<StrayPet> allPets = await getAllStrayPetsUseCase.execute();
-          print(allPets);
           emit(LoadedAllStrayPets(allStrayPets: allPets));
+          print('LoadAllStrayPets Emitted');
         } catch (e) {
           emit(Error(error: e.toString()));
         }
@@ -54,6 +55,7 @@ class StrayPetBloc extends Bloc<StrayPetEvent, StrayPetState> {
           StrayPet postDetail =
               await getStrayPetByIdUseCase.execute(event.strayPetId as String);
           emit(LoadedDetailStrayPet(strayPet: postDetail));
+          print('LoadDetailStrayPet Emitted');
         } catch (e) {
           emit(Error(error: e.toString()));
         }

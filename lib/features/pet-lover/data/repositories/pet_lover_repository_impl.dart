@@ -43,4 +43,8 @@ class PetLoverRepositoryImpl implements PetLoverRepository {
   @override
   Future<void> signUp(PetLoverEntity user) async =>
       remoteDataSource.signUp(user);
+
+  @override
+  Stream<List<PetLoverEntity>> getAllFoundations(PetLoverEntity foundation) =>
+      remoteDataSource.getAllFoundations(foundation);
 }

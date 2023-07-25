@@ -13,24 +13,31 @@ import 'package:pet_keeper_front/global/widgets/container/container_button_dange
 import 'package:pet_keeper_front/global/widgets/custom_text_field/text_field_container.dart';
 import 'package:pet_keeper_front/features/storage/domain/usecases/upload_profile_image_usecase.dart';
 import 'package:pet_keeper_front/features/injection_container.dart' as di;
+import 'package:pet_keeper_front/global/theme/style.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+class ProfilePageFoundation extends StatefulWidget {
+  const ProfilePageFoundation({Key? key}) : super(key: key);
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<ProfilePageFoundation> createState() => _ProfilePageFoundationState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfilePageFoundationState extends State<ProfilePageFoundation> {
   File? _image;
 
   TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
+  TextEditingController _infoController = TextEditingController();
+  TextEditingController _payInfoController = TextEditingController();
+  TextEditingController _addressController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _infoController.dispose();
+    _payInfoController.dispose();
+    _addressController.dispose();
     super.dispose();
   }
 
@@ -47,7 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
             return _bodyWidget(singleUserState.currentUser);
           }
 
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         },
@@ -77,6 +84,9 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _bodyWidget(PetLoverEntity currentUser) {
     _nameController.value = TextEditingValue(text: "${currentUser.name}");
     _emailController.value = TextEditingValue(text: "${currentUser.email}");
+    _infoController.value = TextEditingValue(text: "${currentUser.info}");
+    _payInfoController.value = TextEditingValue(text: "${currentUser.payInfo}");
+    _addressController.value = TextEditingValue(text: "${currentUser.address}");
 
     return SingleChildScrollView(
       child: Container(
@@ -99,7 +109,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     networkImageBoxFit: BoxFit.cover,
                     imageUrl: currentUser.profileUrl,
                     progressIndicatorBuilder: Center(
-                      child: CircularProgressIndicator(),
+                      child: const CircularProgressIndicator(),
                     ),
                     placeHolder: "assets/images/profile_default.png",
                   ),
@@ -109,7 +119,7 @@ class _ProfilePageState extends State<ProfilePage> {
             SizedBox(
               height: 14,
             ),
-            Text(
+            const Text(
               'Remove profile photo',
               style: TextStyle(
                   color: Colors.blue,
@@ -137,6 +147,65 @@ class _ProfilePageState extends State<ProfilePage> {
             SizedBox(
               height: 14,
             ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: TextField(
+                controller: _infoController,
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+                textInputAction: TextInputAction.newline,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: color747480.withOpacity(.2),
+                  prefixIcon: const Icon(Icons.info),
+                  hintText: 'info',
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 14,
+            ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: TextField(
+                textAlignVertical: TextAlignVertical.center,
+                controller: _payInfoController,
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+                textInputAction: TextInputAction.newline,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: color747480.withOpacity(.2),
+                  prefixIcon: const Icon(Icons.payment),
+                  hintText: 'pay info',
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 14,
+            ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: TextField(
+                textAlignVertical: TextAlignVertical.center,
+                controller: _addressController,
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+                textInputAction: TextInputAction.newline,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: color747480.withOpacity(.2),
+                  prefixIcon: const Icon(Icons.home),
+                  hintText: 'address',
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 14,
+            ),
             ContainerButton(
               title: "Update Profile",
               onTap: () {
@@ -150,6 +219,7 @@ class _ProfilePageState extends State<ProfilePage> {
               title: "Logout",
               onTap: () {
                 BlocProvider.of<AuthCubit>(context).loggedOut();
+                Navigator.pop(context);
               },
             ),
           ],
@@ -159,6 +229,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _updateProfile(String uid) {
+    print(_infoController.text);
     if (_image != null) {
       di.sl<UploadProfileImageUseCase>().call(file: _image!).then((imageUrl) {
         BlocProvider.of<UserCubit>(context)
@@ -166,6 +237,7 @@ class _ProfilePageState extends State<ProfilePage> {
           user: PetLoverEntity(
             id: uid,
             name: _nameController.text,
+            info: _infoController.text,
             profileUrl: imageUrl,
           ),
         )
@@ -179,6 +251,7 @@ class _ProfilePageState extends State<ProfilePage> {
         user: PetLoverEntity(
           id: uid,
           name: _nameController.text,
+          info: _infoController.text,
         ),
       )
           .then((value) {

@@ -3,6 +3,7 @@ import 'package:pet_keeper_front/features/pet-lover/data/datasources/firebase_da
 import 'package:pet_keeper_front/features/pet-lover/data/repositories/pet_lover_repository_impl.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/repositories/pet_lover_repository.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/forgot_password_usecase.dart';
+import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_all_foundations_usecase.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_all_users_usecase.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_create_current_user_usecase.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_current_uid_usecase.dart';
@@ -14,6 +15,7 @@ import 'package:pet_keeper_front/features/pet-lover/domain/usecases/sign_out_use
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/sign_up_usecase.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/auth/auth_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/credential/credential_cubit.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/foundation/foundation_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/user/user_cubit.dart';
 
@@ -39,11 +41,17 @@ Future<void> petLoverInjectionContainer() async {
       signInUseCase: sl.call(),
       signUpUseCase: sl.call()));
 
+  sl.registerFactory<FoundationCubit>(
+    () => FoundationCubit(getAllFoundationsUseCase: sl.call()),
+  );
+
   //UseCases
   sl.registerLazySingleton<ForgotPasswordUseCase>(
       () => ForgotPasswordUseCase(repository: sl.call()));
   sl.registerLazySingleton<GetAllUsersUseCase>(
       () => GetAllUsersUseCase(repository: sl.call()));
+  sl.registerLazySingleton<GetAllFoundationsUseCase>(
+      () => GetAllFoundationsUseCase(repository: sl.call()));
   sl.registerLazySingleton<GetCreateCurrentUserUseCase>(
       () => GetCreateCurrentUserUseCase(repository: sl.call()));
   sl.registerLazySingleton<GetCurrentIdUseCase>(

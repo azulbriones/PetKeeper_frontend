@@ -10,5 +10,6 @@ abstract class PetLoverFirebaseDataSource {
   Future<void> getUpdateUser(PetLoverEntity user);
   Future<String> getCurrentId();
   Stream<List<PetLoverEntity>> getAllUsers(PetLoverEntity user);
+  Stream<List<PetLoverEntity>> getAllFoundations(PetLoverEntity foundation);
   Stream<List<PetLoverEntity>> getSingleUser(PetLoverEntity user);
 }

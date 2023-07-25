@@ -23,7 +23,7 @@ class TextFieldContainer extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
           color: color747480.withOpacity(.2),
-          borderRadius: BorderRadius.circular(10)),
+          borderRadius: BorderRadius.circular(12)),
       child: TextField(
         obscureText: isObscureText == true ? true : false,
         keyboardType: keyboardType == null ? TextInputType.text : keyboardType,

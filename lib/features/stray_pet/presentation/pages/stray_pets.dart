@@ -33,19 +33,17 @@ class _StrayPetsState extends State<StrayPets> {
 
   @override
   void initState() {
-    super.initState();
-
     subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
-      if (result == ConnectivityResult.wifi) {
+      if (result == ConnectivityResult.wifi ||
+          result == ConnectivityResult.mobile) {
         context.read<StrayPetBloc>().add(GetAllStrayPets());
-        print("cc");
         ScaffoldMessenger.of(context).clearSnackBars();
       } else {
         const snackBar = SnackBar(
           content: Text(
-            'Se perdió la conectividad Wi-Fi',
+            'No hay internet',
             style: TextStyle(),
           ),
           duration: Duration(days: 365),
@@ -53,12 +51,17 @@ class _StrayPetsState extends State<StrayPets> {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     });
+    super.initState();
   }
 
   @override
   void dispose() {
     subscription.cancel();
     super.dispose();
+  }
+
+  void _onReturnFromOtherPage() {
+    context.read<StrayPetBloc>().add(GetAllStrayPets());
   }
 
   @override
@@ -179,188 +182,186 @@ class _StrayPetsState extends State<StrayPets> {
                       child: CircularProgressIndicator(),
                     );
                   } else if (state is LoadedAllStrayPets) {
-                    return SingleChildScrollView(
-                      child: Column(
-                          children: state.allStrayPets.map((pets) {
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: GestureDetector(
-                              onTap: () {
-                                print('ID DEL POST ENVIADO: ${pets.id}');
-                                Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    pageBuilder: (context, animation,
-                                            secondaryAnimation) =>
-                                        StrayPostView(id: pets.id),
-                                    transitionsBuilder: (context, animation,
-                                        secondaryAnimation, child) {
-                                      var begin = const Offset(1.0, 0.0);
-                                      var end = Offset.zero;
-                                      var curve = Curves.easeInOut;
+                    return ListView(
+                        children: state.allStrayPets.map((pets) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: GestureDetector(
+                            onTap: () async {
+                              print('ID DEL POST ENVIADO: ${pets.id}');
+                              await Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation,
+                                          secondaryAnimation) =>
+                                      StrayPostView(id: pets.id),
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    var begin = const Offset(1.0, 0.0);
+                                    var end = Offset.zero;
+                                    var curve = Curves.easeInOut;
 
-                                      var tween = Tween(begin: begin, end: end)
-                                          .chain(CurveTween(curve: curve));
+                                    var tween = Tween(begin: begin, end: end)
+                                        .chain(CurveTween(curve: curve));
 
-                                      return SlideTransition(
-                                        position: animation.drive(tween),
-                                        child: child,
-                                      );
-                                    },
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                height: 100,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.5),
-                                      spreadRadius: 3,
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 5),
-                                    ),
-                                  ],
+                                    return SlideTransition(
+                                      position: animation.drive(tween),
+                                      child: child,
+                                    );
+                                  },
                                 ),
-                                margin: EdgeInsets.all(8),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 40,
-                                        // backgroundImage: NetworkImage(
-                                        //   pets.petImage.toString(),
-                                        // ),
-                                        foregroundImage: AssetImage(
-                                            'assets/images/pet_default2.jpg'),
-                                      ),
-                                      SizedBox(
-                                        width: 15,
-                                      ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5.0),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: Align(
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      child: Text(
-                                                        pets.petName.toString(),
-                                                        style: const TextStyle(
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 16,
-                                                        ),
+                              );
+                              _onReturnFromOtherPage();
+                            },
+                            child: Container(
+                              height: 100,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 3,
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 5),
+                                  ),
+                                ],
+                              ),
+                              margin: EdgeInsets.all(8),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 40,
+                                      // backgroundImage: NetworkImage(
+                                      //   pets.petImage.toString(),
+                                      // ),
+                                      foregroundImage: AssetImage(
+                                          'assets/images/pet_default2.jpg'),
+                                    ),
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Text(
+                                                      pets.petName.toString(),
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16,
                                                       ),
                                                     ),
                                                   ),
-                                                  Expanded(
-                                                    child: Align(
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      child: Text(
-                                                        // '\$${pets.reward}',
-                                                        '2',
-                                                        style: const TextStyle(
-                                                          color: Colors.green,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Align(
-                                                      alignment:
-                                                          Alignment.centerRight,
-                                                      child: Text(
-                                                        pets.lostDate
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                          color: Colors
-                                                              .indigo.shade400,
-                                                          fontSize: 12,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: Align(
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      child: Text(
-                                                        pets.ownerName
-                                                            .toString(),
-                                                        style: const TextStyle(
-                                                          color: Colors.grey,
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Align(
-                                                      alignment:
-                                                          Alignment.centerRight,
-                                                      child: Text(
-                                                        pets.address.toString(),
-                                                        style: TextStyle(
-                                                          color: Colors
-                                                              .indigo.shade400,
-                                                          fontSize: 12,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              Flexible(
-                                                child: Text(
-                                                  pets.description.toString(),
-                                                  style: const TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 12,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 2,
                                                 ),
+                                                Expanded(
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Text(
+                                                      // '\$${pets.reward}',
+                                                      pets.reward.toString(),
+                                                      style: const TextStyle(
+                                                        color: Colors.green,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.centerRight,
+                                                    child: Text(
+                                                      pets.lostDate.toString(),
+                                                      style: TextStyle(
+                                                        color: Colors
+                                                            .indigo.shade400,
+                                                        fontSize: 12,
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Text(
+                                                      pets.ownerName.toString(),
+                                                      style: const TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.centerRight,
+                                                    child: Text(
+                                                      pets.address.toString(),
+                                                      style: TextStyle(
+                                                        color: Colors
+                                                            .indigo.shade400,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Flexible(
+                                              child: Text(
+                                                pets.description.toString(),
+                                                style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 12,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 2,
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
                           ),
-                        );
-                      }).toList()),
-                    );
+                        ),
+                      );
+                    }).toList());
                   } else if (state is Error) {
                     return Center(
                       child: Text(state.error,

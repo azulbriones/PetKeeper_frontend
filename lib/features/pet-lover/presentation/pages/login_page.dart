@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/auth/auth_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/credential/credential_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/email_verify_user_page.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/register_page%20_foundation.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/register_page.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/reset_password_page.dart';
 import 'package:pet_keeper_front/global/common/common.dart';
@@ -283,32 +284,70 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(
                         height: 20,
                       ),
-                      RichText(
-                        text: TextSpan(
-                          text: 'Olvidaste tu contraseña?',
-                          style: const TextStyle(color: Colors.white),
-                          children: [
-                            const WidgetSpan(
-                              child: SizedBox(
-                                  width: 5), // Espacio en blanco como widget
+                      Column(
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              text: 'Olvidaste tu contraseña?',
+                              style: const TextStyle(color: Colors.white),
+                              children: [
+                                const WidgetSpan(
+                                  child: SizedBox(
+                                      width:
+                                          5), // Espacio en blanco como widget
+                                ),
+                                TextSpan(
+                                  text: 'Restablecer contraseña',
+                                  style: TextStyle(
+                                      color: Colors.purple[100],
+                                      fontWeight: FontWeight.bold),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ResetPasswordPage(),
+                                        ),
+                                      );
+                                    },
+                                ),
+                              ],
                             ),
-                            TextSpan(
-                              text: 'Restablecer contraseña',
-                              style: TextStyle(
-                                  color: Colors.purple[100],
-                                  fontWeight: FontWeight.bold),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ResetPasswordPage(),
-                                    ),
-                                  );
-                                },
+                          ),
+                          SizedBox(
+                            height: 15.0,
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              text: 'Eres una fundación?',
+                              style: const TextStyle(color: Colors.white),
+                              children: [
+                                const WidgetSpan(
+                                  child: SizedBox(
+                                      width:
+                                          5), // Espacio en blanco como widget
+                                ),
+                                TextSpan(
+                                  text: 'Postularse como fundación',
+                                  style: TextStyle(
+                                      color: Colors.purple[100],
+                                      fontWeight: FontWeight.bold),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const RegisterPageFoundation(),
+                                        ),
+                                      );
+                                    },
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -365,65 +404,65 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 50.0),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 70.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text(
-                    'O continúa con',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/images/google.png',
-                        width: 50,
-                        height: 50,
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Image.asset(
-                        'assets/images/fb.png',
-                        width: 50,
-                        height: 50,
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      text: 'Al continúar, estás de acuerdo con nuestros',
-                      style: const TextStyle(color: Colors.black),
-                      children: [
-                        const WidgetSpan(
-                          child: SizedBox(
-                              width: 5), // Espacio en blanco como widget
-                        ),
-                        TextSpan(
-                          text: 'Términos y condiciones',
-                          style: TextStyle(
-                              color: Colors.purple[100],
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(vertical: 50.0),
+          //   child: Padding(
+          //     padding: const EdgeInsets.symmetric(horizontal: 70.0),
+          //     child: Column(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       crossAxisAlignment: CrossAxisAlignment.center,
+          //       children: [
+          //         const Text(
+          //           'O continúa con',
+          //           style: TextStyle(fontSize: 18),
+          //         ),
+          //         SizedBox(
+          //           height: 20,
+          //         ),
+          //         Row(
+          //           mainAxisAlignment: MainAxisAlignment.center,
+          //           children: [
+          //             Image.asset(
+          //               'assets/images/google.png',
+          //               width: 50,
+          //               height: 50,
+          //             ),
+          //             SizedBox(
+          //               width: 20,
+          //             ),
+          //             Image.asset(
+          //               'assets/images/fb.png',
+          //               width: 50,
+          //               height: 50,
+          //             ),
+          //           ],
+          //         ),
+          //         SizedBox(
+          //           height: 30,
+          //         ),
+          //         RichText(
+          //           textAlign: TextAlign.center,
+          //           text: TextSpan(
+          //             text: 'Al continúar, estás de acuerdo con nuestros',
+          //             style: const TextStyle(color: Colors.black),
+          //             children: [
+          //               const WidgetSpan(
+          //                 child: SizedBox(
+          //                     width: 5), // Espacio en blanco como widget
+          //               ),
+          //               TextSpan(
+          //                 text: 'Términos y condiciones',
+          //                 style: TextStyle(
+          //                     color: Colors.purple[100],
+          //                     fontWeight: FontWeight.bold),
+          //               ),
+          //             ],
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -432,11 +471,13 @@ class _LoginPageState extends State<LoginPage> {
   void _submitLogin() {
     if (_emailController.text.isEmpty) {
       toast("Enter Your Email");
+      toggleLoading();
       return;
     }
 
     if (_passwordController.text.isEmpty) {
       toast("Enter Your Password");
+      toggleLoading();
       return;
     }
 

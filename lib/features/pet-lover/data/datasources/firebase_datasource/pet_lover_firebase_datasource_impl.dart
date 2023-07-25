@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pet_keeper_front/features/pet-lover/data/datasources/firebase_datasource/pet_lover_firebase_datasource.dart';
 import 'package:pet_keeper_front/features/pet-lover/data/models/pet_lover_model.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
   final FirebaseAuth auth;
@@ -20,6 +23,21 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
 
     return userCollection
         .where("id", isNotEqualTo: user.id)
+        .snapshots()
+        .map((querySnapshot) {
+      return querySnapshot.docs
+          .map((e) => PetLoverModel.fromSnapshot(e))
+          .toList();
+    });
+  }
+
+  @override
+  Stream<List<PetLoverEntity>> getAllFoundations(PetLoverEntity foundation) {
+    final userCollection = firestore.collection("users");
+
+    return userCollection
+        .where("id", isNotEqualTo: foundation.id)
+        .where("type", isEqualTo: "foundation")
         .snapshots()
         .map((querySnapshot) {
       return querySnapshot.docs
@@ -83,6 +101,18 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
       userInformation['name'] = user.name;
     }
 
+    if (user.info != null && user.info != "") {
+      userInformation['info'] = user.info;
+    }
+
+    if (user.payInfo != null && user.payInfo != "") {
+      userInformation['payInfo'] = user.payInfo;
+    }
+
+    if (user.address != null && user.address != "") {
+      userInformation['address'] = user.address;
+    }
+
     await userCollection.doc(user.id).update(userInformation);
   }
 
@@ -111,6 +141,19 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
         password: user.password!,
       );
 
+      // Subir el archivo a Firebase Storage
+      String filePath = 'certificates/${userCredential.user!.uid}/certFile.pdf';
+      firebase_storage.Reference storageReference =
+          firebase_storage.FirebaseStorage.instance.ref().child(filePath);
+
+      // Sube el archivo PDF al bucket de Firebase Storage y escucha el estado de la tarea
+      firebase_storage.UploadTask uploadTask =
+          storageReference.putFile(user.certFile);
+      await uploadTask.whenComplete(() {});
+
+      // Obtiene el enlace (URL) del archivo PDF subido
+      String downloadURL = await storageReference.getDownloadURL();
+
       // Obtener la referencia a la colección "users"
       CollectionReference usersCollection =
           FirebaseFirestore.instance.collection('users');
@@ -121,11 +164,16 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
         'email': user.email,
         'profileUrl': '',
         'id': userCredential.user!.uid,
-        'type': 'petlover',
+        'type': user.type,
+        'certFile': downloadURL,
+        'info': user.info,
+        'payInfo': user.payInfo,
+        'address': user.address,
+        'location': user.location,
       });
 
       // El documento se creó correctamente
-      print('Usuario creado en Firestore');
+      print('Usuario creado exitosamente');
     } catch (e) {
       // Hubo un error al crear el usuario o el documento
       print('Error: $e');
