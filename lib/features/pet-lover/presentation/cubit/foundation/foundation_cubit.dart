@@ -4,13 +4,17 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_all_foundations_usecase.dart';
+import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_single_foundation_usecase.dart';
 
 part 'foundation_state.dart';
 
 class FoundationCubit extends Cubit<FoundationState> {
   final GetAllFoundationsUseCase getAllFoundationsUseCase;
+  final GetSingleFoundationUsecase getSingleFoundationUsecase;
 
-  FoundationCubit({required this.getAllFoundationsUseCase})
+  FoundationCubit(
+      {required this.getAllFoundationsUseCase,
+      required this.getSingleFoundationUsecase})
       : super(FoundationInitial());
 
   Future<void> getFoundations({required PetLoverEntity foundation}) async {
@@ -23,6 +27,21 @@ class FoundationCubit extends Cubit<FoundationState> {
       });
     } on SocketException catch (_) {
       emit(FoundationFailure());
+    } catch (_) {
+      emit(FoundationFailure());
+    }
+  }
+
+  Future<void> getSingleFoundation({required String foundationId}) async {
+    emit(SingleFoundationLoading());
+    try {
+      final foundation = await getSingleFoundationUsecase.execute(foundationId);
+      if (foundation != null) {
+        emit(SingleFoundationLoaded(foundation: foundation));
+        print('SingleFoundationLoaded Emitted');
+      } else {
+        emit(FoundationError(error: "Foundation not found"));
+      }
     } catch (_) {
       emit(FoundationFailure());
     }

@@ -8,6 +8,7 @@ import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_en
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/foundation/foundation_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/user/user_cubit.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/foundation_profile_view.dart';
 import 'package:pet_keeper_front/features/stray_pet/presentation/bloc/stray_pet_bloc.dart';
 import 'package:pet_keeper_front/features/stray_pet/presentation/pages/stray_post.dart';
 import 'package:pet_keeper_front/features/stray_pet/presentation/pages/stray_post_view.dart';
@@ -25,6 +26,11 @@ class _AllFoundationsPageState extends State<AllFoundationsPage> {
     BlocProvider.of<FoundationCubit>(context)
         .getFoundations(foundation: const PetLoverEntity());
     super.initState();
+  }
+
+  void _onReturnFromOtherPage() {
+    BlocProvider.of<FoundationCubit>(context)
+        .getFoundations(foundation: const PetLoverEntity());
   }
 
   @override
@@ -89,14 +95,14 @@ class _AllFoundationsPageState extends State<AllFoundationsPage> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             print('ID DEL POST ENVIADO: ${foundations.id}');
-                            Navigator.push(
+                            await Navigator.push(
                               context,
                               PageRouteBuilder(
-                                pageBuilder:
-                                    (context, animation, secondaryAnimation) =>
-                                        StrayPostView(id: foundations.id),
+                                pageBuilder: (context, animation,
+                                        secondaryAnimation) =>
+                                    FoundationProfileView(id: foundations.id),
                                 transitionsBuilder: (context, animation,
                                     secondaryAnimation, child) {
                                   var begin = const Offset(1.0, 0.0);
@@ -113,6 +119,7 @@ class _AllFoundationsPageState extends State<AllFoundationsPage> {
                                 },
                               ),
                             );
+                            _onReturnFromOtherPage();
                           },
                           child: Container(
                             height: 100,
@@ -210,9 +217,7 @@ class _AllFoundationsPageState extends State<AllFoundationsPage> {
                         style: const TextStyle(color: Colors.red)),
                   );
                 } else {
-                  return Container(
-                    child: Text(state.toString()),
-                  );
+                  return Container();
                 }
               },
             ),

@@ -7,6 +7,7 @@ import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_all_foun
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_all_users_usecase.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_create_current_user_usecase.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_current_uid_usecase.dart';
+import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_single_foundation_usecase.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_single_user_usecase.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_update_user_usecase.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/is_sign_in_usecase.dart';
@@ -42,7 +43,10 @@ Future<void> petLoverInjectionContainer() async {
       signUpUseCase: sl.call()));
 
   sl.registerFactory<FoundationCubit>(
-    () => FoundationCubit(getAllFoundationsUseCase: sl.call()),
+    () => FoundationCubit(
+      getAllFoundationsUseCase: sl.call(),
+      getSingleFoundationUsecase: sl.call(),
+    ),
   );
 
   //UseCases
@@ -52,6 +56,8 @@ Future<void> petLoverInjectionContainer() async {
       () => GetAllUsersUseCase(repository: sl.call()));
   sl.registerLazySingleton<GetAllFoundationsUseCase>(
       () => GetAllFoundationsUseCase(repository: sl.call()));
+  sl.registerLazySingleton<GetSingleFoundationUsecase>(
+      () => GetSingleFoundationUsecase(repository: sl.call()));
   sl.registerLazySingleton<GetCreateCurrentUserUseCase>(
       () => GetCreateCurrentUserUseCase(repository: sl.call()));
   sl.registerLazySingleton<GetCurrentIdUseCase>(

@@ -5,7 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pet_keeper_front/features/pet-lover/data/datasources/firebase_datasource/pet_lover_firebase_datasource.dart';
 import 'package:pet_keeper_front/features/pet-lover/data/models/pet_lover_model.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
+import 'package:pet_keeper_front/global/config/config.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:http/http.dart' as http;
+
+String apiURL = serverURL;
 
 class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
   final FirebaseAuth auth;
@@ -178,5 +182,19 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
       // Hubo un error al crear el usuario o el documento
       print('Error: $e');
     }
+  }
+
+  @override
+  Future<PetLoverEntity> getSingleFoundation(String foundationId) async {
+    DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+        .collection(
+            'users') // Cambia 'users' por el nombre de tu colección de usuarios en Firestore
+        .doc(
+            foundationId) // Utiliza el UID del usuario como el ID del documento
+        .get();
+
+    PetLoverModel strayPet = PetLoverModel.fromSnapshot(userSnapshot);
+
+    return strayPet;
   }
 }

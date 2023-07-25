@@ -6,12 +6,12 @@ abstract class FoundationState extends Equatable {
 
 class FoundationInitial extends FoundationState {
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class FoundationLoading extends FoundationState {
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class FoundationLoaded extends FoundationState {
@@ -20,12 +20,26 @@ class FoundationLoaded extends FoundationState {
   FoundationLoaded({required this.foundations});
 
   @override
-  List<Object> get props => [foundations];
+  List<Object?> get props => [foundations];
+}
+
+class SingleFoundationLoading extends FoundationState {
+  @override
+  List<Object?> get props => [];
+}
+
+class SingleFoundationLoaded extends FoundationState {
+  final PetLoverEntity foundation;
+
+  SingleFoundationLoaded({required this.foundation});
+
+  @override
+  List<Object?> get props => [foundation];
 }
 
 class FoundationFailure extends FoundationState {
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class FoundationError extends FoundationState {
@@ -34,6 +48,5 @@ class FoundationError extends FoundationState {
   FoundationError({required this.error});
 
   @override
-  // TODO: implement props
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [error];
 }

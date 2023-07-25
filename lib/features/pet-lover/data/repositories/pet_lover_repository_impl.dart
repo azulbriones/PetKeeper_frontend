@@ -47,4 +47,8 @@ class PetLoverRepositoryImpl implements PetLoverRepository {
   @override
   Stream<List<PetLoverEntity>> getAllFoundations(PetLoverEntity foundation) =>
       remoteDataSource.getAllFoundations(foundation);
+
+  @override
+  Future<PetLoverEntity> getSingleFoundation(String foundationId) =>
+      remoteDataSource.getSingleFoundation(foundationId);
 }
