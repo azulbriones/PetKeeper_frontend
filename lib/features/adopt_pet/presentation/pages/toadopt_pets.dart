@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:network_image/network_image.dart';
@@ -6,73 +9,81 @@ import 'package:pet_keeper_front/features/adopt_pet/presentation/pages/adopt_pos
 import 'package:pet_keeper_front/features/adopt_pet/presentation/pages/adopt_post_view.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
-import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
-import 'package:pet_keeper_front/global/theme/style.dart';
 
-class ToAdoptPets extends StatefulWidget {
-  const ToAdoptPets({super.key});
+class AdoptPets extends StatefulWidget {
+  const AdoptPets({super.key});
 
   @override
-  State<ToAdoptPets> createState() => _ToAdoptPetsState();
+  State<AdoptPets> createState() => _AdoptPetsState();
 }
 
-class Post {
-  String nombre;
-  String raza;
-  String owner;
-  String info;
-  String fotoUrl;
-  String postDate;
-  String postPlace;
+class _AdoptPetsState extends State<AdoptPets>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
 
-  Post({
-    required this.nombre,
-    required this.raza,
-    required this.owner,
-    required this.info,
-    required this.fotoUrl,
-    required this.postDate,
-    required this.postPlace,
-  });
-}
-
-class _ToAdoptPetsState extends State<ToAdoptPets> {
   String? selectedCountry;
   String? selectedCity;
 
   List<String> countries = [
     'Chiapas',
+    'Todos',
   ];
 
   List<String> cities = [
     'Tuxtla Gutiérrez',
   ];
 
-  List<Post> mascotas = [
-    Post(
-      nombre: 'Max',
-      raza: 'Labrador',
-      owner: 'Emilio',
-      info:
-          'Hola, esta es mi mascota, la extravié en aaaaaaaaaaaaaaaaaaaaaaaaaaaaafffffffffgggggggg',
-      fotoUrl: 'assets/images/dog1.png',
-      postDate: '14/12/2020',
-      postPlace: 'Tuxtla Gutierrez',
-    ),
-    Post(
-      nombre: 'Luna',
-      raza: 'Golden Retriever',
-      owner: 'Emilio 2',
-      info: 'Hola, esta es mi mascota, la extravié en',
-      fotoUrl: 'assets/images/dog2.png',
-      postDate: '23/06/2021',
-      postPlace: 'Suchiapa',
-    ),
-    // Agrega más objetos de mascota con diferentes datos
-  ];
+  late StreamSubscription<ConnectivityResult> subscription;
+
+  @override
+  void initState() {
+    context.read<AdoptPetBloc>().add(GetAllPets());
+    subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.wifi ||
+          result == ConnectivityResult.mobile) {
+        context.read<AdoptPetBloc>().add(GetAllPets());
+        ScaffoldMessenger.of(context).clearSnackBars();
+      } else {
+        const snackBar = SnackBar(
+          content: Text(
+            'No hay internet',
+            style: TextStyle(),
+          ),
+          duration: Duration(days: 365),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
+
+  // Función que se ejecutará al realizar la acción de recarga
+  Future<void> _onRefresh() async {
+    // Simulamos una operación de carga de datos
+    await Future.delayed(Duration(seconds: 1));
+
+    // Una vez finalizada la operación, actualizamos la lista de elementos
+    setState(() {
+      context.read<AdoptPetBloc>().add(GetAllPets());
+    });
+  }
+
+  void _onReturnFromOtherPage() {
+    context.read<AdoptPetBloc>().add(GetAllPets());
+  }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: BlocBuilder<SingleUserCubit, SingleUserState>(
         builder: (context, singleUserState) {
@@ -126,8 +137,9 @@ class _ToAdoptPetsState extends State<ToAdoptPets> {
                   children: [
                     DropdownButton<String>(
                       value: selectedCountry,
-                      iconEnabledColor: Colors.black87,
-                      style: const TextStyle(color: Colors.black87),
+                      dropdownColor: Colors.grey.shade400,
+                      iconEnabledColor: Colors.white,
+                      style: const TextStyle(color: Colors.white),
                       onChanged: (String? newValue) {
                         setState(() {
                           selectedCountry = newValue;
@@ -139,20 +151,21 @@ class _ToAdoptPetsState extends State<ToAdoptPets> {
                           value: value,
                           child: Text(
                             value,
-                            style: const TextStyle(color: Colors.black87),
+                            style: const TextStyle(color: Colors.white),
                           ),
                         );
                       }).toList(),
                       hint: const Text(
                         'Seleccione un estado',
-                        style: TextStyle(color: Colors.black87),
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
-                    selectedCountry != null
+                    selectedCountry != null && selectedCountry != 'Todos'
                         ? DropdownButton<String>(
                             value: selectedCity,
-                            iconEnabledColor: Colors.black87,
-                            style: const TextStyle(color: Colors.black87),
+                            dropdownColor: Colors.grey.shade400,
+                            iconEnabledColor: Colors.white,
+                            style: const TextStyle(color: Colors.white),
                             onChanged: (String? newValue) {
                               setState(() {
                                 selectedCity = newValue;
@@ -164,13 +177,13 @@ class _ToAdoptPetsState extends State<ToAdoptPets> {
                                 value: value,
                                 child: Text(
                                   value,
-                                  style: const TextStyle(color: Colors.black87),
+                                  style: const TextStyle(color: Colors.white),
                                 ),
                               );
                             }).toList(),
                             hint: const Text(
                               'Seleccione un municipio',
-                              style: TextStyle(color: Colors.black87),
+                              style: TextStyle(color: Colors.white),
                             ),
                           )
                         : Container(),
@@ -189,8 +202,9 @@ class _ToAdoptPetsState extends State<ToAdoptPets> {
                       child: CircularProgressIndicator(),
                     );
                   } else if (state is LoadedAllPets) {
-                    return SingleChildScrollView(
-                      child: Column(
+                    return RefreshIndicator(
+                      onRefresh: _onRefresh,
+                      child: ListView(
                           children: state.allPets.map((pets) {
                         return Padding(
                           padding: const EdgeInsets.only(top: 10.0),
@@ -198,13 +212,13 @@ class _ToAdoptPetsState extends State<ToAdoptPets> {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 10.0),
                             child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
+                              onTap: () async {
+                                await Navigator.push(
                                   context,
                                   PageRouteBuilder(
                                     pageBuilder: (context, animation,
                                             secondaryAnimation) =>
-                                        const AdoptPostView(),
+                                        AdoptPostView(id: pets.id),
                                     transitionsBuilder: (context, animation,
                                         secondaryAnimation, child) {
                                       var begin = const Offset(1.0, 0.0);
@@ -221,6 +235,7 @@ class _ToAdoptPetsState extends State<ToAdoptPets> {
                                     },
                                   ),
                                 );
+                                _onReturnFromOtherPage();
                               },
                               child: Container(
                                 height: 100,
@@ -241,10 +256,26 @@ class _ToAdoptPetsState extends State<ToAdoptPets> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Row(
                                     children: [
-                                      CircleAvatar(
-                                        radius: 40,
-                                        backgroundImage: NetworkImage(
-                                          pets.petImage.toString(),
+                                      SizedBox(
+                                        height: 85,
+                                        width: 85,
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          child: NetworkImageWidget(
+                                            borderRadiusImageFile: 50,
+                                            imageFileBoxFit: BoxFit.cover,
+                                            placeHolderBoxFit: BoxFit.cover,
+                                            networkImageBoxFit: BoxFit.cover,
+                                            imageUrl: pets.petImage,
+                                            progressIndicatorBuilder:
+                                                const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                            placeHolder:
+                                                "assets/images/pet_default2.jpg",
+                                          ),
                                         ),
                                       ),
                                       SizedBox(
@@ -280,26 +311,31 @@ class _ToAdoptPetsState extends State<ToAdoptPets> {
                                                       alignment:
                                                           Alignment.centerRight,
                                                       child: Text(
-                                                        pets.createdDate
+                                                        pets.createdAt
                                                             .toString(),
                                                         style: TextStyle(
                                                           color: Colors
                                                               .indigo.shade400,
                                                           fontSize: 12,
                                                         ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
                                                       ),
                                                     ),
                                                   ),
                                                 ],
                                               ),
                                               Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Expanded(
                                                     child: Align(
                                                       alignment:
                                                           Alignment.centerLeft,
                                                       child: Text(
-                                                        pets.actualOwnerName
+                                                        pets.ownerName
                                                             .toString(),
                                                         style: const TextStyle(
                                                           color: Colors.grey,
@@ -352,7 +388,7 @@ class _ToAdoptPetsState extends State<ToAdoptPets> {
                         );
                       }).toList()),
                     );
-                  } else if (state is Error) {
+                  } else if (state is AdoptError) {
                     return Center(
                       child: Text(state.error,
                           style: const TextStyle(color: Colors.red)),
@@ -368,6 +404,7 @@ class _ToAdoptPetsState extends State<ToAdoptPets> {
                     child: Padding(
                       padding: const EdgeInsets.only(right: 25.0),
                       child: FloatingActionButton(
+                        heroTag: 'adoptPetsButton',
                         onPressed: () {
                           Navigator.push(
                             context,

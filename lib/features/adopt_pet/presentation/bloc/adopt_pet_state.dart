@@ -41,8 +41,8 @@ class DeletePet extends AdoptPetState {
   DeletePet({required this.petId});
 }
 
-class Error extends AdoptPetState {
+class AdoptError extends AdoptPetState {
   final String error;
 
-  Error({required this.error});
+  AdoptError({required this.error});
 }

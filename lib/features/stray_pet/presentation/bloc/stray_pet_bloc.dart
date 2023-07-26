@@ -3,13 +3,13 @@ import 'package:pet_keeper_front/features/stray_pet/domain/entities/stray_pet.da
 import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/create_stray_pet_use_case.dart';
 import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/delete_stray_pet_use_case.dart';
 import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_all_stray_pets_use_case.dart';
-import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_lost_date_use_case.dart';
-import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_owner_id_use_case.dart';
+// import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_lost_date_use_case.dart';
+// import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_owner_id_use_case.dart';
 import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pet_by_id_use_case.dart';
-import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_location_use_case.dart';
-import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_rescuer_id_use_case.dart';
-import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_status_use_case.dart';
-import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/update_stray_pet_use_case.dart';
+// import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_location_use_case.dart';
+// import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_rescuer_id_use_case.dart';
+// import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_status_use_case.dart';
+// import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/update_stray_pet_use_case.dart';
 
 part 'stray_pet_event.dart';
 part 'stray_pet_state.dart';
@@ -47,7 +47,7 @@ class StrayPetBloc extends Bloc<StrayPetEvent, StrayPetState> {
           emit(LoadedAllStrayPets(allStrayPets: allPets));
           print('LoadAllStrayPets Emitted');
         } catch (e) {
-          emit(Error(error: e.toString()));
+          emit(StrayError(error: e.toString()));
         }
       } else if (event is GetDetailStrayPet) {
         try {
@@ -57,7 +57,7 @@ class StrayPetBloc extends Bloc<StrayPetEvent, StrayPetState> {
           emit(LoadedDetailStrayPet(strayPet: postDetail));
           print('LoadDetailStrayPet Emitted');
         } catch (e) {
-          emit(Error(error: e.toString()));
+          emit(StrayError(error: e.toString()));
         }
       }
     });

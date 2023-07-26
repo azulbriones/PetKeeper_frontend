@@ -6,15 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:network_image/network_image.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
-import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/auth/auth_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
-import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/user/user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page_foundation.dart';
 import 'package:pet_keeper_front/global/common/common.dart';
 import 'package:pet_keeper_front/global/theme/style.dart';
 import 'package:pet_keeper_front/global/widgets/container/container_button.dart';
-import 'package:pet_keeper_front/global/widgets/container/container_button_secondary.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class StrayPost extends StatefulWidget {

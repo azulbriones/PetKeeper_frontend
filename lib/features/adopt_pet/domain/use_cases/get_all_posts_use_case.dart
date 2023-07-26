@@ -6,6 +6,6 @@ class GetAllPostsUseCase {
 
   GetAllPostsUseCase(this.adoptPetRepository);
   Future<List<AdoptPet>> execute() async {
-    return await adoptPetRepository.getAllPosts();
+    return await adoptPetRepository.getAllAdoptPets();
   }
 }

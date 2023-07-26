@@ -1,29 +1,26 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:network_image/network_image.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
-import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/auth/auth_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
-import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/user/user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page_foundation.dart';
 import 'package:pet_keeper_front/global/common/common.dart';
 import 'package:pet_keeper_front/global/theme/style.dart';
 import 'package:pet_keeper_front/global/widgets/container/container_button.dart';
-import 'package:pet_keeper_front/global/widgets/container/container_button_secondary.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class AdoptPost extends StatefulWidget {
   const AdoptPost({super.key});
 
   @override
-  State<AdoptPost> createState() => _AdoptPostState();
+  State<AdoptPost> createState() => _StrayPostState();
 }
 
-class _AdoptPostState extends State<AdoptPost> {
+class _StrayPostState extends State<AdoptPost> {
   late TextEditingController _petName;
   late TextEditingController _petRace;
   late TextEditingController _petOwner;
@@ -31,7 +28,8 @@ class _AdoptPostState extends State<AdoptPost> {
   late TextEditingController _petDesc;
   String buttonTitle = 'Seleccionar imagen';
   File? _image;
-  final DateTime _postDate = DateTime.now();
+  DateTime? _selectedDate;
+  final DateTime _maximumDate = DateTime.now();
   bool isLoading = false;
   bool _isColorChanged = false;
 
@@ -94,12 +92,53 @@ class _AdoptPostState extends State<AdoptPost> {
                 padding: const EdgeInsets.only(right: 15.0),
                 child: InkWell(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ProfilePage(),
-                      ),
-                    );
+                    if (currentUser.type == 'foundation') {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  const ProfilePageFoundation(),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                            var begin = const Offset(1.0, 0.0);
+                            var end = Offset.zero;
+                            var curve = Curves.easeInOut;
+
+                            var tween = Tween(begin: begin, end: end)
+                                .chain(CurveTween(curve: curve));
+
+                            return SlideTransition(
+                              position: animation.drive(tween),
+                              child: child,
+                            );
+                          },
+                        ),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  const ProfilePage(),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                            var begin = const Offset(1.0, 0.0);
+                            var end = Offset.zero;
+                            var curve = Curves.easeInOut;
+
+                            var tween = Tween(begin: begin, end: end)
+                                .chain(CurveTween(curve: curve));
+
+                            return SlideTransition(
+                              position: animation.drive(tween),
+                              child: child,
+                            );
+                          },
+                        ),
+                      );
+                    }
                   },
                   child: SizedBox(
                     height: 40,
@@ -154,12 +193,22 @@ class _AdoptPostState extends State<AdoptPost> {
                       height: 15.0,
                     ),
                     if (_image != null)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12.0),
-                        child: Image.file(
-                          _image!,
-                          fit: BoxFit.cover,
-                        ),
+                      Stack(
+                        children: [
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 12.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12.0),
+                            child: Image.file(
+                              _image!,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ],
                       ),
                     SizedBox(
                       height: 15.0,
@@ -337,12 +386,80 @@ class _AdoptPostState extends State<AdoptPost> {
                             width: 1,
                           ),
                         ),
-                        hintText: 'Lugar de residencia',
+                        hintText: 'Lugar de extravío',
                         hintStyle: const TextStyle(
                           color: Colors.grey,
                         ),
                         filled: true,
                         fillColor: const Color.fromARGB(132, 255, 255, 255),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15.0,
+                    ),
+                    TextFormField(
+                      style: const TextStyle(color: Colors.grey),
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(
+                          Icons.date_range,
+                          color: Colors.indigo,
+                        ),
+                        contentPadding: const EdgeInsets.all(12.0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.indigo,
+                            width: 0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.indigo,
+                            width: 2,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.grey,
+                            width: 1,
+                          ),
+                        ),
+                        hintText: 'Fecha de extravío',
+                        hintStyle: const TextStyle(
+                          color: Colors.grey,
+                        ),
+                        filled: true,
+                        fillColor: const Color.fromARGB(132, 255, 255, 255),
+                      ),
+                      readOnly: true,
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return SizedBox(
+                              height: 300,
+                              child: SfDateRangePicker(
+                                onSelectionChanged:
+                                    (DateRangePickerSelectionChangedArgs args) {
+                                  // Actualizar el campo de texto con la fecha seleccionada
+                                  setState(() {
+                                    _selectedDate = args.value;
+                                  });
+                                  Navigator.pop(context);
+                                },
+                                initialSelectedDate: _selectedDate,
+                                maxDate: _maximumDate,
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      controller: TextEditingController(
+                        text: _selectedDate != null
+                            ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
+                            : '',
                       ),
                     ),
                     SizedBox(
@@ -469,6 +586,18 @@ class _AdoptPostState extends State<AdoptPost> {
 
     if (_petOwner.text.isEmpty) {
       toast("Inserta un dueño");
+      toggleLoading();
+      return;
+    }
+
+    if (_petPlace.text.isEmpty) {
+      toast("Inserta un lugar");
+      toggleLoading();
+      return;
+    }
+
+    if (_selectedDate == null) {
+      toast("Inserta una fecha");
       toggleLoading();
       return;
     }

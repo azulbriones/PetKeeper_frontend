@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:network_image/network_image.dart';
@@ -8,9 +9,7 @@ import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_en
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/foundation/foundation_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
-import 'package:pet_keeper_front/features/stray_pet/presentation/bloc/stray_pet_bloc.dart';
 import 'package:pet_keeper_front/global/theme/style.dart';
-import 'package:pet_keeper_front/global/widgets/container/container_button.dart';
 
 class FoundationProfileView extends StatefulWidget {
   final String? id;
@@ -73,8 +72,6 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
   }
 
   Widget _bodyWidget(PetLoverEntity currentUser) {
-    double baseWidth = 375;
-    double fem = MediaQuery.of(context).size.width / baseWidth;
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
@@ -138,7 +135,7 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                           width: double.infinity,
                           height: 250,
                           decoration: BoxDecoration(
-                            color: Colors.grey,
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(12.0),
                             boxShadow: [
                               BoxShadow(
@@ -149,18 +146,18 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                               ),
                             ],
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12.0),
-                            child: Image(
-                              fit: BoxFit.cover,
-                              image: state.foundation.profileUrl.toString() !=
-                                      ''
-                                  ? NetworkImage(
-                                      state.foundation.profileUrl.toString(),
-                                    )
-                                  : const NetworkImage(
-                                      'https://firebasestorage.googleapis.com/v0/b/petkeeper-c0f97.appspot.com/o/adopt_pet.jpg?alt=media&token=1a7b93a4-44f9-4a02-bab2-cbcec4253f37'),
+                          child: NetworkImageWidget(
+                            borderRadiusImageFile: 12.0,
+                            borderRadiusNetworkImage: 12.0,
+                            borderRadiusPlaceHolder: 12.0,
+                            imageFileBoxFit: BoxFit.cover,
+                            placeHolderBoxFit: BoxFit.cover,
+                            networkImageBoxFit: BoxFit.cover,
+                            imageUrl: state.foundation.profileUrl,
+                            progressIndicatorBuilder: const Center(
+                              child: CircularProgressIndicator(),
                             ),
+                            placeHolder: "assets/images/pet_default2.jpg",
                           ),
                         ),
                         SizedBox(
@@ -182,56 +179,14 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                           child: Padding(
                             padding: const EdgeInsets.all(15.0),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          state.foundation.name.toString(),
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 30),
-                                        ),
-                                        SizedBox(
-                                          width: 10.0,
-                                        ),
-                                        Text(
-                                          '(${state.foundation.location})',
-                                          style: const TextStyle(fontSize: 20),
-                                        ),
-                                      ],
-                                    ),
-                                    Text(
-                                      '\$${state.foundation.payInfo}',
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 26,
-                                        color: Colors.green,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 10.0,
-                                ),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.person,
-                                      color: Colors.grey,
-                                    ),
-                                    SizedBox(
-                                      width: 5.0,
-                                    ),
-                                    Text(
-                                      state.foundation.name.toString(),
-                                      style: const TextStyle(
-                                          fontSize: 18, color: Colors.grey),
-                                    ),
-                                  ],
+                                Text(
+                                  state.foundation.name.toString(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 24,
+                                  ),
                                 ),
                                 SizedBox(
                                   height: 10.0,
@@ -245,24 +200,94 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                                 ),
                                 Row(
                                   children: [
-                                    Text(
-                                      state.foundation.address.toString(),
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey,
-                                      ),
+                                    const Icon(
+                                      Icons.place,
+                                      color: Colors.grey,
                                     ),
                                     SizedBox(
-                                      width: 15.0,
+                                      width: 10.0,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        '${state.foundation.location} ${state.foundation.address}',
+                                        style: const TextStyle(
+                                            fontSize: 15, color: Colors.grey),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10.0,
+                                ),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.mail,
+                                      color: Colors.grey,
+                                    ),
+                                    SizedBox(
+                                      width: 10.0,
                                     ),
                                     Text(
                                       state.foundation.email.toString(),
                                       style: const TextStyle(
-                                        fontSize: 12,
+                                        fontSize: 15,
                                         color: Colors.grey,
                                       ),
                                     ),
                                   ],
+                                ),
+                                SizedBox(
+                                  height: 10.0,
+                                ),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.payment,
+                                      color: Colors.grey,
+                                    ),
+                                    SizedBox(
+                                      width: 10.0,
+                                    ),
+                                    Text(
+                                      state.foundation.payInfo.toString(),
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 15.0,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    print('reportar');
+                                  },
+                                  child: const Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Icon(
+                                          Icons.report,
+                                          size: 20,
+                                          color: Colors.red,
+                                        ),
+                                        SizedBox(
+                                          width: 5.0,
+                                        ),
+                                        Text(
+                                          'Reportar fundación',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.red,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -293,6 +318,7 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                             ),
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
                                   'Enviar mensaje',
@@ -305,13 +331,16 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                                   width: 10.0,
                                 ),
                                 Icon(
-                                  Icons.chat,
+                                  CupertinoIcons.chat_bubble_fill,
                                   color: Colors.white,
                                   size: 20,
                                 ),
                               ],
                             ),
                           ),
+                        ),
+                        SizedBox(
+                          height: 15.0,
                         ),
                       ],
                     );

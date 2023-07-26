@@ -72,7 +72,6 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
   @override
   Future<List<StrayPetModel>> getAllStrayPets() async {
     var url = Uri.http(apiURL, '/strayPets/');
-    print(url);
 
     var response = await http.get(url);
 

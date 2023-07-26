@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:network_image/network_image.dart';
@@ -9,7 +10,6 @@ import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_us
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
 import 'package:pet_keeper_front/features/stray_pet/presentation/bloc/stray_pet_bloc.dart';
 import 'package:pet_keeper_front/global/theme/style.dart';
-import 'package:pet_keeper_front/global/widgets/container/container_button.dart';
 
 class StrayPostView extends StatefulWidget {
   final String? id;
@@ -72,8 +72,6 @@ class _StrayPostViewState extends State<StrayPostView> {
   }
 
   Widget _bodyWidget(PetLoverEntity currentUser) {
-    double baseWidth = 375;
-    double fem = MediaQuery.of(context).size.width / baseWidth;
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
@@ -137,7 +135,7 @@ class _StrayPostViewState extends State<StrayPostView> {
                           width: double.infinity,
                           height: 250,
                           decoration: BoxDecoration(
-                            color: Colors.grey,
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(12.0),
                             boxShadow: [
                               BoxShadow(
@@ -148,17 +146,18 @@ class _StrayPostViewState extends State<StrayPostView> {
                               ),
                             ],
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12.0),
-                            child: Image(
-                              fit: BoxFit.cover,
-                              image: state.strayPet.petImage.toString() != ''
-                                  ? NetworkImage(
-                                      state.strayPet.petImage.toString(),
-                                    )
-                                  : const NetworkImage(
-                                      'https://firebasestorage.googleapis.com/v0/b/petkeeper-c0f97.appspot.com/o/adopt_pet.jpg?alt=media&token=1a7b93a4-44f9-4a02-bab2-cbcec4253f37'),
+                          child: NetworkImageWidget(
+                            borderRadiusImageFile: 12.0,
+                            borderRadiusNetworkImage: 12.0,
+                            borderRadiusPlaceHolder: 12.0,
+                            imageFileBoxFit: BoxFit.cover,
+                            placeHolderBoxFit: BoxFit.cover,
+                            networkImageBoxFit: BoxFit.cover,
+                            imageUrl: state.strayPet.petImage,
+                            progressIndicatorBuilder: const Center(
+                              child: CircularProgressIndicator(),
                             ),
+                            placeHolder: "assets/images/pet_default2.jpg",
                           ),
                         ),
                         SizedBox(
@@ -180,6 +179,7 @@ class _StrayPostViewState extends State<StrayPostView> {
                           child: Padding(
                             padding: const EdgeInsets.all(15.0),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Row(
                                   mainAxisAlignment:
@@ -291,6 +291,7 @@ class _StrayPostViewState extends State<StrayPostView> {
                             ),
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
                                   'Enviar mensaje',
@@ -303,7 +304,7 @@ class _StrayPostViewState extends State<StrayPostView> {
                                   width: 10.0,
                                 ),
                                 Icon(
-                                  Icons.chat,
+                                  CupertinoIcons.chat_bubble_fill,
                                   color: Colors.white,
                                   size: 20,
                                 ),
@@ -311,9 +312,12 @@ class _StrayPostViewState extends State<StrayPostView> {
                             ),
                           ),
                         ),
+                        SizedBox(
+                          height: 15.0,
+                        ),
                       ],
                     );
-                  } else if (state is Error) {
+                  } else if (state is StrayError) {
                     return Center(
                       child: Text(
                         state.error,

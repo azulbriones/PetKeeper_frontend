@@ -41,8 +41,8 @@ class DeleteStrayPet extends StrayPetState {
   DeleteStrayPet({required this.strayPetId});
 }
 
-class Error extends StrayPetState {
+class StrayError extends StrayPetState {
   final String error;
 
-  Error({required this.error});
+  StrayError({required this.error});
 }

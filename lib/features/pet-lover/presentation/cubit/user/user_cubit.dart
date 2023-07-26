@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
-import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_all_foundations_usecase.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_all_users_usecase.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_update_user_usecase.dart';
 part 'user_state.dart';

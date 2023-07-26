@@ -5,7 +5,7 @@ class GetPostDetailUseCase {
   final AdoptPetRepository adoptPetRepository;
 
   GetPostDetailUseCase(this.adoptPetRepository);
-  Future<AdoptPet> execute(int postId) async {
-    return await adoptPetRepository.getPostDetail(postId);
+  Future<AdoptPet> execute(String postId) async {
+    return await adoptPetRepository.getAdoptPetById(postId);
   }
 }

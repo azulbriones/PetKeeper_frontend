@@ -191,7 +191,7 @@ class _MainLayoutState extends State<MainLayout> {
           HomePage(),
           StrayPets(),
           HomePage(),
-          ToAdoptPets(),
+          AdoptPets(),
           AllFoundationsPage(),
         ],
       ),

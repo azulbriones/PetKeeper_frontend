@@ -18,7 +18,7 @@ class CreatePet extends AdoptPetEvent {
 }
 
 class GetDetailPet extends AdoptPetEvent {
-  final int petId;
+  final String petId;
 
   GetDetailPet({required this.petId});
 }

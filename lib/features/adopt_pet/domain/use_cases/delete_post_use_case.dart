@@ -4,7 +4,7 @@ class DeletePostUseCase {
   final AdoptPetRepository adoptPetRepository;
 
   DeletePostUseCase(this.adoptPetRepository);
-  Future<String> execute(int postId) async {
-    return await adoptPetRepository.deletePost(postId);
+  Future<String> execute(String postId) async {
+    return await adoptPetRepository.deleteAdoptPet(postId);
   }
 }

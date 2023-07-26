@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pet_keeper_front/features/adopt_pet/presentation/bloc/adopt_pet_bloc.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/auth/auth_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/credential/credential_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/foundation/foundation_cubit.dart';
@@ -39,6 +40,14 @@ class MyApp extends StatelessWidget {
         BlocProvider<SingleUserCubit>(create: (_) => di.sl<SingleUserCubit>()),
         BlocProvider<UserCubit>(create: (_) => di.sl<UserCubit>()),
         BlocProvider<FoundationCubit>(create: (_) => di.sl<FoundationCubit>()),
+        BlocProvider<AdoptPetBloc>(
+          create: (BuildContext context) => AdoptPetBloc(
+            createPostUseCase: usecaseConfig.createAdoptPetUseCase!,
+            deletePostUseCase: usecaseConfig.deleteAdoptPetUseCase!,
+            getAllPostsUseCase: usecaseConfig.getAllAdoptPetsUseCase!,
+            getPostDetailUseCase: usecaseConfig.getAdoptPetByIdUseCase!,
+          ),
+        ),
         BlocProvider<StrayPetBloc>(
           create: (BuildContext context) => StrayPetBloc(
             createStrayPetUseCase: usecaseConfig.createStrayPetUseCase!,

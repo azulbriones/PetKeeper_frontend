@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/auth/auth_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/credential/credential_cubit.dart';
-import 'package:pet_keeper_front/features/pet-lover/presentation/pages/email_verify_user_page.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/register_page%20_foundation.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/register_page.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/reset_password_page.dart';
 import 'package:pet_keeper_front/global/common/common.dart';
-import 'package:pet_keeper_front/global/pages/home_page.dart';
 import 'package:pet_keeper_front/global/pages/main_layout.dart';
 
 class LoginPage extends StatefulWidget {

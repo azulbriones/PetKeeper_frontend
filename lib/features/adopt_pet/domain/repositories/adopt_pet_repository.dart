@@ -1,13 +1,16 @@
+// import 'dart:io';
+
 import 'package:pet_keeper_front/features/adopt_pet/domain/entities/adopt_pet.dart';
 
 abstract class AdoptPetRepository {
-  Future<List<AdoptPet>> createPost(AdoptPet adoptPet);
-  Future<List<AdoptPet>> getAllPosts();
-  Future<AdoptPet> getPostDetail(int postId);
-  Future<String> updatePost(AdoptPet adoptPet);
-  Future<String> deletePost(int postId);
-  Future<List<AdoptPet>> getPostByActualOwnerId(int actualOwnerId);
-  Future<List<AdoptPet>> getPostByNewOwnerId(int rescuerId);
-  Future<List<AdoptPet>> getPostsByAddress(String address);
-  Future<List<AdoptPet>> getPostsByStatus(String status);
+  Future<List<AdoptPet>> createAdoptPet(AdoptPet adoptPet);
+  Future<List<AdoptPet>> getAllAdoptPets();
+  Future<AdoptPet> getAdoptPetById(String petId);
+  // Future<AdoptPet> updateAdoptPet(AdoptPet adoptPet, File petImage);
+  Future<String> deleteAdoptPet(String petId);
+  // Future<List<AdoptPet>> getAdoptPetsByOwnerId(String ownerId);
+  // Future<List<AdoptPet>> getAdoptPetsByNewOwnerId(String newOwnerId);
+  // Future<List<AdoptPet>> getAdoptPetsByLocation(String location);
+  // Future<List<AdoptPet>> getAdoptPetsByAdoptDate(String adoptDate);
+  // Future<List<AdoptPet>> getAdoptPetsByStatus(String status);
 }

@@ -36,13 +36,11 @@ class FoundationCubit extends Cubit<FoundationState> {
     emit(SingleFoundationLoading());
     try {
       final foundation = await getSingleFoundationUsecase.execute(foundationId);
-      if (foundation != null) {
-        emit(SingleFoundationLoaded(foundation: foundation));
-        print('SingleFoundationLoaded Emitted');
-      } else {
-        emit(FoundationError(error: "Foundation not found"));
-      }
+
+      emit(SingleFoundationLoaded(foundation: foundation));
+      print('SingleFoundationLoaded Emitted');
     } catch (_) {
+      emit(FoundationError(error: "Foundation not found"));
       emit(FoundationFailure());
     }
   }

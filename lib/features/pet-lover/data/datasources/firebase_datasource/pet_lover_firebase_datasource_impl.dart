@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pet_keeper_front/features/pet-lover/data/datasources/firebase_datasource/pet_lover_firebase_datasource.dart';
@@ -7,7 +5,6 @@ import 'package:pet_keeper_front/features/pet-lover/data/models/pet_lover_model.
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 import 'package:pet_keeper_front/global/config/config.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:http/http.dart' as http;
 
 String apiURL = serverURL;
 
