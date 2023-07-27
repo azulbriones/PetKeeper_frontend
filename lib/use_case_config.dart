@@ -6,6 +6,7 @@ import 'package:pet_keeper_front/features/adopt_pet/domain/use_cases/delete_post
 import 'package:pet_keeper_front/features/adopt_pet/domain/use_cases/get_all_posts_use_case.dart';
 import 'package:pet_keeper_front/features/adopt_pet/domain/use_cases/get_post_by_actual_owner_id_use_case.dart';
 import 'package:pet_keeper_front/features/adopt_pet/domain/use_cases/get_post_detail_use_case.dart';
+import 'package:pet_keeper_front/features/adopt_pet/domain/use_cases/update_status_post_use_case.dart';
 import 'package:pet_keeper_front/features/stray_pet/data/datasources/api_datasource/stray_pet_remote_data_source_impl.dart';
 import 'package:pet_keeper_front/features/stray_pet/data/repositories/stray_pet_repository_impl.dart';
 import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/create_stray_pet_use_case.dart';
@@ -15,6 +16,7 @@ import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_p
 // import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_location_use_case.dart';
 // import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_lost_date_use_case.dart';
 import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_owner_id_use_case.dart';
+import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/update_stray_pet_use_case.dart';
 // import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_rescuer_id_use_case.dart';
 // import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_status_use_case.dart';
 // import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/update_stray_pet_use_case.dart';
@@ -27,6 +29,7 @@ class UseCaseConfig {
   DeleteStrayPetUseCase? deleteStrayPetUseCase;
   GetAllStrayPetsUseCase? getAllStrayPetsUseCase;
   GetStrayPetByIdUseCase? getStrayPetByIdUseCase;
+  UpdateStrayPetUseCase? updateStrayPetUseCase;
   //ADOPT PETS
   AdoptPetRemoteDataSourceImpl? adoptPetDatasourceImpl;
   AdoptPetRepositoryImpl? adoptPetRepositoryImpl;
@@ -35,6 +38,7 @@ class UseCaseConfig {
   GetAllPostsUseCase? getAllAdoptPetsUseCase;
   GetPostDetailUseCase? getAdoptPetByIdUseCase;
   GetPostByActualOwnerIdUseCase? getPostByActualOwnerIdUseCase;
+  UpdateStatusAdoptPetUseCase? updateStatusAdoptPetUseCase;
   // GetStrayPetByLocationUseCase? getStrayPetByLocationUseCase;
   // GetStrayPetsByLostDateUseCase? getStrayPetsByLostDateUseCase;
   GetStrayPetsByOwnerIdUseCase? getStrayPetsByOwnerIdUseCase;
@@ -53,6 +57,7 @@ class UseCaseConfig {
     getStrayPetByIdUseCase = GetStrayPetByIdUseCase(strayPetRepositoryImpl!);
     getStrayPetsByOwnerIdUseCase =
         GetStrayPetsByOwnerIdUseCase(strayPetRepositoryImpl!);
+    updateStrayPetUseCase = UpdateStrayPetUseCase(strayPetRepositoryImpl!);
     //ADOPT PETS
     adoptPetDatasourceImpl = AdoptPetRemoteDataSourceImpl();
     adoptPetRepositoryImpl = AdoptPetRepositoryImpl(
@@ -63,6 +68,8 @@ class UseCaseConfig {
     getAdoptPetByIdUseCase = GetPostDetailUseCase(adoptPetRepositoryImpl!);
     getPostByActualOwnerIdUseCase =
         GetPostByActualOwnerIdUseCase(adoptPetRepositoryImpl!);
+    updateStatusAdoptPetUseCase =
+        UpdateStatusAdoptPetUseCase(adoptPetRepositoryImpl!);
     // getStrayPetByLocationUseCase =
     //     GetStrayPetByLocationUseCase(strayPetRepositoryImpl!);
     // getStrayPetsByLostDateUseCase =

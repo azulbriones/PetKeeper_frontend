@@ -6,6 +6,7 @@ import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_all_str
 // import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_lost_date_use_case.dart';
 import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_owner_id_use_case.dart';
 import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pet_by_id_use_case.dart';
+import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/update_stray_pet_use_case.dart';
 // import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_location_use_case.dart';
 // import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_rescuer_id_use_case.dart';
 // import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_status_use_case.dart';
@@ -15,7 +16,7 @@ part 'stray_pet_event.dart';
 part 'stray_pet_state.dart';
 
 class StrayPetBloc extends Bloc<StrayPetEvent, StrayPetState> {
-  // final UpdateStrayPetUseCase updateStrayPetUseCase;
+  final UpdateStrayPetUseCase updateStrayPetUseCase;
   final GetAllStrayPetsUseCase getAllStrayPetsUseCase;
   final GetStrayPetByIdUseCase getStrayPetByIdUseCase;
   // final GetStrayPetByLocationUseCase getStrayPetByLocationUseCase;
@@ -27,7 +28,7 @@ class StrayPetBloc extends Bloc<StrayPetEvent, StrayPetState> {
   final DeleteStrayPetUseCase deleteStrayPetUseCase;
 
   StrayPetBloc({
-    // required this.updateStrayPetUseCase,
+    required this.updateStrayPetUseCase,
     required this.getAllStrayPetsUseCase,
     required this.getStrayPetByIdUseCase,
     // required this.getStrayPetByLocationUseCase,
@@ -67,6 +68,34 @@ class StrayPetBloc extends Bloc<StrayPetEvent, StrayPetState> {
           emit(LoadedAllUserPostsStrayPet(
               allUserPostsStrayPets: allUserPostsStrayPets));
           print('LoadAllUserPostsStrayPet Emitted');
+        } catch (e) {
+          emit(StrayError(error: e.toString()));
+        }
+      } else if (event is CreateStrayPet) {
+        try {
+          emit(CreatingStrayPet());
+          createStrayPetUseCase.execute(event.strayPet);
+          emit(CreatedStrayPet(newStrayPet: event.strayPet));
+          print('CreateStrayPet Emitted');
+        } catch (e) {
+          emit(StrayError(error: e.toString()));
+        }
+      } else if (event is UpdateStrayPet) {
+        try {
+          emit(UpdatingStrayPet());
+          updateStrayPetUseCase.execute(event.strayPetId, event.status);
+          emit(UpdatedStrayPet(
+              strayPetId: event.strayPetId, status: event.status));
+          print('UpdatedStatusePet Emitted');
+        } catch (e) {
+          emit(StrayError(error: e.toString()));
+        }
+      } else if (event is DeleteStrayPet) {
+        try {
+          emit(DeletingStrayPet());
+          deleteStrayPetUseCase.execute(event.strayPetId);
+          emit(DeletedStrayPet(strayPetId: event.strayPetId));
+          print('DeleteStrayPet Emitted');
         } catch (e) {
           emit(StrayError(error: e.toString()));
         }

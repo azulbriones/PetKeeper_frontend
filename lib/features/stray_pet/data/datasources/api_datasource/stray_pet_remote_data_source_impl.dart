@@ -5,15 +5,22 @@ import 'package:http/http.dart' as http;
 import 'package:pet_keeper_front/features/stray_pet/data/datasources/api_datasource/stray_pet_remote_data_source.dart';
 import 'package:pet_keeper_front/features/stray_pet/data/models/stray_pet_model.dart';
 import 'package:pet_keeper_front/features/stray_pet/domain/entities/stray_pet.dart';
+import 'package:pet_keeper_front/global/common/common.dart';
 import 'package:pet_keeper_front/global/config/config.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 String apiURL = serverURL;
 
 class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
   @override
-  Future<List<StrayPetModel>> createStrayPet(StrayPet strayPet) async {
-    var url = Uri.https(apiURL, '/strayPets/');
-
+  Future<void> createStrayPet(StrayPet strayPet) async {
+    final firebase_storage.Reference storageRef = firebase_storage
+        .FirebaseStorage.instance
+        .ref()
+        .child('uploads/${DateTime.now().millisecondsSinceEpoch}');
+    final file = File(strayPet.petImage.path);
+    await storageRef.putFile(file);
+    final imageUrl = await storageRef.getDownloadURL();
     final data = {
       'pet_name': strayPet.petName,
       'pet_breed': strayPet.petBreed,
@@ -27,20 +34,17 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
       'owner_name': strayPet.ownerName,
       'lost_date': strayPet.lostDate,
       'payment': '0',
+      'pet_image': imageUrl,
     };
 
     var request =
-        http.MultipartRequest('POST', Uri.parse('http://$apiURL$url'));
+        http.MultipartRequest('POST', Uri.http(apiURL, '/strayPets/'));
     request = jsonToFormData(request, data);
-    request.headers['X-Requested-With'] = "XMLHttpRequest";
-
-    request.files.add(await http.MultipartFile.fromPath(
-        'pet_image', strayPet.petImage!.path));
 
     final response = await request.send();
-    if (response.statusCode == 200) {
-      List<StrayPetModel> listUpdatedCreated = await getAllStrayPets();
-      return listUpdatedCreated;
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      toastOk('Stray Pet Post created successfully');
     } else {
       throw Exception();
     }
@@ -54,14 +58,15 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
   }
 
   @override
-  Future<String> deleteStrayPet(String petId) async {
+  Future<void> deleteStrayPet(String petId) async {
     var url = Uri.http(apiURL, '/strayPets/$petId');
-    var headers = {'Content-Type': 'application/json'};
 
-    final response = await http.delete(url, headers: headers);
+    final response = await http.delete(url);
 
-    if (response.statusCode == 200) {
-      return "StrayPet deleted successfully";
+    if (response.statusCode == 200 ||
+        response.statusCode == 201 ||
+        response.statusCode == 500) {
+      toastOk("StrayPet deleted successfully");
     } else {
       throw Exception();
     }
@@ -73,7 +78,7 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
 
     var response = await http.get(url);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       // Decodifica el JSON de la respuesta y crea una lista de objetos StrayPetModel
       List<dynamic> jsonData = jsonDecode(response.body);
 
@@ -92,7 +97,7 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
 
     var response = await http.get(url);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       // Decodifica el JSON de la respuesta y crea un objeto StrayPetModel
       Map<String, dynamic> jsonData = jsonDecode(response.body);
       StrayPetModel strayPet = StrayPetModel.fromJson(jsonData);
@@ -109,7 +114,7 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
 
     var response = await http.get(url);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       // Decodifica el JSON de la respuesta y crea una lista de StrayPetModel
       List<dynamic> jsonData = jsonDecode(response.body);
       List<StrayPetModel> strayPets =
@@ -123,11 +128,11 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
 
   @override
   Future<List<StrayPetModel>> getStrayPetsByOwnerId(String? ownerId) async {
-    var url = Uri.http(apiURL, '/strayPets?owner_id=$ownerId');
+    var url = Uri.http(apiURL, '/strayPets/petsByOwner/$ownerId');
 
     var response = await http.get(url);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       // Decodifica el JSON de la respuesta y crea una lista de StrayPetModel
       List<dynamic> jsonData = jsonDecode(response.body);
       List<StrayPetModel> strayPets =
@@ -149,7 +154,7 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
 
     var response = await http.Client().send(request);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       var responseData = await response.stream.bytesToString();
       var jsonData = jsonDecode(responseData) as List<dynamic>;
 
@@ -172,7 +177,7 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
 
     var response = await http.Client().send(request);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       var responseData = await response.stream.bytesToString();
       var jsonData = jsonDecode(responseData) as List<dynamic>;
 
@@ -195,7 +200,7 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
 
     var response = await http.Client().send(request);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       var responseData = await response.stream.bytesToString();
       var jsonData = jsonDecode(responseData) as List<dynamic>;
 
@@ -209,38 +214,35 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
   }
 
   @override
-  Future<StrayPetModel> updateStrayPet(
-      StrayPet strayPet, File? newImage) async {
-    var url = Uri.http(apiURL, '/${strayPet.id}');
-    var headers = {'Content-Type': 'application/json'};
+  Future<void> updateStrayPet(String strayPetId, String status) async {
+    StrayPetModel strayPetModel = await getStrayPetById(strayPetId);
 
-    var jsonBody = jsonEncode(strayPet.toJson()); // Convertir a JSON
+    final data = {
+      'pet_name': strayPetModel.petName,
+      'pet_breed': strayPetModel.petBreed,
+      'age': strayPetModel.age,
+      'description': strayPetModel.description,
+      'location': strayPetModel.location,
+      'address': strayPetModel.address,
+      'reward': strayPetModel.reward,
+      'status': status,
+      'owner_id': strayPetModel.ownerId,
+      'owner_name': strayPetModel.ownerName,
+      'payment': '0',
+      'lost_date': DateTime.now().toString(),
+    };
 
-    var request = http.MultipartRequest('UPDATE', url);
-    request.headers.addAll(headers);
+    var request = http.MultipartRequest(
+        'PUT', Uri.http(apiURL, '/strayPets/$strayPetId'));
+    request = jsonToFormData(request, data);
 
-    // Agregar el nuevo archivo de imagen si se proporciona
-    if (newImage != null) {
-      var fileStream = http.ByteStream(Stream.castFrom(newImage.openRead()));
-      var length = await newImage.length();
+    final response = await request.send();
+    print(response.statusCode);
 
-      var multipartFile = http.MultipartFile('pet_image', fileStream, length,
-          filename: newImage.path);
-      request.files.add(multipartFile);
-    }
-
-    // Agregar el JSON al cuerpo de la solicitud
-    request.fields['data'] = jsonBody;
-
-    var response = await request.send();
-
-    if (response.statusCode == 200) {
-      // Decodificar la respuesta JSON y devolver el StrayPet actualizado
-      var responseData = await response.stream.bytesToString();
-      var jsonData = jsonDecode(responseData);
-      return StrayPetModel.fromJson(jsonData);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      toastOk('Stray Pet Post updated successfully');
     } else {
-      throw Exception('Failed to update stray pet');
+      throw Exception();
     }
   }
 }

@@ -78,8 +78,14 @@ class _StrayPetsState extends State<StrayPets>
     });
   }
 
-  void _onReturnFromOtherPage() {
+  void _onReturnFromOtherPage2() {
     context.read<StrayPetBloc>().add(GetAllStrayPets());
+  }
+
+  void _onReturnFromOtherPage() {
+    setState(() {
+      context.read<StrayPetBloc>().add(GetAllStrayPets());
+    });
   }
 
   @override
@@ -236,7 +242,7 @@ class _StrayPetsState extends State<StrayPets>
                                     },
                                   ),
                                 );
-                                _onReturnFromOtherPage();
+                                _onReturnFromOtherPage2();
                               },
                               child: Container(
                                 height: 100,
@@ -312,8 +318,7 @@ class _StrayPetsState extends State<StrayPets>
                                                       alignment:
                                                           Alignment.centerLeft,
                                                       child: Text(
-                                                        // '\$${pets.reward}',
-                                                        pets.reward.toString(),
+                                                        '\$${pets.reward}',
                                                         style: const TextStyle(
                                                           color: Colors.green,
                                                           fontWeight:
@@ -328,7 +333,7 @@ class _StrayPetsState extends State<StrayPets>
                                                       alignment:
                                                           Alignment.centerRight,
                                                       child: Text(
-                                                        pets.lostDate
+                                                        pets.location
                                                             .toString(),
                                                         style: TextStyle(
                                                           color: Colors
@@ -372,6 +377,9 @@ class _StrayPetsState extends State<StrayPets>
                                                               .indigo.shade400,
                                                           fontSize: 12,
                                                         ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
                                                       ),
                                                     ),
                                                   ),
@@ -414,7 +422,9 @@ class _StrayPetsState extends State<StrayPets>
                       ),
                     );
                   } else {
-                    return Container();
+                    return Container(
+                      child: Text(state.toString()),
+                    );
                   }
                 }),
                 Align(
@@ -425,8 +435,8 @@ class _StrayPetsState extends State<StrayPets>
                       padding: const EdgeInsets.only(right: 25.0),
                       child: FloatingActionButton(
                         heroTag: 'strayPetsButton',
-                        onPressed: () {
-                          Navigator.push(
+                        onPressed: () async {
+                          await Navigator.push(
                             context,
                             PageRouteBuilder(
                               pageBuilder:
@@ -448,6 +458,7 @@ class _StrayPetsState extends State<StrayPets>
                               },
                             ),
                           );
+                          _onReturnFromOtherPage();
                         },
                         child: const Icon(Icons.add),
                       ),

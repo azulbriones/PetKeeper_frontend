@@ -1,26 +1,18 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
+
 import 'package:network_image/network_image.dart';
-import 'package:pet_keeper_front/features/adopt_pet/domain/entities/adopt_pet.dart';
+
 import 'package:pet_keeper_front/features/adopt_pet/presentation/bloc/adopt_pet_bloc.dart';
 import 'package:pet_keeper_front/features/adopt_pet/presentation/pages/adopt_post_view.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
-import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/auth/auth_cubit.dart';
+
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
-import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/user/user_cubit.dart';
-import 'package:pet_keeper_front/features/stray_pet/domain/entities/stray_pet.dart';
+
 import 'package:pet_keeper_front/features/stray_pet/presentation/bloc/stray_pet_bloc.dart';
 import 'package:pet_keeper_front/features/stray_pet/presentation/pages/stray_post_view.dart';
-import 'package:pet_keeper_front/global/common/common.dart';
-import 'package:pet_keeper_front/global/widgets/container/container_button.dart';
-import 'package:pet_keeper_front/global/widgets/container/container_button_danger.dart';
-import 'package:pet_keeper_front/global/widgets/custom_text_field/text_field_container.dart';
-import 'package:pet_keeper_front/features/storage/domain/usecases/upload_profile_image_usecase.dart';
-import 'package:pet_keeper_front/features/injection_container.dart' as di;
 
 class MyPostsPage extends StatefulWidget {
   final String? userId;
@@ -35,17 +27,25 @@ class _MyPostsPageState extends State<MyPostsPage>
   @override
   bool get wantKeepAlive => true;
 
+  late AdoptPetBloc _adoptPetBloc;
+  late StrayPetBloc _strayPetBloc;
+
   late AnimationController _animationController;
   late AnimationController _animationController2;
-  late bool _visible;
-  late bool _visible2;
+  bool _visible = true;
+  bool _visible2 = false;
+  late int? _selectedStatus;
+
+  List<String> statusOptions = [
+    'Tuxtla Gutiérrez',
+  ];
 
   late StreamSubscription<ConnectivityResult> subscription;
 
   @override
   void initState() {
-    _visible = true;
-    _visible2 = false;
+    _adoptPetBloc = BlocProvider.of<AdoptPetBloc>(context);
+    _strayPetBloc = BlocProvider.of<StrayPetBloc>(context);
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -102,6 +102,22 @@ class _MyPostsPageState extends State<MyPostsPage>
       context
           .read<AdoptPetBloc>()
           .add(GetAllUserPostsPet(userId: widget.userId));
+      context
+          .read<StrayPetBloc>()
+          .add(GetAllUserPostsStrayPet(userId: widget.userId));
+    });
+  }
+
+  void _onUpdatedAdoptPost() {
+    setState(() {
+      context
+          .read<AdoptPetBloc>()
+          .add(GetAllUserPostsPet(userId: widget.userId));
+    });
+  }
+
+  void _onUpdatedStrayPost() {
+    setState(() {
       context
           .read<StrayPetBloc>()
           .add(GetAllUserPostsStrayPet(userId: widget.userId));
@@ -283,7 +299,7 @@ class _MyPostsPageState extends State<MyPostsPage>
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 500),
                         curve: Curves.easeInOut,
-                        height: _visible ? 200 : 0,
+                        height: _visible ? 300 : 0,
                         child: _buildStrayPets(),
                       ),
                     ),
@@ -413,179 +429,371 @@ class _MyPostsPageState extends State<MyPostsPage>
             child: CircularProgressIndicator(),
           );
         } else if (state is LoadedAllUserPostsStrayPet) {
-          return ListView(
-              children: state.allUserPostsStrayPets.map((pets) {
-            return Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: GestureDetector(
-                onTap: () async {
-                  await Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          StrayPostView(id: pets.id),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                        var begin = const Offset(1.0, 0.0);
-                        var end = Offset.zero;
-                        var curve = Curves.easeInOut;
+          return state.allUserPostsStrayPets.isNotEmpty
+              ? ListView(
+                  children: state.allUserPostsStrayPets.map((pets) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: GestureDetector(
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    StrayPostView(id: pets.id),
+                            transitionsBuilder: (context, animation,
+                                secondaryAnimation, child) {
+                              var begin = const Offset(1.0, 0.0);
+                              var end = Offset.zero;
+                              var curve = Curves.easeInOut;
 
-                        var tween = Tween(begin: begin, end: end)
-                            .chain(CurveTween(curve: curve));
+                              var tween = Tween(begin: begin, end: end)
+                                  .chain(CurveTween(curve: curve));
 
-                        return SlideTransition(
-                          position: animation.drive(tween),
-                          child: child,
+                              return SlideTransition(
+                                position: animation.drive(tween),
+                                child: child,
+                              );
+                            },
+                          ),
                         );
+                        _onUpdatedStrayPost();
                       },
-                    ),
-                  );
-                },
-                child: Container(
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 3,
-                        blurRadius: 8,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  margin: const EdgeInsets.all(5.0),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          height: 85,
-                          width: 85,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(50),
-                            child: NetworkImageWidget(
-                              borderRadiusImageFile: 50,
-                              imageFileBoxFit: BoxFit.cover,
-                              placeHolderBoxFit: BoxFit.cover,
-                              networkImageBoxFit: BoxFit.cover,
-                              imageUrl: pets.petImage,
-                              progressIndicatorBuilder: const Center(
-                                child: CircularProgressIndicator(),
+                      child: Dismissible(
+                        key: Key(pets.id),
+                        direction: DismissDirection.horizontal,
+                        confirmDismiss: (direction) async {
+                          if (direction == DismissDirection.endToStart) {
+                            if (pets.status == 'lost') {
+                              setState(() {
+                                _selectedStatus = 1;
+                              });
+                            } else if (pets.status == 'found') {
+                              setState(() {
+                                _selectedStatus = 2;
+                              });
+                            }
+                            await showDialog(
+                              context: context,
+                              builder: (context) => StatefulBuilder(builder:
+                                  (BuildContext context, StateSetter setState) {
+                                return AlertDialog(
+                                  title: const Text(
+                                      'Cambiar estatus de publicación'),
+                                  scrollable: true,
+                                  content: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text('Seleccione un nuevo estatus'),
+                                      Column(
+                                        children: [
+                                          RadioListTile<int>(
+                                            title: const Text('Extraviado'),
+                                            value: 1,
+                                            groupValue: _selectedStatus,
+                                            onChanged: (int? value) {
+                                              setState(() {
+                                                _selectedStatus = value;
+                                              });
+                                            },
+                                          ),
+                                          RadioListTile<int>(
+                                            title: const Text('Encontrado'),
+                                            value: 2,
+                                            groupValue: _selectedStatus,
+                                            onChanged: (int? value) {
+                                              setState(() {
+                                                _selectedStatus = value;
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop(
+                                            false); // Cancelar el deslizamiento
+                                      },
+                                      child: const Text('Cancelar'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        late String status;
+                                        if (_selectedStatus == 1) {
+                                          status = 'lost';
+                                        } else if (_selectedStatus == 2) {
+                                          status = 'found';
+                                        }
+                                        _updateStrayPost(pets.id, status);
+
+                                        Navigator.of(context).pop(true);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                            content:
+                                                Text('Estatus actualizado'),
+                                            duration: Duration(seconds: 2),
+                                          ),
+                                        ); // Aceptar el deslizamiento
+                                      },
+                                      child: const Text('Actualizar'),
+                                    ),
+                                  ],
+                                );
+                              }),
+                            );
+                            return false;
+                          } else if (direction == DismissDirection.startToEnd) {
+                            bool shouldDismiss = await showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Eliminar publicación'),
+                                content: const Text(
+                                    '¿Estás seguro de eliminar esta publicación?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(
+                                          false); // Cancelar el deslizamiento
+                                    },
+                                    child: const Text('Cancelar'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      _deleteStrayPost(pets.id);
+
+                                      Navigator.of(context).pop(true);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Post eliminado'),
+                                          duration: Duration(seconds: 2),
+                                        ),
+                                      ); // Aceptar el deslizamiento
+                                    },
+                                    child: const Text('Eliminar'),
+                                  ),
+                                ],
                               ),
-                              placeHolder: "assets/images/pet_default2.jpg",
-                            ),
+                            );
+                            return shouldDismiss; // Devuelve true o false según la decisión del usuario
+                          }
+                          return false;
+                        },
+                        background: Container(
+                          height: 100,
+                          margin: const EdgeInsets.all(5.0),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 3,
+                                blurRadius: 8,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          alignment: Alignment.centerLeft,
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Icon(Icons.delete, color: Colors.white),
                           ),
                         ),
-                        SizedBox(
-                          width: 15,
+                        secondaryBackground: Container(
+                          height: 100,
+                          margin: const EdgeInsets.all(5.0),
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 3,
+                                blurRadius: 8,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          alignment: Alignment.centerRight,
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Icon(Icons.edit, color: Colors.white),
+                          ),
                         ),
-                        Expanded(
+                        child: Container(
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 3,
+                                blurRadius: 8,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          margin: const EdgeInsets.all(5.0),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
                               children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          pets.petName.toString(),
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                          ),
-                                        ),
+                                SizedBox(
+                                  height: 85,
+                                  width: 85,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(50),
+                                    child: NetworkImageWidget(
+                                      borderRadiusImageFile: 50,
+                                      imageFileBoxFit: BoxFit.cover,
+                                      placeHolderBoxFit: BoxFit.cover,
+                                      networkImageBoxFit: BoxFit.cover,
+                                      imageUrl: pets.petImage,
+                                      progressIndicatorBuilder: const Center(
+                                        child: CircularProgressIndicator(),
                                       ),
+                                      placeHolder:
+                                          "assets/images/pet_default2.jpg",
                                     ),
-                                    Expanded(
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          // '\$${pets.reward}',
-                                          pets.reward.toString(),
-                                          style: const TextStyle(
-                                            color: Colors.green,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Text(
-                                          pets.lostDate.toString(),
-                                          style: TextStyle(
-                                            color: Colors.indigo.shade400,
-                                            fontSize: 12,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          pets.ownerName.toString(),
-                                          style: const TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Text(
-                                          pets.address.toString(),
-                                          style: TextStyle(
-                                            color: Colors.indigo.shade400,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
                                 SizedBox(
-                                  height: 5,
+                                  width: 15,
                                 ),
-                                Flexible(
-                                  child: Text(
-                                    pets.description.toString(),
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 12,
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 5.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  pets.petName.toString(),
+                                                  style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  '\$${pets.reward}',
+                                                  style: const TextStyle(
+                                                    color: Colors.green,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Text(
+                                                  pets.location.toString(),
+                                                  style: TextStyle(
+                                                    color:
+                                                        Colors.indigo.shade400,
+                                                    fontSize: 12,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  pets.ownerName.toString(),
+                                                  style: const TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Text(
+                                                  pets.address.toString(),
+                                                  style: TextStyle(
+                                                    color:
+                                                        Colors.indigo.shade400,
+                                                    fontSize: 12,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Flexible(
+                                          child: Text(
+                                            pets.description.toString(),
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 12,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 2,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
                                   ),
                                 ),
                               ],
                             ),
                           ),
                         ),
-                      ],
+                      ),
+                    ),
+                  );
+                }).toList())
+              : const Center(
+                  child: Text(
+                    'Nada por aqui aún',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-              ),
-            );
-          }).toList());
+                );
         } else if (state is StrayError) {
           return Center(
             child: Text(state.error, style: const TextStyle(color: Colors.red)),
@@ -632,132 +840,300 @@ class _MyPostsPageState extends State<MyPostsPage>
                       },
                     ),
                   );
+                  _onUpdatedAdoptPost();
                 },
-                child: Container(
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 3,
-                        blurRadius: 8,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  margin: const EdgeInsets.all(5.0),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          height: 85,
-                          width: 85,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(50),
-                            child: NetworkImageWidget(
-                              borderRadiusImageFile: 50,
-                              imageFileBoxFit: BoxFit.cover,
-                              placeHolderBoxFit: BoxFit.cover,
-                              networkImageBoxFit: BoxFit.cover,
-                              imageUrl: pets.petImage,
-                              progressIndicatorBuilder: const Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                              placeHolder: "assets/images/pet_default2.jpg",
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5.0),
-                            child: Column(
+                child: Dismissible(
+                  key: Key(pets.id),
+                  direction: DismissDirection.horizontal,
+                  confirmDismiss: (direction) async {
+                    if (direction == DismissDirection.endToStart) {
+                      if (pets.status == 'to adopt') {
+                        setState(() {
+                          _selectedStatus = 1;
+                        });
+                      } else if (pets.status == 'adopted') {
+                        setState(() {
+                          _selectedStatus = 2;
+                        });
+                      }
+                      await showDialog(
+                        context: context,
+                        builder: (context) => StatefulBuilder(builder:
+                            (BuildContext context, StateSetter setState) {
+                          return AlertDialog(
+                            title: const Text('Cambiar estatus de publicación'),
+                            scrollable: true,
+                            content: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
+                                const Text('Seleccione un nuevo estatus'),
+                                Column(
                                   children: [
-                                    Expanded(
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          pets.petName.toString(),
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ),
+                                    RadioListTile<int>(
+                                      title: const Text('En adopción'),
+                                      value: 1,
+                                      groupValue: _selectedStatus,
+                                      onChanged: (int? value) {
+                                        setState(() {
+                                          _selectedStatus = value;
+                                        });
+                                      },
                                     ),
-                                    Expanded(
-                                      child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Text(
-                                          pets.createdAt.toString(),
-                                          style: TextStyle(
-                                            color: Colors.indigo.shade400,
-                                            fontSize: 12,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                        ),
-                                      ),
+                                    RadioListTile<int>(
+                                      title: const Text('Adoptado'),
+                                      value: 2,
+                                      groupValue: _selectedStatus,
+                                      onChanged: (int? value) {
+                                        setState(() {
+                                          _selectedStatus = value;
+                                        });
+                                      },
                                     ),
                                   ],
-                                ),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          pets.ownerName.toString(),
-                                          style: const TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Text(
-                                          pets.address.toString(),
-                                          style: TextStyle(
-                                            color: Colors.indigo.shade400,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Flexible(
-                                  child: Text(
-                                    pets.description.toString(),
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 12,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                  ),
-                                ),
+                                )
                               ],
                             ),
-                          ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pop(false); // Cancelar el deslizamiento
+                                },
+                                child: const Text('Cancelar'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  late String status;
+                                  if (_selectedStatus == 1) {
+                                    status = 'to adopt';
+                                  } else if (_selectedStatus == 2) {
+                                    status = 'adopted';
+                                  }
+                                  _updatePost(pets.id, status);
+
+                                  Navigator.of(context).pop(true);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Estatus actualizado'),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  ); // Aceptar el deslizamiento
+                                },
+                                child: const Text('Actualizar'),
+                              ),
+                            ],
+                          );
+                        }),
+                      );
+                      return false;
+                    } else if (direction == DismissDirection.startToEnd) {
+                      bool shouldDismiss = await showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Eliminar publicación'),
+                          content: const Text(
+                              '¿Estás seguro de eliminar esta publicación?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .pop(false); // Cancelar el deslizamiento
+                              },
+                              child: const Text('Cancelar'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                _deletePost(pets.id);
+
+                                Navigator.of(context).pop(true);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Post eliminado'),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                ); // Aceptar el deslizamiento
+                              },
+                              child: const Text('Eliminar'),
+                            ),
+                          ],
+                        ),
+                      );
+                      return shouldDismiss; // Devuelve true o false según la decisión del usuario
+                    }
+                    return false;
+                  },
+                  background: Container(
+                    height: 100,
+                    margin: const EdgeInsets.all(5.0),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 3,
+                          blurRadius: 8,
+                          offset: const Offset(0, 5),
                         ),
                       ],
+                    ),
+                    alignment: Alignment.centerLeft,
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Icon(Icons.delete, color: Colors.white),
+                    ),
+                  ),
+                  secondaryBackground: Container(
+                    height: 100,
+                    margin: const EdgeInsets.all(5.0),
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 3,
+                          blurRadius: 8,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    alignment: Alignment.centerRight,
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Icon(Icons.edit, color: Colors.white),
+                    ),
+                  ),
+                  child: Container(
+                    height: 100,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 3,
+                          blurRadius: 8,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    margin: const EdgeInsets.all(5.0),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            height: 85,
+                            width: 85,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(50),
+                              child: NetworkImageWidget(
+                                borderRadiusImageFile: 50,
+                                imageFileBoxFit: BoxFit.cover,
+                                placeHolderBoxFit: BoxFit.cover,
+                                networkImageBoxFit: BoxFit.cover,
+                                imageUrl: pets.petImage,
+                                progressIndicatorBuilder: const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                                placeHolder: "assets/images/pet_default2.jpg",
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 15,
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 5.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            pets.petName.toString(),
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                            pets.location.toString(),
+                                            style: TextStyle(
+                                              color: Colors.indigo.shade400,
+                                              fontSize: 12,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            pets.ownerName.toString(),
+                                            style: const TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                            pets.address.toString(),
+                                            style: TextStyle(
+                                              color: Colors.indigo.shade400,
+                                              fontSize: 12,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Flexible(
+                                    child: Text(
+                                      pets.description.toString(),
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 12,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -775,32 +1151,27 @@ class _MyPostsPageState extends State<MyPostsPage>
     );
   }
 
-  // void _updateProfile(String uid) {
-  //   if (_image != null) {
-  //     di.sl<UploadProfileImageUseCase>().call(file: _image!).then((imageUrl) {
-  //       BlocProvider.of<UserCubit>(context)
-  //           .getUpdateUser(
-  //         user: PetLoverEntity(
-  //           id: uid,
-  //           name: _nameController.text,
-  //           profileUrl: imageUrl,
-  //         ),
-  //       )
-  //           .then((value) {
-  //         toast("Profile Updated Successfully");
-  //       });
-  //     });
-  //   } else {
-  //     BlocProvider.of<UserCubit>(context)
-  //         .getUpdateUser(
-  //       user: PetLoverEntity(
-  //         id: uid,
-  //         name: _nameController.text,
-  //       ),
-  //     )
-  //         .then((value) {
-  //       toast("Profile Updated Successfully");
-  //     });
-  //   }
-  // }
+  void _updatePost(String adoptPetId, String status) {
+    _adoptPetBloc.add(UpdateStatusPet(adoptPetId: adoptPetId, status: status));
+    Future.delayed(const Duration(seconds: 1))
+        .then((value) => {_onUpdatedAdoptPost()});
+  }
+
+  void _updateStrayPost(String strayPetId, String status) {
+    _strayPetBloc.add(UpdateStrayPet(strayPetId: strayPetId, status: status));
+    Future.delayed(const Duration(seconds: 1))
+        .then((value) => {_onUpdatedStrayPost()});
+  }
+
+  void _deletePost(String adoptPetId) {
+    _adoptPetBloc.add(DeletePet(petId: adoptPetId));
+    Future.delayed(const Duration(seconds: 1))
+        .then((value) => {_onUpdatedAdoptPost()});
+  }
+
+  void _deleteStrayPost(String adoptPetId) {
+    _strayPetBloc.add(DeleteStrayPet(strayPetId: adoptPetId));
+    Future.delayed(const Duration(seconds: 1))
+        .then((value) => {_onUpdatedStrayPost()});
+  }
 }

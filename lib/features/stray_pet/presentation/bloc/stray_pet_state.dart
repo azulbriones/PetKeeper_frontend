@@ -15,9 +15,10 @@ class InitialState extends StrayPetState {}
 class UpdatingStrayPet extends StrayPetState {}
 
 class UpdatedStrayPet extends StrayPetState {
-  final StrayPet strayPet;
+  final String strayPetId;
+  final String status;
 
-  UpdatedStrayPet({required this.strayPet});
+  UpdatedStrayPet({required this.strayPetId, required this.status});
 }
 
 class LoadingDetailStrayPet extends StrayPetState {}
@@ -37,15 +38,17 @@ class LoadedAllUserPostsStrayPet extends StrayPetState {
 class CreatingStrayPet extends StrayPetState {}
 
 class CreatedStrayPet extends StrayPetState {
-  List<StrayPet> allStrayPets;
+  final StrayPet newStrayPet;
 
-  CreatedStrayPet({required this.allStrayPets});
+  CreatedStrayPet({required this.newStrayPet});
 }
 
-class DeleteStrayPet extends StrayPetState {
+class DeletingStrayPet extends StrayPetState {}
+
+class DeletedStrayPet extends StrayPetState {
   final String strayPetId;
 
-  DeleteStrayPet({required this.strayPetId});
+  DeletedStrayPet({required this.strayPetId});
 }
 
 class StrayError extends StrayPetState {

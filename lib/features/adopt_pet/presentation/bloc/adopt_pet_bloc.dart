@@ -5,12 +5,14 @@ import 'package:pet_keeper_front/features/adopt_pet/domain/use_cases/delete_post
 import 'package:pet_keeper_front/features/adopt_pet/domain/use_cases/get_all_posts_use_case.dart';
 import 'package:pet_keeper_front/features/adopt_pet/domain/use_cases/get_post_by_actual_owner_id_use_case.dart';
 import 'package:pet_keeper_front/features/adopt_pet/domain/use_cases/get_post_detail_use_case.dart';
+import 'package:pet_keeper_front/features/adopt_pet/domain/use_cases/update_status_post_use_case.dart';
 
 part 'adopt_pet_event.dart';
 part 'adopt_pet_state.dart';
 
 class AdoptPetBloc extends Bloc<AdoptPetEvent, AdoptPetState> {
   // final UpdatePostUseCase updatePostUseCase;
+  final UpdateStatusAdoptPetUseCase updateStatusPostUseCase;
   final GetAllPostsUseCase getAllPostsUseCase;
   final GetPostDetailUseCase getPostDetailUseCase;
   // final GetPostsByAddressUseCase getPostsByAddressUseCase;
@@ -22,6 +24,7 @@ class AdoptPetBloc extends Bloc<AdoptPetEvent, AdoptPetState> {
 
   AdoptPetBloc({
     // required this.updatePostUseCase,
+    required this.updateStatusPostUseCase,
     required this.getAllPostsUseCase,
     required this.getPostDetailUseCase,
     // required this.getPostsByAddressUseCase,
@@ -64,9 +67,28 @@ class AdoptPetBloc extends Bloc<AdoptPetEvent, AdoptPetState> {
       } else if (event is CreatePet) {
         try {
           emit(CreatingPet());
-          await createPostUseCase.execute(event.adoptPet);
+          createPostUseCase.execute(event.adoptPet);
           emit(CreatedPet(newPet: event.adoptPet));
           print('CreatePet Emitted');
+        } catch (e) {
+          emit(AdoptError(error: e.toString()));
+        }
+      } else if (event is UpdateStatusPet) {
+        try {
+          emit(UpdatingStatusPet());
+          updateStatusPostUseCase.execute(event.adoptPetId, event.status);
+          emit(UpdatedStatusPet(
+              adoptPetId: event.adoptPetId, status: event.status));
+          print('UpdatedStatusePet Emitted');
+        } catch (e) {
+          emit(AdoptError(error: e.toString()));
+        }
+      } else if (event is DeletePet) {
+        try {
+          emit(DeletingPet());
+          await deletePostUseCase.execute(event.petId);
+          emit(DeletedPet(petId: event.petId));
+          print('DeleteStrayPet Emitted');
         } catch (e) {
           emit(AdoptError(error: e.toString()));
         }

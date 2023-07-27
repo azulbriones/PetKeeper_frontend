@@ -4,7 +4,7 @@ class DeleteStrayPetUseCase {
   final StrayPetRepository strayPetRepository;
 
   DeleteStrayPetUseCase(this.strayPetRepository);
-  Future<String> execute(String petId) async {
+  Future<void> execute(String petId) async {
     return await strayPetRepository.deleteStrayPet(petId);
   }
 }

@@ -239,7 +239,7 @@ class _StrayPostViewState extends State<AdoptPostView> {
                                       width: 5.0,
                                     ),
                                     Text(
-                                      state.adoptPet.age.toString(),
+                                      '${state.adoptPet.age.toString()} meses',
                                       style: const TextStyle(
                                           fontSize: 18, color: Colors.grey),
                                     ),
@@ -273,7 +273,7 @@ class _StrayPostViewState extends State<AdoptPostView> {
                                         height: 10.0,
                                       ),
                                       Text(
-                                        state.adoptPet.createdAt.toString(),
+                                        state.adoptPet.status.toString(),
                                         style: const TextStyle(
                                           fontSize: 12,
                                           color: Colors.grey,

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:pet_keeper_front/features/stray_pet/data/datasources/api_datasource/stray_pet_remote_data_source.dart';
 import 'package:pet_keeper_front/features/stray_pet/domain/entities/stray_pet.dart';
 import 'package:pet_keeper_front/features/stray_pet/domain/repositories/stray_pet_repository.dart';
@@ -9,12 +7,12 @@ class StrayPetRepositoryImpl implements StrayPetRepository {
 
   StrayPetRepositoryImpl({required this.strayPetRemoteDataSource});
   @override
-  Future<List<StrayPet>> createStrayPet(StrayPet strayPet) async {
+  Future<void> createStrayPet(StrayPet strayPet) async {
     return await strayPetRemoteDataSource.createStrayPet(strayPet);
   }
 
   @override
-  Future<String> deleteStrayPet(String petId) async {
+  Future<void> deleteStrayPet(String petId) async {
     return await strayPetRemoteDataSource.deleteStrayPet(petId);
   }
 
@@ -54,7 +52,7 @@ class StrayPetRepositoryImpl implements StrayPetRepository {
   }
 
   @override
-  Future<StrayPet> updateStrayPet(StrayPet strayPet, File petImage) async {
-    return await strayPetRemoteDataSource.updateStrayPet(strayPet, petImage);
+  Future<void> updateStrayPet(String strayPetId, String status) async {
+    return await strayPetRemoteDataSource.updateStrayPet(strayPetId, status);
   }
 }

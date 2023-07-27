@@ -5,11 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:network_image/network_image.dart';
-import 'package:pet_keeper_front/features/adopt_pet/presentation/bloc/adopt_pet_bloc.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page_foundation.dart';
+import 'package:pet_keeper_front/features/stray_pet/domain/entities/stray_pet.dart';
+import 'package:pet_keeper_front/features/stray_pet/presentation/bloc/stray_pet_bloc.dart';
 import 'package:pet_keeper_front/global/common/common.dart';
 import 'package:pet_keeper_front/global/theme/style.dart';
 import 'package:pet_keeper_front/global/widgets/container/container_button_secondary.dart';
@@ -23,12 +24,13 @@ class StrayPost extends StatefulWidget {
 }
 
 class _StrayPostState extends State<StrayPost> {
+  late StrayPetBloc _strayPetBloc;
   late TextEditingController _petName;
   late TextEditingController _petRace;
-  late TextEditingController _petOwner;
   late TextEditingController _petStrayAddress;
   late TextEditingController _petDesc;
   late TextEditingController _petBounty;
+  late TextEditingController _petAge;
   String? _locationController;
   String? _cityController;
   String buttonTitle = 'Seleccionar imagen';
@@ -49,22 +51,23 @@ class _StrayPostState extends State<StrayPost> {
   @override
   void initState() {
     super.initState();
+    _strayPetBloc = BlocProvider.of<StrayPetBloc>(context);
     _petName = TextEditingController();
     _petRace = TextEditingController();
-    _petOwner = TextEditingController();
     _petDesc = TextEditingController();
     _petStrayAddress = TextEditingController();
     _petBounty = TextEditingController();
+    _petAge = TextEditingController();
   }
 
   @override
   void dispose() {
     _petName.dispose();
     _petRace.dispose();
-    _petOwner.dispose();
     _petDesc.dispose();
     _petStrayAddress.dispose();
     _petBounty.dispose();
+    _petAge.dispose();
     _image = null;
     super.dispose();
   }
@@ -290,6 +293,51 @@ class _StrayPostState extends State<StrayPost> {
                       height: 15.0,
                     ),
                     TextField(
+                      controller: _petAge,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      ],
+                      style: const TextStyle(color: Colors.black87),
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(
+                          Icons.timelapse,
+                          color: Colors.indigo,
+                        ),
+                        contentPadding: const EdgeInsets.all(12.0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.indigo,
+                            width: 0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.indigo,
+                            width: 2,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.grey,
+                            width: 1,
+                          ),
+                        ),
+                        hintText: 'Edad de la mascota (en meses)',
+                        hintStyle: const TextStyle(
+                          color: Colors.grey,
+                        ),
+                        filled: true,
+                        fillColor: const Color.fromARGB(132, 255, 255, 255),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15.0,
+                    ),
+                    TextField(
                       controller: _petRace,
                       style: const TextStyle(color: Colors.black87),
                       decoration: InputDecoration(
@@ -320,47 +368,6 @@ class _StrayPostState extends State<StrayPost> {
                           ),
                         ),
                         hintText: 'Raza de la mascota',
-                        hintStyle: const TextStyle(
-                          color: Colors.grey,
-                        ),
-                        filled: true,
-                        fillColor: const Color.fromARGB(132, 255, 255, 255),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 15.0,
-                    ),
-                    TextField(
-                      controller: _petOwner,
-                      style: const TextStyle(color: Colors.black87),
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(
-                          Icons.person,
-                          color: Colors.indigo,
-                        ),
-                        contentPadding: const EdgeInsets.all(12.0),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: const BorderSide(
-                            color: Colors.indigo,
-                            width: 0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: const BorderSide(
-                            color: Colors.indigo,
-                            width: 2,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 1,
-                          ),
-                        ),
-                        hintText: 'Nombre del dueño',
                         hintStyle: const TextStyle(
                           color: Colors.grey,
                         ),
@@ -720,9 +727,9 @@ class _StrayPostState extends State<StrayPost> {
                       height: 15.0,
                     ),
                     InkWell(
-                      onTap: () async {
+                      onTap: () {
                         toggleLoading();
-                        _submitPost();
+                        _submitPost(currentUser);
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12.0),
@@ -774,7 +781,7 @@ class _StrayPostState extends State<StrayPost> {
     );
   }
 
-  void _submitPost() {
+  void _submitPost(PetLoverEntity currentUser) {
     if (_image == null) {
       toast("Selecciona una imagen");
       toggleLoading();
@@ -788,12 +795,6 @@ class _StrayPostState extends State<StrayPost> {
 
     if (_petRace.text.isEmpty) {
       toast("Inserta una raza");
-      toggleLoading();
-      return;
-    }
-
-    if (_petOwner.text.isEmpty) {
-      toast("Inserta un dueño");
       toggleLoading();
       return;
     }
@@ -833,5 +834,23 @@ class _StrayPostState extends State<StrayPost> {
       toggleLoading();
       return;
     }
+
+    final strayPet = StrayPet(
+        petName: _petName.text,
+        petImage: _image,
+        ownerId: currentUser.id,
+        ownerName: currentUser.name,
+        age: _petAge.text,
+        petBreed: _petRace.text,
+        reward: _petBounty.text,
+        location: '$_locationController, $_cityController',
+        address: _petStrayAddress.text,
+        lostDate: _selectedDate,
+        description: _petDesc.text,
+        status: 'lost');
+
+    _strayPetBloc.add(CreateStrayPet(strayPet: strayPet));
+    Future.delayed(const Duration(seconds: 3))
+        .then((value) => {Navigator.pop(context)});
   }
 }

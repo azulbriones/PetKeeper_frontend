@@ -266,7 +266,7 @@ class _HomePageState extends State<HomePage>
                       child: AnimatedContainer(
                           duration: const Duration(milliseconds: 500),
                           curve: Curves.easeInOut,
-                          height: _visible ? 200 : 0,
+                          height: _visible ? 300 : 0,
                           child: _buildStrayPets()),
                     ),
                     Padding(
@@ -490,8 +490,7 @@ class _HomePageState extends State<HomePage>
                                       child: Align(
                                         alignment: Alignment.centerLeft,
                                         child: Text(
-                                          // '\$${pets.reward}',
-                                          pets.reward.toString(),
+                                          '\$${pets.reward}',
                                           style: const TextStyle(
                                             color: Colors.green,
                                             fontWeight: FontWeight.bold,
@@ -504,7 +503,7 @@ class _HomePageState extends State<HomePage>
                                       child: Align(
                                         alignment: Alignment.centerRight,
                                         child: Text(
-                                          pets.lostDate.toString(),
+                                          pets.location.toString(),
                                           style: TextStyle(
                                             color: Colors.indigo.shade400,
                                             fontSize: 12,
@@ -540,6 +539,8 @@ class _HomePageState extends State<HomePage>
                                             color: Colors.indigo.shade400,
                                             fontSize: 12,
                                           ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
                                         ),
                                       ),
                                     ),
@@ -684,7 +685,7 @@ class _HomePageState extends State<HomePage>
                                       child: Align(
                                         alignment: Alignment.centerRight,
                                         child: Text(
-                                          pets.createdAt.toString(),
+                                          pets.location.toString(),
                                           style: TextStyle(
                                             color: Colors.indigo.shade400,
                                             fontSize: 12,
@@ -708,6 +709,8 @@ class _HomePageState extends State<HomePage>
                                             color: Colors.grey,
                                             fontSize: 14,
                                           ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
                                         ),
                                       ),
                                     ),

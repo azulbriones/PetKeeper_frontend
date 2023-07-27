@@ -48,6 +48,7 @@ class MyApp extends StatelessWidget {
             getPostDetailUseCase: usecaseConfig.getAdoptPetByIdUseCase!,
             getPostByActualOwnerIdUseCase:
                 usecaseConfig.getPostByActualOwnerIdUseCase!,
+            updateStatusPostUseCase: usecaseConfig.updateStatusAdoptPetUseCase!,
           ),
         ),
         BlocProvider<StrayPetBloc>(
@@ -56,6 +57,7 @@ class MyApp extends StatelessWidget {
             deleteStrayPetUseCase: usecaseConfig.deleteStrayPetUseCase!,
             getAllStrayPetsUseCase: usecaseConfig.getAllStrayPetsUseCase!,
             getStrayPetByIdUseCase: usecaseConfig.getStrayPetByIdUseCase!,
+            updateStrayPetUseCase: usecaseConfig.updateStrayPetUseCase!,
             // getStrayPetByLocationUseCase:
             //     usecaseConfig.getStrayPetByLocationUseCase!,
             // getStrayPetsByLostDateUseCase:

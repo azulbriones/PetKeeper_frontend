@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:network_image/network_image.dart';
@@ -13,7 +14,6 @@ import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_p
 import 'package:pet_keeper_front/global/common/common.dart';
 import 'package:pet_keeper_front/global/theme/style.dart';
 import 'package:pet_keeper_front/global/widgets/container/container_button_secondary.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class AdoptPost extends StatefulWidget {
   const AdoptPost({super.key});
@@ -291,6 +291,10 @@ class _StrayPostState extends State<AdoptPost> {
                     ),
                     TextField(
                       controller: _petAge,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      ],
                       style: const TextStyle(color: Colors.black87),
                       decoration: InputDecoration(
                         prefixIcon: const Icon(
@@ -319,7 +323,7 @@ class _StrayPostState extends State<AdoptPost> {
                             width: 1,
                           ),
                         ),
-                        hintText: 'Edad de la mascota',
+                        hintText: 'Edad de la mascota (en meses)',
                         hintStyle: const TextStyle(
                           color: Colors.grey,
                         ),
@@ -607,7 +611,7 @@ class _StrayPostState extends State<AdoptPost> {
                       height: 15.0,
                     ),
                     InkWell(
-                      onTap: () async {
+                      onTap: () {
                         toggleLoading();
                         _submitPost(currentUser);
                       },
@@ -717,6 +721,7 @@ class _StrayPostState extends State<AdoptPost> {
     );
 
     _adoptPetBloc.add(CreatePet(adoptPet: adoptPet));
-    toggleLoading();
+    Future.delayed(const Duration(seconds: 3))
+        .then((value) => {Navigator.pop(context)});
   }
 }

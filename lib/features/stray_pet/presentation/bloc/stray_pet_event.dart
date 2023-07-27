@@ -5,37 +5,28 @@ abstract class StrayPetEvent {}
 class GetAllStrayPets extends StrayPetEvent {}
 
 class CreateStrayPet extends StrayPetEvent {
-  final String petName;
-  final dynamic petImage;
-  final String? petBreed;
-  final dynamic age;
-  final String description;
-  final String location;
-  final String address;
-  final dynamic reward;
-  final String? ownerId;
-  final String? ownerName;
-  final dynamic lostDate;
+  final StrayPet strayPet;
 
-  CreateStrayPet({
-    required this.petName,
-    required this.petImage,
-    this.petBreed,
-    this.ownerId,
-    this.ownerName,
-    required this.location,
-    required this.address,
-    required this.lostDate,
-    this.age,
-    this.reward,
-    required this.description,
-  });
+  CreateStrayPet({required this.strayPet});
 }
 
 class GetDetailStrayPet extends StrayPetEvent {
   final String? strayPetId;
 
   GetDetailStrayPet({required this.strayPetId});
+}
+
+class DeleteStrayPet extends StrayPetEvent {
+  final String strayPetId;
+
+  DeleteStrayPet({required this.strayPetId});
+}
+
+class UpdateStrayPet extends StrayPetEvent {
+  final String strayPetId;
+  final String status;
+
+  UpdateStrayPet({required this.strayPetId, required this.status});
 }
 
 class GetAllUserPostsStrayPet extends StrayPetEvent {

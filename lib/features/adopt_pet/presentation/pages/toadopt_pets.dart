@@ -69,7 +69,7 @@ class _AdoptPetsState extends State<AdoptPets>
   // Función que se ejecutará al realizar la acción de recarga
   Future<void> _onRefresh() async {
     // Simulamos una operación de carga de datos
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
 
     // Una vez finalizada la operación, actualizamos la lista de elementos
     setState(() {
@@ -78,6 +78,12 @@ class _AdoptPetsState extends State<AdoptPets>
   }
 
   void _onReturnFromOtherPage() {
+    setState(() {
+      context.read<AdoptPetBloc>().add(GetAllPets());
+    });
+  }
+
+  void _onReturnFromOtherPage2() {
     context.read<AdoptPetBloc>().add(GetAllPets());
   }
 
@@ -235,7 +241,7 @@ class _AdoptPetsState extends State<AdoptPets>
                                     },
                                   ),
                                 );
-                                _onReturnFromOtherPage();
+                                _onReturnFromOtherPage2();
                               },
                               child: Container(
                                 height: 100,
@@ -311,7 +317,7 @@ class _AdoptPetsState extends State<AdoptPets>
                                                       alignment:
                                                           Alignment.centerRight,
                                                       child: Text(
-                                                        pets.createdAt
+                                                        pets.location
                                                             .toString(),
                                                         style: TextStyle(
                                                           color: Colors
@@ -355,6 +361,9 @@ class _AdoptPetsState extends State<AdoptPets>
                                                               .indigo.shade400,
                                                           fontSize: 12,
                                                         ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
                                                       ),
                                                     ),
                                                   ),
@@ -391,9 +400,13 @@ class _AdoptPetsState extends State<AdoptPets>
                   } else if (state is AdoptError) {
                     return RefreshIndicator(
                       onRefresh: _onRefresh,
-                      child: Center(
-                        child: Text(state.error,
-                            style: const TextStyle(color: Colors.red)),
+                      child: ListView(
+                        children: [
+                          Center(
+                            child: Text(state.error,
+                                style: const TextStyle(color: Colors.red)),
+                          ),
+                        ],
                       ),
                     );
                   } else {
@@ -408,8 +421,8 @@ class _AdoptPetsState extends State<AdoptPets>
                       padding: const EdgeInsets.only(right: 25.0),
                       child: FloatingActionButton(
                         heroTag: 'adoptPetsButton',
-                        onPressed: () {
-                          Navigator.push(
+                        onPressed: () async {
+                          await Navigator.push(
                             context,
                             PageRouteBuilder(
                               pageBuilder:
@@ -431,6 +444,7 @@ class _AdoptPetsState extends State<AdoptPets>
                               },
                             ),
                           );
+                          _onReturnFromOtherPage();
                         },
                         child: const Icon(Icons.add),
                       ),

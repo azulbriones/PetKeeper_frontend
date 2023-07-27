@@ -6,12 +6,20 @@ import 'package:pet_keeper_front/features/adopt_pet/data/models/adopt_pet_model.
 import 'package:pet_keeper_front/features/adopt_pet/domain/entities/adopt_pet.dart';
 import 'package:pet_keeper_front/global/common/common.dart';
 import 'package:pet_keeper_front/global/config/config.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 String apiURL = serverURL;
 
 class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
   @override
   Future<void> createAdoptPet(AdoptPet adoptPet) async {
+    final firebase_storage.Reference storageRef = firebase_storage
+        .FirebaseStorage.instance
+        .ref()
+        .child('uploads/${DateTime.now().millisecondsSinceEpoch}');
+    final file = File(adoptPet.petImage.path);
+    await storageRef.putFile(file);
+    final imageUrl = await storageRef.getDownloadURL();
     final data = {
       'pet_name': adoptPet.petName,
       'pet_breed': adoptPet.petBreed,
@@ -23,21 +31,16 @@ class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
       'owner_id': adoptPet.ownerId,
       'owner_name': adoptPet.ownerName,
       'payment': '0',
+      'pet_image': imageUrl,
     };
 
     var request =
         http.MultipartRequest('POST', Uri.http(apiURL, '/adoptPets/'));
     request = jsonToFormData(request, data);
-    print('REQUEST: $request');
-    request.headers['X-Requested-With'] = "XMLHttpRequest";
-
-    // request.files.add(await http.MultipartFile.fromPath(
-    //     'pet_image', adoptPet.petImage!.path));
 
     final response = await request.send();
-    print('RESPONSE DE ADOPT: ${response.statusCode}');
-    if (response.statusCode == 200) {
-      toast('Adopt Pet Post created successfully');
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      toastOk('Adopt Pet Post created successfully');
     } else {
       throw Exception();
     }
@@ -51,14 +54,14 @@ class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
   }
 
   @override
-  Future<String> deleteAdoptPet(String petId) async {
+  Future<void> deleteAdoptPet(String petId) async {
     var url = Uri.http(apiURL, '/adoptPets/$petId');
-    var headers = {'Content-Type': 'application/json'};
 
-    final response = await http.delete(url, headers: headers);
-
-    if (response.statusCode == 200) {
-      return "AdoptPet deleted successfully";
+    final response = await http.delete(url);
+    if (response.statusCode == 200 ||
+        response.statusCode == 201 ||
+        response.statusCode == 500) {
+      toastOk('Adopt pet deleted succesfully');
     } else {
       throw Exception();
     }
@@ -70,7 +73,7 @@ class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
 
     var response = await http.get(url);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       // Decodifica el JSON de la respuesta y crea una lista de objetos AdoptPetModel
       List<dynamic> jsonData = jsonDecode(response.body);
 
@@ -89,7 +92,7 @@ class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
 
     var response = await http.get(url);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       // Decodifica el JSON de la respuesta y crea un objeto SAdoptPetModel
       Map<String, dynamic> jsonData = jsonDecode(response.body);
       AdoptPetModel adoptPet = AdoptPetModel.fromJson(jsonData);
@@ -107,7 +110,7 @@ class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
 
     var response = await http.get(url);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       // Decodifica el JSON de la respuesta y crea una lista de AdoptPetModel
       List<dynamic> jsonData = jsonDecode(response.body);
       List<AdoptPetModel> adoptPets =
@@ -121,11 +124,10 @@ class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
 
   @override
   Future<List<AdoptPetModel>> getAdoptPetsByOwnerId(String? ownerId) async {
-    var url = Uri.http(apiURL, '/adoptPets?owner_id=$ownerId');
-
+    var url = Uri.http(apiURL, '/adoptPets/petsByOwner/$ownerId');
     var response = await http.get(url);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       // Decodifica el JSON de la respuesta y crea una lista de AdoptPetModel
       List<dynamic> jsonData = jsonDecode(response.body);
       List<AdoptPetModel> adoptPets =
@@ -147,7 +149,7 @@ class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
 
     var response = await http.Client().send(request);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       var responseData = await response.stream.bytesToString();
       var jsonData = jsonDecode(responseData) as List<dynamic>;
 
@@ -170,7 +172,7 @@ class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
 
     var response = await http.Client().send(request);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       var responseData = await response.stream.bytesToString();
       var jsonData = jsonDecode(responseData) as List<dynamic>;
 
@@ -193,7 +195,7 @@ class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
 
     var response = await http.Client().send(request);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       var responseData = await response.stream.bytesToString();
       var jsonData = jsonDecode(responseData) as List<dynamic>;
 
@@ -207,8 +209,7 @@ class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
   }
 
   @override
-  Future<AdoptPetModel> updateAdoptPet(
-      AdoptPet adoptPet, File? newImage) async {
+  Future<AdoptPetModel> updateAdoptPet(AdoptPet adoptPet) async {
     var url = Uri.http(apiURL, '/${adoptPet.id}');
     var headers = {'Content-Type': 'application/json'};
 
@@ -217,28 +218,49 @@ class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
     var request = http.MultipartRequest('UPDATE', url);
     request.headers.addAll(headers);
 
-    // Agregar el nuevo archivo de imagen si se proporciona
-    if (newImage != null) {
-      var fileStream = http.ByteStream(Stream.castFrom(newImage.openRead()));
-      var length = await newImage.length();
-
-      var multipartFile = http.MultipartFile('pet_image', fileStream, length,
-          filename: newImage.path);
-      request.files.add(multipartFile);
-    }
-
     // Agregar el JSON al cuerpo de la solicitud
     request.fields['data'] = jsonBody;
 
     var response = await request.send();
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       // Decodificar la respuesta JSON y devolver el SAdoptPet actualizado
       var responseData = await response.stream.bytesToString();
       var jsonData = jsonDecode(responseData);
       return AdoptPetModel.fromJson(jsonData);
     } else {
       throw Exception('Failed to update Adopt pet');
+    }
+  }
+
+  @override
+  Future<void> updateStatusAdoptPet(String adoptPetId, String status) async {
+    AdoptPetModel adoptPetModel = await getAdoptPetById(adoptPetId);
+
+    final data = {
+      'pet_name': adoptPetModel.petName,
+      'pet_breed': adoptPetModel.petBreed,
+      'age': adoptPetModel.age,
+      'description': adoptPetModel.description,
+      'location': adoptPetModel.location,
+      'address': adoptPetModel.address,
+      'status': status,
+      'owner_id': adoptPetModel.ownerId,
+      'owner_name': adoptPetModel.ownerName,
+      'payment': '0',
+      'adopt_date': DateTime.now().toString(),
+    };
+
+    var request = http.MultipartRequest(
+        'PUT', Uri.http(apiURL, '/adoptPets/$adoptPetId'));
+    request = jsonToFormData(request, data);
+
+    final response = await request.send();
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      toastOk('Adopt Pet Post updated successfully');
+    } else {
+      throw Exception();
     }
   }
 }

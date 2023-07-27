@@ -240,20 +240,22 @@ class _StrayPostViewState extends State<StrayPostView> {
                                 SizedBox(
                                   height: 10.0,
                                 ),
-                                Row(
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      state.strayPet.address.toString(),
+                                      '${state.strayPet.location}, ${state.strayPet.address}',
                                       style: const TextStyle(
                                         fontSize: 12,
                                         color: Colors.grey,
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: 15.0,
+                                    const SizedBox(
+                                      height: 10.0,
                                     ),
                                     Text(
-                                      state.strayPet.lostDate.toString(),
+                                      state.strayPet.status.toString(),
                                       style: const TextStyle(
                                         fontSize: 12,
                                         color: Colors.grey,

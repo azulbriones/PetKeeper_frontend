@@ -14,7 +14,7 @@ class AdoptPetRepositoryImpl implements AdoptPetRepository {
   }
 
   @override
-  Future<String> deleteAdoptPet(String petId) async {
+  Future<void> deleteAdoptPet(String petId) async {
     return await adoptPetRemoteDataSource.deleteAdoptPet(petId);
   }
 
@@ -54,7 +54,13 @@ class AdoptPetRepositoryImpl implements AdoptPetRepository {
   // }
 
   // @override
-  // Future<AdoptPet> updateAdoptPet(AdoptPet adoptPet, File petImage) async {
-  //   return await adoptPetRemoteDataSource.updateAdoptPet(adoptPet, petImage);
+  // Future<AdoptPet> updateAdoptPet(AdoptPet adoptPet) async {
+  //   return await adoptPetRemoteDataSource.updateAdoptPet(adoptPet);
   // }
+
+  @override
+  Future<void> updateStatusAdoptPet(String adoptPetId, String status) async {
+    return await adoptPetRemoteDataSource.updateStatusAdoptPet(
+        adoptPetId, status);
+  }
 }

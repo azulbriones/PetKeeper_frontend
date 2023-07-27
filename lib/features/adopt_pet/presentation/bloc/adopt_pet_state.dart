@@ -20,6 +20,15 @@ class UpdatedPet extends AdoptPetState {
   UpdatedPet({required this.adoptPet});
 }
 
+class UpdatingStatusPet extends AdoptPetState {}
+
+class UpdatedStatusPet extends AdoptPetState {
+  final String adoptPetId;
+  final String status;
+
+  UpdatedStatusPet({required this.adoptPetId, required this.status});
+}
+
 class LoadingDetailPet extends AdoptPetState {}
 
 class LoadedDetailPet extends AdoptPetState {
@@ -42,10 +51,12 @@ class CreatedPet extends AdoptPetState {
   CreatedPet({required this.newPet});
 }
 
-class DeletePet extends AdoptPetState {
-  final int petId;
+class DeletingPet extends AdoptPetState {}
 
-  DeletePet({required this.petId});
+class DeletedPet extends AdoptPetState {
+  final String petId;
+
+  DeletedPet({required this.petId});
 }
 
 class AdoptError extends AdoptPetState {

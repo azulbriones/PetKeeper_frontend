@@ -5,7 +5,7 @@ class CreateStrayPetUseCase {
   final StrayPetRepository strayPetRepository;
 
   CreateStrayPetUseCase(this.strayPetRepository);
-  Future<List<StrayPet>> execute(StrayPet strayPet) async {
+  Future<void> execute(StrayPet strayPet) async {
     return await strayPetRepository.createStrayPet(strayPet);
   }
 }
