@@ -27,6 +27,13 @@ class LoadedDetailStrayPet extends StrayPetState {
   LoadedDetailStrayPet({required this.strayPet});
 }
 
+class LoadingAllUserPostsStrayPet extends StrayPetState {}
+
+class LoadedAllUserPostsStrayPet extends StrayPetState {
+  List<StrayPet> allUserPostsStrayPets;
+  LoadedAllUserPostsStrayPet({required this.allUserPostsStrayPets});
+}
+
 class CreatingStrayPet extends StrayPetState {}
 
 class CreatedStrayPet extends StrayPetState {

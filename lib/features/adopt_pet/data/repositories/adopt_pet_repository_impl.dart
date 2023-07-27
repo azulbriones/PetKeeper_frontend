@@ -9,7 +9,7 @@ class AdoptPetRepositoryImpl implements AdoptPetRepository {
 
   AdoptPetRepositoryImpl({required this.adoptPetRemoteDataSource});
   @override
-  Future<List<AdoptPet>> createAdoptPet(AdoptPet adoptPet) async {
+  Future<void> createAdoptPet(AdoptPet adoptPet) async {
     return await adoptPetRemoteDataSource.createAdoptPet(adoptPet);
   }
 
@@ -23,10 +23,10 @@ class AdoptPetRepositoryImpl implements AdoptPetRepository {
     return await adoptPetRemoteDataSource.getAllAdoptPets();
   }
 
-  // @override
-  // Future<List<AdoptPet>> getAdoptPetsByOwnerId(String ownerId) async {
-  //   return await adoptPetRemoteDataSource.getAdoptPetsByOwnerId(ownerId);
-  // }
+  @override
+  Future<List<AdoptPet>> getAdoptPetsByOwnerId(String? ownerId) async {
+    return await adoptPetRemoteDataSource.getAdoptPetsByOwnerId(ownerId);
+  }
 
   // @override
   // Future<List<AdoptPet>> getAdoptPetsByNewOwnerId(String newOwnerId) async {

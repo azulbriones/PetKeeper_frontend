@@ -15,6 +15,7 @@ class StrayPet {
   final String? ownerName;
   final dynamic lostDate;
   final dynamic createdAt;
+  final dynamic payment;
 
   StrayPet({
     this.id,
@@ -33,27 +34,28 @@ class StrayPet {
     this.rescuerId,
     this.rescuerName,
     this.createdAt,
+    this.payment,
   });
 
   factory StrayPet.fromJson(Map<String, dynamic> json) {
     return StrayPet(
-      id: json['id'],
-      petName: json['pet_name'],
-      petImage: json['pet_image'],
-      petBreed: json['pet_breed'],
-      ownerId: json['owner_id'],
-      ownerName: json['owner_name'],
-      address: json['address'],
-      location: json['location'],
-      lostDate: json['lost_date'],
-      reward: json['reward'],
-      age: json['age'],
-      description: json['description'],
-      status: json['status'],
-      rescuerId: json['rescuer_id'],
-      rescuerName: json['rescuer_name'],
-      createdAt: json['createdAt'],
-    );
+        id: json['id'],
+        petName: json['pet_name'],
+        petImage: json['pet_image'],
+        petBreed: json['pet_breed'],
+        ownerId: json['owner_id'],
+        ownerName: json['owner_name'],
+        address: json['address'],
+        location: json['location'],
+        lostDate: json['lost_date'],
+        reward: json['reward'],
+        age: json['age'],
+        description: json['description'],
+        status: json['status'],
+        rescuerId: json['rescuer_id'],
+        rescuerName: json['rescuer_name'],
+        createdAt: json['createdAt'],
+        payment: json['payment']);
   }
 
   Map<String, dynamic> toJson() {
@@ -74,6 +76,7 @@ class StrayPet {
       'owner_name': ownerName,
       'lost_date': lostDate,
       'created_at': createdAt,
+      'payment': payment
     };
   }
 }

@@ -16,7 +16,6 @@ class SingleUserCubit extends Cubit<SingleUserState> {
     emit(SingleUserLoading());
     try {
       final streamResponse = getSingleUserUseCase.call(user);
-      print('USER DATA: ${user}');
       streamResponse.listen((user) {
         emit(SingleUserLoaded(currentUser: user.first));
       });

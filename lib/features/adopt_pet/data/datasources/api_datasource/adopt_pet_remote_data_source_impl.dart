@@ -4,15 +4,14 @@ import 'package:http/http.dart' as http;
 import 'package:pet_keeper_front/features/adopt_pet/data/datasources/api_datasource/adopt_pet_remote_data_source.dart';
 import 'package:pet_keeper_front/features/adopt_pet/data/models/adopt_pet_model.dart';
 import 'package:pet_keeper_front/features/adopt_pet/domain/entities/adopt_pet.dart';
+import 'package:pet_keeper_front/global/common/common.dart';
 import 'package:pet_keeper_front/global/config/config.dart';
 
 String apiURL = serverURL;
 
 class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
   @override
-  Future<List<AdoptPetModel>> createAdoptPet(AdoptPet adoptPet) async {
-    var url = Uri.https(apiURL, '/adoptPets/');
-
+  Future<void> createAdoptPet(AdoptPet adoptPet) async {
     final data = {
       'pet_name': adoptPet.petName,
       'pet_breed': adoptPet.petBreed,
@@ -20,25 +19,25 @@ class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
       'description': adoptPet.description,
       'location': adoptPet.location,
       'address': adoptPet.address,
-      'status': 'lost',
+      'status': adoptPet.status,
       'owner_id': adoptPet.ownerId,
       'owner_name': adoptPet.ownerName,
-      'created_at': adoptPet.createdAt,
-      'payment': adoptPet.payment
+      'payment': '0',
     };
 
     var request =
-        http.MultipartRequest('POST', Uri.parse('http://$apiURL$url'));
+        http.MultipartRequest('POST', Uri.http(apiURL, '/adoptPets/'));
     request = jsonToFormData(request, data);
+    print('REQUEST: $request');
     request.headers['X-Requested-With'] = "XMLHttpRequest";
 
-    request.files.add(await http.MultipartFile.fromPath(
-        'pet_image', adoptPet.petImage!.path));
+    // request.files.add(await http.MultipartFile.fromPath(
+    //     'pet_image', adoptPet.petImage!.path));
 
     final response = await request.send();
+    print('RESPONSE DE ADOPT: ${response.statusCode}');
     if (response.statusCode == 200) {
-      List<AdoptPetModel> listUpdatedCreated = await getAllAdoptPets();
-      return listUpdatedCreated;
+      toast('Adopt Pet Post created successfully');
     } else {
       throw Exception();
     }
@@ -87,7 +86,6 @@ class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
   @override
   Future<AdoptPetModel> getAdoptPetById(String petId) async {
     var url = Uri.http(apiURL, '/adoptPets/$petId');
-    print(url);
 
     var response = await http.get(url);
 
@@ -122,7 +120,7 @@ class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
   }
 
   @override
-  Future<List<AdoptPetModel>> getAdoptPetsByOwnerId(String ownerId) async {
+  Future<List<AdoptPetModel>> getAdoptPetsByOwnerId(String? ownerId) async {
     var url = Uri.http(apiURL, '/adoptPets?owner_id=$ownerId');
 
     var response = await http.get(url);

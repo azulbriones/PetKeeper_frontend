@@ -214,7 +214,6 @@ class _StrayPetsState extends State<StrayPets>
                                 const EdgeInsets.symmetric(horizontal: 10.0),
                             child: GestureDetector(
                               onTap: () async {
-                                print('ID DEL POST ENVIADO: ${pets.id}');
                                 await Navigator.push(
                                   context,
                                   PageRouteBuilder(
@@ -407,9 +406,12 @@ class _StrayPetsState extends State<StrayPets>
                       }).toList()),
                     );
                   } else if (state is StrayError) {
-                    return Center(
-                      child: Text(state.error,
-                          style: const TextStyle(color: Colors.red)),
+                    return RefreshIndicator(
+                      onRefresh: _onRefresh,
+                      child: Center(
+                        child: Text(state.error,
+                            style: const TextStyle(color: Colors.red)),
+                      ),
                     );
                   } else {
                     return Container();

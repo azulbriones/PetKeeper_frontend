@@ -9,6 +9,7 @@ import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_en
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/foundation/foundation_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
+import 'package:pet_keeper_front/global/common/common.dart';
 import 'package:pet_keeper_front/global/theme/style.dart';
 
 class FoundationProfileView extends StatefulWidget {
@@ -24,7 +25,6 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
 
   @override
   void initState() {
-    print('ID DEL POST RECIBIDO: ${widget.id}');
     BlocProvider.of<FoundationCubit>(context)
         .getSingleFoundation(foundationId: widget.id.toString());
     subscription = Connectivity()
@@ -263,7 +263,62 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    print('reportar');
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            scrollable: true,
+                                            title: const Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Icon(Icons.dangerous),
+                                                SizedBox(width: 5.0),
+                                                Text('Reportar fundación'),
+                                              ],
+                                            ),
+                                            content: const Column(
+                                              children: [
+                                                Text(
+                                                    'Escriba el motivo de su reporte'),
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 5.0),
+                                                  child: SizedBox(
+                                                    width: 220,
+                                                    child: TextField(
+                                                      textAlign:
+                                                          TextAlign.start,
+                                                      maxLines: 1,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  // Aquí puedes agregar la lógica que deseas realizar al presionar el botón "Cancelar"
+                                                  Navigator.of(context)
+                                                      .pop(); // Cerrar el AlertDialog
+                                                },
+                                                child: const Text('Cancelar'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  //enviar correo a petkeeper del reporte
+                                                  toastOk(
+                                                      'Foundation report sent');
+                                                  Navigator.of(context)
+                                                      .pop(); // Cerrar el AlertDialog
+                                                },
+                                                child: const Text('Enviar'),
+                                              ),
+                                            ],
+                                          );
+                                        });
                                   },
                                   child: const Align(
                                     alignment: Alignment.centerRight,
@@ -281,7 +336,7 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                                         Text(
                                           'Reportar fundación',
                                           style: TextStyle(
-                                              fontSize: 12,
+                                              fontSize: 14,
                                               color: Colors.red,
                                               fontWeight: FontWeight.bold),
                                         ),
@@ -296,49 +351,50 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                         SizedBox(
                           height: 15.0,
                         ),
-                        InkWell(
-                          onTap: () {
-                            print('enviar mensaje');
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            height: 44,
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                              color: greenColor,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 1,
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 5),
-                                ),
-                              ],
-                            ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Enviar mensaje',
-                                  style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white),
-                                ),
-                                SizedBox(
-                                  width: 10.0,
-                                ),
-                                Icon(
-                                  CupertinoIcons.chat_bubble_fill,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                              ],
+                        if (currentUser.id != state.foundation.id)
+                          InkWell(
+                            onTap: () {
+                              print('enviar mensaje');
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              height: 44,
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                color: greenColor,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 1,
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 5),
+                                  ),
+                                ],
+                              ),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Enviar mensaje',
+                                    style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white),
+                                  ),
+                                  SizedBox(
+                                    width: 10.0,
+                                  ),
+                                  Icon(
+                                    CupertinoIcons.chat_bubble_fill,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
                         SizedBox(
                           height: 15.0,
                         ),

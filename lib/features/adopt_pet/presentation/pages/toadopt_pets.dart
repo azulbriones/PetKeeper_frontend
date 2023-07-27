@@ -389,9 +389,12 @@ class _AdoptPetsState extends State<AdoptPets>
                       }).toList()),
                     );
                   } else if (state is AdoptError) {
-                    return Center(
-                      child: Text(state.error,
-                          style: const TextStyle(color: Colors.red)),
+                    return RefreshIndicator(
+                      onRefresh: _onRefresh,
+                      child: Center(
+                        child: Text(state.error,
+                            style: const TextStyle(color: Colors.red)),
+                      ),
                     );
                   } else {
                     return Container();

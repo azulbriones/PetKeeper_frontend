@@ -27,12 +27,19 @@ class LoadedDetailPet extends AdoptPetState {
   LoadedDetailPet({required this.adoptPet});
 }
 
+class LoadingAllUserPostsPet extends AdoptPetState {}
+
+class LoadedAllUserPostsPet extends AdoptPetState {
+  List<AdoptPet> allUserPostsPets;
+  LoadedAllUserPostsPet({required this.allUserPostsPets});
+}
+
 class CreatingPet extends AdoptPetState {}
 
 class CreatedPet extends AdoptPetState {
-  List<AdoptPet> allPets;
+  final AdoptPet newPet;
 
-  CreatedPet({required this.allPets});
+  CreatedPet({required this.newPet});
 }
 
 class DeletePet extends AdoptPetState {

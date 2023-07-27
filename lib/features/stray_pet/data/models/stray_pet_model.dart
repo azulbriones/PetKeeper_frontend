@@ -18,24 +18,25 @@ class StrayPetModel extends StrayPet {
     String? ownerName,
     required dynamic lostDate,
     dynamic createdAt,
+    dynamic payment,
   }) : super(
-          id: id,
-          petName: petName,
-          petImage: petImage,
-          petBreed: petBreed,
-          ownerId: ownerId,
-          ownerName: ownerName,
-          address: address,
-          location: location,
-          lostDate: lostDate,
-          reward: reward,
-          age: age,
-          description: description,
-          status: status,
-          rescuerId: rescuerId,
-          rescuerName: rescuerName,
-          createdAt: createdAt,
-        );
+            id: id,
+            petName: petName,
+            petImage: petImage,
+            petBreed: petBreed,
+            ownerId: ownerId,
+            ownerName: ownerName,
+            address: address,
+            location: location,
+            lostDate: lostDate,
+            reward: reward,
+            age: age,
+            description: description,
+            status: status,
+            rescuerId: rescuerId,
+            rescuerName: rescuerName,
+            createdAt: createdAt,
+            payment: payment);
 
   factory StrayPetModel.fromJson(Map<String, dynamic> json) {
     return StrayPetModel(
@@ -77,27 +78,28 @@ class StrayPetModel extends StrayPet {
       'owner_name': ownerName,
       'lost_date': lostDate,
       'created_at': createdAt,
+      'payment': payment
     };
   }
 
   factory StrayPetModel.fromEntity(StrayPet strayPet) {
     return StrayPetModel(
-      id: strayPet.id,
-      petName: strayPet.petName,
-      petImage: strayPet.petImage,
-      petBreed: strayPet.petBreed,
-      ownerId: strayPet.ownerId,
-      ownerName: strayPet.ownerName,
-      address: strayPet.address,
-      location: strayPet.location,
-      lostDate: strayPet.lostDate,
-      reward: strayPet.reward,
-      age: strayPet.age,
-      description: strayPet.description,
-      status: strayPet.status,
-      rescuerId: strayPet.rescuerId,
-      rescuerName: strayPet.rescuerName,
-      createdAt: strayPet.createdAt,
-    );
+        id: strayPet.id,
+        petName: strayPet.petName,
+        petImage: strayPet.petImage,
+        petBreed: strayPet.petBreed,
+        ownerId: strayPet.ownerId,
+        ownerName: strayPet.ownerName,
+        address: strayPet.address,
+        location: strayPet.location,
+        lostDate: strayPet.lostDate,
+        reward: strayPet.reward,
+        age: strayPet.age,
+        description: strayPet.description,
+        status: strayPet.status,
+        rescuerId: strayPet.rescuerId,
+        rescuerName: strayPet.rescuerName,
+        createdAt: strayPet.createdAt,
+        payment: strayPet.payment);
   }
 }

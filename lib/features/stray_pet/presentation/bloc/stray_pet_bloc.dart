@@ -4,7 +4,7 @@ import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/create_stra
 import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/delete_stray_pet_use_case.dart';
 import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_all_stray_pets_use_case.dart';
 // import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_lost_date_use_case.dart';
-// import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_owner_id_use_case.dart';
+import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_owner_id_use_case.dart';
 import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pet_by_id_use_case.dart';
 // import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_location_use_case.dart';
 // import 'package:pet_keeper_front/features/stray_pet/domain/use_cases/get_stray_pets_by_rescuer_id_use_case.dart';
@@ -20,7 +20,7 @@ class StrayPetBloc extends Bloc<StrayPetEvent, StrayPetState> {
   final GetStrayPetByIdUseCase getStrayPetByIdUseCase;
   // final GetStrayPetByLocationUseCase getStrayPetByLocationUseCase;
   // final GetStrayPetsByLostDateUseCase getStrayPetsByLostDateUseCase;
-  // final GetStrayPetsByOwnerIdUseCase getStrayPetsByOwnerIdUseCase;
+  final GetStrayPetsByOwnerIdUseCase getStrayPetsByOwnerIdUseCase;
   // final GetStrayPetsByRescuerIdUseCase getStrayPetsByRescuerIdUseCase;
   // final GetStrayPetsByStatusUseCase getStrayPetsByStatusUseCase;
   final CreateStrayPetUseCase createStrayPetUseCase;
@@ -32,7 +32,7 @@ class StrayPetBloc extends Bloc<StrayPetEvent, StrayPetState> {
     required this.getStrayPetByIdUseCase,
     // required this.getStrayPetByLocationUseCase,
     // required this.getStrayPetsByLostDateUseCase,
-    // required this.getStrayPetsByOwnerIdUseCase,
+    required this.getStrayPetsByOwnerIdUseCase,
     // required this.getStrayPetsByRescuerIdUseCase,
     // required this.getStrayPetsByStatusUseCase,
     required this.createStrayPetUseCase,
@@ -56,6 +56,17 @@ class StrayPetBloc extends Bloc<StrayPetEvent, StrayPetState> {
               await getStrayPetByIdUseCase.execute(event.strayPetId as String);
           emit(LoadedDetailStrayPet(strayPet: postDetail));
           print('LoadDetailStrayPet Emitted');
+        } catch (e) {
+          emit(StrayError(error: e.toString()));
+        }
+      } else if (event is GetAllUserPostsStrayPet) {
+        try {
+          emit(LoadingAllUserPostsStrayPet());
+          List<StrayPet> allUserPostsStrayPets =
+              await getStrayPetsByOwnerIdUseCase.execute(event.userId);
+          emit(LoadedAllUserPostsStrayPet(
+              allUserPostsStrayPets: allUserPostsStrayPets));
+          print('LoadAllUserPostsStrayPet Emitted');
         } catch (e) {
           emit(StrayError(error: e.toString()));
         }

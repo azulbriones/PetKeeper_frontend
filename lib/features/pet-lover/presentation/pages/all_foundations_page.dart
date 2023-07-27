@@ -110,7 +110,6 @@ class _AllFoundationsPageState extends State<AllFoundationsPage>
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           child: GestureDetector(
                             onTap: () async {
-                              print('ID DEL POST ENVIADO: ${foundations.id}');
                               await Navigator.push(
                                 context,
                                 PageRouteBuilder(

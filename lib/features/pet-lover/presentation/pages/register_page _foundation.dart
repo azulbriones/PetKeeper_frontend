@@ -84,7 +84,6 @@ class _RegisterPageFoundationState extends State<RegisterPageFoundation> {
   }
 
   Future<void> _pickFile() async {
-    print('FILE PATH BEFORE ${_certFile.path}');
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.any,
     );
@@ -92,7 +91,6 @@ class _RegisterPageFoundationState extends State<RegisterPageFoundation> {
     if (result != null) {
       setState(() {
         _certFile = File(result.files.single.path!);
-        print('FILE PATH: $_certFile');
       });
     }
   }

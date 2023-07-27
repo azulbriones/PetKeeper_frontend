@@ -5,13 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:network_image/network_image.dart';
+import 'package:pet_keeper_front/features/adopt_pet/presentation/bloc/adopt_pet_bloc.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page_foundation.dart';
 import 'package:pet_keeper_front/global/common/common.dart';
 import 'package:pet_keeper_front/global/theme/style.dart';
-import 'package:pet_keeper_front/global/widgets/container/container_button.dart';
+import 'package:pet_keeper_front/global/widgets/container/container_button_secondary.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class StrayPost extends StatefulWidget {
@@ -25,15 +26,25 @@ class _StrayPostState extends State<StrayPost> {
   late TextEditingController _petName;
   late TextEditingController _petRace;
   late TextEditingController _petOwner;
-  late TextEditingController _petStrayPlace;
+  late TextEditingController _petStrayAddress;
   late TextEditingController _petDesc;
   late TextEditingController _petBounty;
+  String? _locationController;
+  String? _cityController;
   String buttonTitle = 'Seleccionar imagen';
   File? _image;
   DateTime? _selectedDate;
   final DateTime _maximumDate = DateTime.now();
   bool isLoading = false;
   bool _isColorChanged = false;
+
+  List<String> countries = [
+    'Chiapas',
+  ];
+
+  List<String> cities = [
+    'Tuxtla Gutiérrez',
+  ];
 
   @override
   void initState() {
@@ -42,7 +53,7 @@ class _StrayPostState extends State<StrayPost> {
     _petRace = TextEditingController();
     _petOwner = TextEditingController();
     _petDesc = TextEditingController();
-    _petStrayPlace = TextEditingController();
+    _petStrayAddress = TextEditingController();
     _petBounty = TextEditingController();
   }
 
@@ -52,7 +63,7 @@ class _StrayPostState extends State<StrayPost> {
     _petRace.dispose();
     _petOwner.dispose();
     _petDesc.dispose();
-    _petStrayPlace.dispose();
+    _petStrayAddress.dispose();
     _petBounty.dispose();
     _image = null;
     super.dispose();
@@ -217,7 +228,7 @@ class _StrayPostState extends State<StrayPost> {
                     SizedBox(
                       height: 15.0,
                     ),
-                    ContainerButton(
+                    ContainerButtonSecondary(
                       title: buttonTitle,
                       onTap: () async {
                         final picker = ImagePicker();
@@ -229,7 +240,7 @@ class _StrayPostState extends State<StrayPost> {
                             _image = File(pickedFile.path);
                             buttonTitle = 'Cambiar imagen';
                           } else {
-                            print('No se seleccionó ninguna imagen.');
+                            toast('No se seleccionó ninguna imagen.');
                           }
                         });
                       },
@@ -360,8 +371,156 @@ class _StrayPostState extends State<StrayPost> {
                     SizedBox(
                       height: 15.0,
                     ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12.0),
+                        color: const Color.fromARGB(132, 255, 255, 255),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.place,
+                              color: Colors.indigo,
+                            ),
+                            SizedBox(
+                              width: 13.0,
+                            ),
+                            Expanded(
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  dropdownColor: Colors.indigo,
+                                  value: _locationController,
+                                  iconEnabledColor: Colors.indigo,
+                                  isExpanded: true,
+                                  style: const TextStyle(color: Colors.black87),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _locationController = newValue;
+                                    });
+                                  },
+                                  items:
+                                      countries.map<DropdownMenuItem<String>>(
+                                    (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12.0),
+                                          child: Text(
+                                            value,
+                                            style: const TextStyle(
+                                              color: Colors.black87,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ).toList(),
+                                  hint: const Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 12.0),
+                                    child: Text(
+                                      'Seleccione un estado',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    _locationController != null
+                        ? Column(
+                            children: [
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  color:
+                                      const Color.fromARGB(132, 255, 255, 255),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12.0),
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.location_city,
+                                        color: Colors.indigo,
+                                      ),
+                                      SizedBox(
+                                        width: 13.0,
+                                      ),
+                                      Expanded(
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<String>(
+                                            dropdownColor: Colors.indigo,
+                                            value: _cityController,
+                                            iconEnabledColor: Colors.indigo,
+                                            isExpanded: true,
+                                            style: const TextStyle(
+                                                color: Colors.black87),
+                                            onChanged: (String? newValue) {
+                                              setState(() {
+                                                _cityController = newValue;
+                                              });
+                                            },
+                                            items: cities
+                                                .map<DropdownMenuItem<String>>(
+                                              (String value) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 12.0),
+                                                    child: Text(
+                                                      value,
+                                                      style: const TextStyle(
+                                                        color: Colors.black87,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ).toList(),
+                                            hint: const Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 12.0),
+                                              child: Text(
+                                                'Seleccione una ciudad',
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : Container(),
+                    SizedBox(
+                      height: 15.0,
+                    ),
                     TextField(
-                      controller: _petStrayPlace,
+                      controller: _petStrayAddress,
                       style: const TextStyle(color: Colors.black87),
                       decoration: InputDecoration(
                         prefixIcon: const Icon(
@@ -390,7 +549,7 @@ class _StrayPostState extends State<StrayPost> {
                             width: 1,
                           ),
                         ),
-                        hintText: 'Lugar de extravío',
+                        hintText: 'Dirección de extravío',
                         hintStyle: const TextStyle(
                           color: Colors.grey,
                         ),
@@ -402,7 +561,7 @@ class _StrayPostState extends State<StrayPost> {
                       height: 15.0,
                     ),
                     TextFormField(
-                      style: const TextStyle(color: Colors.grey),
+                      style: const TextStyle(color: Colors.black87),
                       decoration: InputDecoration(
                         prefixIcon: const Icon(
                           Icons.date_range,
@@ -639,8 +798,26 @@ class _StrayPostState extends State<StrayPost> {
       return;
     }
 
-    if (_petStrayPlace.text.isEmpty) {
-      toast("Inserta un lugar");
+    if (_locationController == '' || _locationController == null) {
+      toast("Inserta un estado");
+      toggleLoading();
+      return;
+    }
+
+    if (_cityController == '' || _cityController == null) {
+      toast("Inserta una ciudad");
+      toggleLoading();
+      return;
+    }
+
+    if (_petStrayAddress.text.isEmpty) {
+      toast("Inserta una dirección");
+      toggleLoading();
+      return;
+    }
+
+    if (_petStrayAddress.text.isEmpty) {
+      toast("Inserta una dirección");
       toggleLoading();
       return;
     }
@@ -656,9 +833,5 @@ class _StrayPostState extends State<StrayPost> {
       toggleLoading();
       return;
     }
-
-    // BlocProvider.of<CredentialCubit>(context).signInSubmit(
-    //     email: _emailController.text, password: _passwordController.text);
-    // toggleLoading();
   }
 }

@@ -5,7 +5,7 @@ class CreatePostUseCase {
   final AdoptPetRepository adoptPetRepository;
 
   CreatePostUseCase(this.adoptPetRepository);
-  Future<List<AdoptPet>> execute(AdoptPet adoptPet) async {
+  Future<void> execute(AdoptPet adoptPet) async {
     return await adoptPetRepository.createAdoptPet(adoptPet);
   }
 }

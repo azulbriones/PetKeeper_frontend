@@ -1,40 +1,51 @@
 import 'dart:async';
-
+import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:network_image/network_image.dart';
 import 'package:pet_keeper_front/features/adopt_pet/domain/entities/adopt_pet.dart';
 import 'package:pet_keeper_front/features/adopt_pet/presentation/bloc/adopt_pet_bloc.dart';
 import 'package:pet_keeper_front/features/adopt_pet/presentation/pages/adopt_post_view.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/auth/auth_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/user/user_cubit.dart';
 import 'package:pet_keeper_front/features/stray_pet/domain/entities/stray_pet.dart';
 import 'package:pet_keeper_front/features/stray_pet/presentation/bloc/stray_pet_bloc.dart';
 import 'package:pet_keeper_front/features/stray_pet/presentation/pages/stray_post_view.dart';
+import 'package:pet_keeper_front/global/common/common.dart';
+import 'package:pet_keeper_front/global/widgets/container/container_button.dart';
+import 'package:pet_keeper_front/global/widgets/container/container_button_danger.dart';
+import 'package:pet_keeper_front/global/widgets/custom_text_field/text_field_container.dart';
+import 'package:pet_keeper_front/features/storage/domain/usecases/upload_profile_image_usecase.dart';
+import 'package:pet_keeper_front/features/injection_container.dart' as di;
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class MyPostsPage extends StatefulWidget {
+  final String? userId;
+  const MyPostsPage({Key? key, required this.userId}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<MyPostsPage> createState() => _MyPostsPageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+class _MyPostsPageState extends State<MyPostsPage>
+    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
 
   late AnimationController _animationController;
   late AnimationController _animationController2;
-  bool _visible = true;
-  bool _visible2 = false;
+  late bool _visible;
+  late bool _visible2;
 
   late StreamSubscription<ConnectivityResult> subscription;
 
   @override
   void initState() {
+    _visible = true;
+    _visible2 = false;
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -43,15 +54,21 @@ class _HomePageState extends State<HomePage>
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
-    // context.read<StrayPetBloc>().add(GetAllStrayPets());
-    // context.read<AdoptPetBloc>().add(GetAllPets());
+    context.read<AdoptPetBloc>().add(GetAllUserPostsPet(userId: widget.userId));
+    context
+        .read<StrayPetBloc>()
+        .add(GetAllUserPostsStrayPet(userId: widget.userId));
     subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
       if (result == ConnectivityResult.wifi ||
           result == ConnectivityResult.mobile) {
-        context.read<AdoptPetBloc>().add(GetAllPets());
-        context.read<StrayPetBloc>().add(GetAllStrayPets());
+        context
+            .read<AdoptPetBloc>()
+            .add(GetAllUserPostsPet(userId: widget.userId));
+        context
+            .read<StrayPetBloc>()
+            .add(GetAllUserPostsStrayPet(userId: widget.userId));
         ScaffoldMessenger.of(context).clearSnackBars();
       } else {
         const snackBar = SnackBar(
@@ -71,27 +88,24 @@ class _HomePageState extends State<HomePage>
   void dispose() {
     _animationController.dispose();
     _animationController2.dispose();
+    subscription.cancel();
     super.dispose();
   }
 
   // Función que se ejecutará al realizar la acción de recarga
   Future<void> _onRefresh() async {
     // Simulamos una operación de carga de datos
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
 
     // Una vez finalizada la operación, actualizamos la lista de elementos
     setState(() {
-      context.read<AdoptPetBloc>().add(GetAllPets());
-      context.read<StrayPetBloc>().add(GetAllStrayPets());
+      context
+          .read<AdoptPetBloc>()
+          .add(GetAllUserPostsPet(userId: widget.userId));
+      context
+          .read<StrayPetBloc>()
+          .add(GetAllUserPostsStrayPet(userId: widget.userId));
     });
-  }
-
-  void _onReturnFromOtherPageAdopt() {
-    context.read<AdoptPetBloc>().add(GetAllPets());
-  }
-
-  void _onReturnFromOtherPageStray() {
-    context.read<StrayPetBloc>().add(GetAllStrayPets());
   }
 
   void _toggleVisibility() {
@@ -120,6 +134,10 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        title: const Text('PetKeeper'),
+      ),
       body: BlocBuilder<SingleUserCubit, SingleUserState>(
         builder: (context, singleUserState) {
           if (singleUserState is SingleUserLoaded) {
@@ -138,7 +156,6 @@ class _HomePageState extends State<HomePage>
     double baseWidth = 375;
     double fem = MediaQuery.of(context).size.width / baseWidth;
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           children: [
@@ -151,7 +168,7 @@ class _HomePageState extends State<HomePage>
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 15.0 * fem),
                   child: const Text(
-                    'Inicio',
+                    'Mis publicaciones',
                     style: TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
@@ -173,7 +190,7 @@ class _HomePageState extends State<HomePage>
                           onTap: _toggleVisibility,
                           behavior: HitTestBehavior.translucent,
                           child: Container(
-                            height: 100,
+                            height: 70,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10.0),
@@ -264,10 +281,11 @@ class _HomePageState extends State<HomePage>
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 18.0),
                       child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.easeInOut,
-                          height: _visible ? 200 : 0,
-                          child: _buildStrayPets()),
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut,
+                        height: _visible ? 200 : 0,
+                        child: _buildStrayPets(),
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 20.0),
@@ -277,7 +295,7 @@ class _HomePageState extends State<HomePage>
                           onTap: _toggleVisibility2,
                           behavior: HitTestBehavior.translucent,
                           child: Container(
-                            height: 100,
+                            height: 70,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10.0),
@@ -390,14 +408,13 @@ class _HomePageState extends State<HomePage>
   Widget _buildStrayPets() {
     return BlocBuilder<StrayPetBloc, StrayPetState>(
       builder: (context, state) {
-        if (state is LoadingAllStrayPets) {
+        if (state is LoadingAllUserPostsStrayPet) {
           return const Center(
             child: CircularProgressIndicator(),
           );
-        } else if (state is LoadedAllStrayPets) {
-          List<StrayPet> topStrayPosts = state.allStrayPets.take(3).toList();
+        } else if (state is LoadedAllUserPostsStrayPet) {
           return ListView(
-              children: topStrayPosts.map((pets) {
+              children: state.allUserPostsStrayPets.map((pets) {
             return Padding(
               padding: const EdgeInsets.only(top: 10.0),
               child: GestureDetector(
@@ -423,7 +440,6 @@ class _HomePageState extends State<HomePage>
                       },
                     ),
                   );
-                  _onReturnFromOtherPageStray();
                 },
                 child: Container(
                   height: 100,
@@ -584,14 +600,13 @@ class _HomePageState extends State<HomePage>
   Widget _buildAdoptPets() {
     return BlocBuilder<AdoptPetBloc, AdoptPetState>(
       builder: (context, state) {
-        if (state is LoadingAllPets) {
+        if (state is LoadingAllUserPostsPet) {
           return const Center(
             child: CircularProgressIndicator(),
           );
-        } else if (state is LoadedAllPets) {
-          List<AdoptPet> topAdoptPosts = state.allPets.take(3).toList();
+        } else if (state is LoadedAllUserPostsPet) {
           return ListView(
-              children: topAdoptPosts.map((pets) {
+              children: state.allUserPostsPets.map((pets) {
             return Padding(
               padding: const EdgeInsets.only(top: 10.0),
               child: GestureDetector(
@@ -617,7 +632,6 @@ class _HomePageState extends State<HomePage>
                       },
                     ),
                   );
-                  _onReturnFromOtherPageAdopt();
                 },
                 child: Container(
                   height: 100,
@@ -760,4 +774,33 @@ class _HomePageState extends State<HomePage>
       },
     );
   }
+
+  // void _updateProfile(String uid) {
+  //   if (_image != null) {
+  //     di.sl<UploadProfileImageUseCase>().call(file: _image!).then((imageUrl) {
+  //       BlocProvider.of<UserCubit>(context)
+  //           .getUpdateUser(
+  //         user: PetLoverEntity(
+  //           id: uid,
+  //           name: _nameController.text,
+  //           profileUrl: imageUrl,
+  //         ),
+  //       )
+  //           .then((value) {
+  //         toast("Profile Updated Successfully");
+  //       });
+  //     });
+  //   } else {
+  //     BlocProvider.of<UserCubit>(context)
+  //         .getUpdateUser(
+  //       user: PetLoverEntity(
+  //         id: uid,
+  //         name: _nameController.text,
+  //       ),
+  //     )
+  //         .then((value) {
+  //       toast("Profile Updated Successfully");
+  //     });
+  //   }
+  // }
 }

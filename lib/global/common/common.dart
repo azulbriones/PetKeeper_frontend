@@ -9,3 +9,12 @@ void toast(String msg) {
       fontSize: 16,
       backgroundColor: Colors.red);
 }
+
+void toastOk(String msg) {
+  Fluttertoast.showToast(
+      msg: msg,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      fontSize: 16,
+      backgroundColor: Colors.green);
+}

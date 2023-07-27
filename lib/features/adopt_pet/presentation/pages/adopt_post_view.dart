@@ -24,7 +24,6 @@ class _StrayPostViewState extends State<AdoptPostView> {
 
   @override
   void initState() {
-    print('ID DEL POST RECIBIDO: ${widget.id}');
     context.read<AdoptPetBloc>().add(GetDetailPet(petId: widget.id));
     subscription = Connectivity()
         .onConnectivityChanged

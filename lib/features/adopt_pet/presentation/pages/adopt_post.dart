@@ -4,13 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:network_image/network_image.dart';
+import 'package:pet_keeper_front/features/adopt_pet/domain/entities/adopt_pet.dart';
+import 'package:pet_keeper_front/features/adopt_pet/presentation/bloc/adopt_pet_bloc.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page_foundation.dart';
 import 'package:pet_keeper_front/global/common/common.dart';
 import 'package:pet_keeper_front/global/theme/style.dart';
-import 'package:pet_keeper_front/global/widgets/container/container_button.dart';
+import 'package:pet_keeper_front/global/widgets/container/container_button_secondary.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class AdoptPost extends StatefulWidget {
@@ -21,26 +23,38 @@ class AdoptPost extends StatefulWidget {
 }
 
 class _StrayPostState extends State<AdoptPost> {
+  late AdoptPetBloc _adoptPetBloc;
   late TextEditingController _petName;
   late TextEditingController _petRace;
   late TextEditingController _petOwner;
-  late TextEditingController _petPlace;
+  late TextEditingController _petAddress;
   late TextEditingController _petDesc;
+  late TextEditingController _petAge;
+  String? _locationController;
+  String? _cityController;
   String buttonTitle = 'Seleccionar imagen';
   File? _image;
-  DateTime? _selectedDate;
-  final DateTime _maximumDate = DateTime.now();
   bool isLoading = false;
   bool _isColorChanged = false;
+
+  List<String> countries = [
+    'Chiapas',
+  ];
+
+  List<String> cities = [
+    'Tuxtla Gutiérrez',
+  ];
 
   @override
   void initState() {
     super.initState();
+    _adoptPetBloc = BlocProvider.of<AdoptPetBloc>(context);
     _petName = TextEditingController();
     _petRace = TextEditingController();
     _petOwner = TextEditingController();
     _petDesc = TextEditingController();
-    _petPlace = TextEditingController();
+    _petAddress = TextEditingController();
+    _petAge = TextEditingController();
   }
 
   @override
@@ -49,7 +63,8 @@ class _StrayPostState extends State<AdoptPost> {
     _petRace.dispose();
     _petOwner.dispose();
     _petDesc.dispose();
-    _petPlace.dispose();
+    _petAddress.dispose();
+    _petAge.dispose();
     _image = null;
     super.dispose();
   }
@@ -213,7 +228,7 @@ class _StrayPostState extends State<AdoptPost> {
                     SizedBox(
                       height: 15.0,
                     ),
-                    ContainerButton(
+                    ContainerButtonSecondary(
                       title: buttonTitle,
                       onTap: () async {
                         final picker = ImagePicker();
@@ -225,7 +240,7 @@ class _StrayPostState extends State<AdoptPost> {
                             _image = File(pickedFile.path);
                             buttonTitle = 'Cambiar imagen';
                           } else {
-                            print('No se seleccionó ninguna imagen.');
+                            toast('No se seleccionó ninguna imagen');
                           }
                         });
                       },
@@ -264,6 +279,47 @@ class _StrayPostState extends State<AdoptPost> {
                           ),
                         ),
                         hintText: 'Nombre de la mascota',
+                        hintStyle: const TextStyle(
+                          color: Colors.grey,
+                        ),
+                        filled: true,
+                        fillColor: const Color.fromARGB(132, 255, 255, 255),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15.0,
+                    ),
+                    TextField(
+                      controller: _petAge,
+                      style: const TextStyle(color: Colors.black87),
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(
+                          Icons.timelapse,
+                          color: Colors.indigo,
+                        ),
+                        contentPadding: const EdgeInsets.all(12.0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.indigo,
+                            width: 0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.indigo,
+                            width: 2,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.grey,
+                            width: 1,
+                          ),
+                        ),
+                        hintText: 'Edad de la mascota',
                         hintStyle: const TextStyle(
                           color: Colors.grey,
                         ),
@@ -315,49 +371,156 @@ class _StrayPostState extends State<AdoptPost> {
                     SizedBox(
                       height: 15.0,
                     ),
-                    TextField(
-                      controller: _petOwner,
-                      style: const TextStyle(color: Colors.black87),
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(
-                          Icons.person,
-                          color: Colors.indigo,
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12.0),
+                        color: const Color.fromARGB(132, 255, 255, 255),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.place,
+                              color: Colors.indigo,
+                            ),
+                            SizedBox(
+                              width: 13.0,
+                            ),
+                            Expanded(
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  dropdownColor: Colors.indigo,
+                                  value: _locationController,
+                                  iconEnabledColor: Colors.indigo,
+                                  isExpanded: true,
+                                  style: const TextStyle(color: Colors.black87),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _locationController = newValue;
+                                    });
+                                  },
+                                  items:
+                                      countries.map<DropdownMenuItem<String>>(
+                                    (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12.0),
+                                          child: Text(
+                                            value,
+                                            style: const TextStyle(
+                                              color: Colors.black87,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ).toList(),
+                                  hint: const Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 12.0),
+                                    child: Text(
+                                      'Seleccione un estado',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        contentPadding: const EdgeInsets.all(12.0),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: const BorderSide(
-                            color: Colors.indigo,
-                            width: 0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: const BorderSide(
-                            color: Colors.indigo,
-                            width: 2,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 1,
-                          ),
-                        ),
-                        hintText: 'Nombre del dueño',
-                        hintStyle: const TextStyle(
-                          color: Colors.grey,
-                        ),
-                        filled: true,
-                        fillColor: const Color.fromARGB(132, 255, 255, 255),
                       ),
                     ),
+                    _locationController != null
+                        ? Column(
+                            children: [
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  color:
+                                      const Color.fromARGB(132, 255, 255, 255),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12.0),
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.location_city,
+                                        color: Colors.indigo,
+                                      ),
+                                      SizedBox(
+                                        width: 13.0,
+                                      ),
+                                      Expanded(
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<String>(
+                                            dropdownColor: Colors.indigo,
+                                            value: _cityController,
+                                            iconEnabledColor: Colors.indigo,
+                                            isExpanded: true,
+                                            style: const TextStyle(
+                                                color: Colors.black87),
+                                            onChanged: (String? newValue) {
+                                              setState(() {
+                                                _cityController = newValue;
+                                              });
+                                            },
+                                            items: cities
+                                                .map<DropdownMenuItem<String>>(
+                                              (String value) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 12.0),
+                                                    child: Text(
+                                                      value,
+                                                      style: const TextStyle(
+                                                        color: Colors.black87,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ).toList(),
+                                            hint: const Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 12.0),
+                                              child: Text(
+                                                'Seleccione una ciudad',
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : Container(),
                     SizedBox(
                       height: 15.0,
                     ),
                     TextField(
-                      controller: _petPlace,
+                      controller: _petAddress,
                       style: const TextStyle(color: Colors.black87),
                       decoration: InputDecoration(
                         prefixIcon: const Icon(
@@ -386,80 +549,12 @@ class _StrayPostState extends State<AdoptPost> {
                             width: 1,
                           ),
                         ),
-                        hintText: 'Lugar de extravío',
+                        hintText: 'Dirección de la mascota',
                         hintStyle: const TextStyle(
                           color: Colors.grey,
                         ),
                         filled: true,
                         fillColor: const Color.fromARGB(132, 255, 255, 255),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 15.0,
-                    ),
-                    TextFormField(
-                      style: const TextStyle(color: Colors.grey),
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(
-                          Icons.date_range,
-                          color: Colors.indigo,
-                        ),
-                        contentPadding: const EdgeInsets.all(12.0),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: const BorderSide(
-                            color: Colors.indigo,
-                            width: 0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: const BorderSide(
-                            color: Colors.indigo,
-                            width: 2,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 1,
-                          ),
-                        ),
-                        hintText: 'Fecha de extravío',
-                        hintStyle: const TextStyle(
-                          color: Colors.grey,
-                        ),
-                        filled: true,
-                        fillColor: const Color.fromARGB(132, 255, 255, 255),
-                      ),
-                      readOnly: true,
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (context) {
-                            return SizedBox(
-                              height: 300,
-                              child: SfDateRangePicker(
-                                onSelectionChanged:
-                                    (DateRangePickerSelectionChangedArgs args) {
-                                  // Actualizar el campo de texto con la fecha seleccionada
-                                  setState(() {
-                                    _selectedDate = args.value;
-                                  });
-                                  Navigator.pop(context);
-                                },
-                                initialSelectedDate: _selectedDate,
-                                maxDate: _maximumDate,
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      controller: TextEditingController(
-                        text: _selectedDate != null
-                            ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
-                            : '',
                       ),
                     ),
                     SizedBox(
@@ -514,7 +609,7 @@ class _StrayPostState extends State<AdoptPost> {
                     InkWell(
                       onTap: () async {
                         toggleLoading();
-                        _submitPost();
+                        _submitPost(currentUser);
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12.0),
@@ -566,7 +661,7 @@ class _StrayPostState extends State<AdoptPost> {
     );
   }
 
-  void _submitPost() {
+  void _submitPost(PetLoverEntity currentUser) {
     if (_image == null) {
       toast("Selecciona una imagen");
       toggleLoading();
@@ -584,20 +679,20 @@ class _StrayPostState extends State<AdoptPost> {
       return;
     }
 
-    if (_petOwner.text.isEmpty) {
-      toast("Inserta un dueño");
+    if (_locationController == '' || _locationController == null) {
+      toast("Inserta un estado");
       toggleLoading();
       return;
     }
 
-    if (_petPlace.text.isEmpty) {
+    if (_cityController == '' || _cityController == null) {
+      toast("Inserta una ciudad");
+      toggleLoading();
+      return;
+    }
+
+    if (_petAddress.text.isEmpty) {
       toast("Inserta un lugar");
-      toggleLoading();
-      return;
-    }
-
-    if (_selectedDate == null) {
-      toast("Inserta una fecha");
       toggleLoading();
       return;
     }
@@ -608,8 +703,20 @@ class _StrayPostState extends State<AdoptPost> {
       return;
     }
 
-    // BlocProvider.of<CredentialCubit>(context).signInSubmit(
-    //     email: _emailController.text, password: _passwordController.text);
-    // toggleLoading();
+    final adoptPet = AdoptPet(
+      petImage: _image,
+      petName: _petName.text,
+      petBreed: _petRace.text,
+      ownerName: currentUser.name,
+      ownerId: currentUser.id,
+      address: _petAddress.text,
+      location: '$_locationController, $_cityController',
+      description: _petDesc.text,
+      age: _petAge.text,
+      status: 'to adopt',
+    );
+
+    _adoptPetBloc.add(CreatePet(adoptPet: adoptPet));
+    toggleLoading();
   }
 }

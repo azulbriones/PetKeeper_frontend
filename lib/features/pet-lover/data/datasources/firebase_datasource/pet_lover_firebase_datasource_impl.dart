@@ -76,7 +76,6 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
   @override
   Stream<List<PetLoverEntity>> getSingleUser(PetLoverEntity user) {
     final userCollection = firestore.collection("users");
-    print('CURRENT ID: ${user.id}');
 
     return userCollection
         .limit(1)
