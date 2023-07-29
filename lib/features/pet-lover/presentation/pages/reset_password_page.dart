@@ -1,6 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/credential/credential_cubit.dart';
+import 'package:pet_keeper_front/global/common/common.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
@@ -10,29 +13,19 @@ class ResetPasswordPage extends StatefulWidget {
 }
 
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
-  bool isPasswordVisible = false;
   bool isLoading = false;
-  late TextEditingController _passwordController;
   late TextEditingController _emailController;
 
   @override
   void initState() {
     super.initState();
-    _passwordController = TextEditingController();
     _emailController = TextEditingController();
   }
 
   @override
   void dispose() {
-    _passwordController.dispose();
     _emailController.dispose();
     super.dispose();
-  }
-
-  void togglePasswordVisibility() {
-    setState(() {
-      isPasswordVisible = !isPasswordVisible;
-    });
   }
 
   void toggleLoading() {
@@ -58,8 +51,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(0),
                     topRight: Radius.circular(0),
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(25),
+                    bottomRight: Radius.circular(25),
                   ),
                   child: Image.asset(
                     'assets/images/banner.png',
@@ -70,14 +63,22 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               Container(
                 width: 375 * fem,
                 height: 500 * fem,
-                decoration: const BoxDecoration(
-                  color: Color.fromARGB(195, 42, 34, 117),
-                  borderRadius: BorderRadius.only(
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(195, 42, 34, 117),
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(0),
                     topRight: Radius.circular(0),
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(25),
+                    bottomRight: Radius.circular(25),
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 3,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3), // desplazamiento hacia abajo
+                    ),
+                  ],
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -186,8 +187,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       toggleLoading();
-                      print('enviar correo de verificacion');
-                      Future.delayed(const Duration(seconds: 2), () {
+                      _sendPasswordReset();
+                      Future.delayed(const Duration(seconds: 1), () {
                         toggleLoading();
                       });
                     },
@@ -211,14 +212,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                       children: [
                         Visibility(
                           visible: !isLoading,
-                          child: Icon(
+                          child: const Icon(
                             Icons.arrow_forward_ios,
                             size: 30,
                           ),
                         ),
                         Visibility(
                           visible: isLoading,
-                          child: Container(
+                          child: const SizedBox(
                             width: 25,
                             height: 25,
                             child: CircularProgressIndicator(
@@ -248,5 +249,17 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         ],
       ),
     );
+  }
+
+  void _sendPasswordReset() {
+    if (_emailController.text.isEmpty) {
+      toast("Enter Your Email");
+      return;
+    }
+
+    BlocProvider.of<CredentialCubit>(context)
+        .forgotPassword(email: _emailController.text);
+
+    Navigator.pop(context);
   }
 }

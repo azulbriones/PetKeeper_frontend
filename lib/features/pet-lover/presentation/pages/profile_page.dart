@@ -32,8 +32,8 @@ class _ProfilePageState extends State<ProfilePage>
 
   File? _image;
 
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
 
   void _onReturnFromOtherPage() {
     context.read<StrayPetBloc>().add(GetAllStrayPets());
@@ -97,28 +97,92 @@ class _ProfilePageState extends State<ProfilePage>
         margin: const EdgeInsets.all(15.0),
         child: Column(
           children: [
-            InkWell(
-              onTap: () {
-                getImage();
-              },
-              child: Container(
-                height: 150,
-                width: 150,
-                child: ClipOval(
-                  child: NetworkImageWidget(
-                    imageFile: _image,
-                    borderRadiusImageFile: 50,
-                    imageFileBoxFit: BoxFit.cover,
-                    placeHolderBoxFit: BoxFit.cover,
-                    networkImageBoxFit: BoxFit.cover,
-                    imageUrl: currentUser.profileUrl,
-                    progressIndicatorBuilder: const Center(
-                      child: CircularProgressIndicator(),
+            Stack(
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: InkWell(
+                    onTap: () {
+                      getImage();
+                    },
+                    child: SizedBox(
+                      height: 150,
+                      width: 150,
+                      child: ClipOval(
+                        child: NetworkImageWidget(
+                          imageFile: _image,
+                          borderRadiusImageFile: 50,
+                          imageFileBoxFit: BoxFit.cover,
+                          placeHolderBoxFit: BoxFit.cover,
+                          networkImageBoxFit: BoxFit.cover,
+                          imageUrl: currentUser.profileUrl,
+                          progressIndicatorBuilder: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                          placeHolder: "assets/images/profile_default.png",
+                        ),
+                      ),
                     ),
-                    placeHolder: "assets/images/profile_default.png",
                   ),
                 ),
-              ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: PopupMenuButton(
+                    onSelected: (result) async {
+                      bool isDelete = await showDialog(
+                        context: context,
+                        builder: (context) {
+                          BuildContext popupContext = context;
+                          return AlertDialog(
+                            title: const Text('Eliminar cuenta'),
+                            content: const Text(
+                                '¿Está seguro de eliminar su cuenta?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pop(false); // Cancelar el deslizamiento
+                                },
+                                child: const Text('Cancelar'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(popupContext).pop(true);
+                                },
+                                child: const Text(
+                                  'Eliminar',
+                                  style: TextStyle(color: Colors.redAccent),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                      if (isDelete == true) {
+                        // ignore: use_build_context_synchronously
+                        BlocProvider.of<SingleUserCubit>(context)
+                            .singleUserDeleted();
+
+                        // ignore: use_build_context_synchronously
+                        BlocProvider.of<AuthCubit>(context).deleteAccount();
+                        // ignore: use_build_context_synchronously
+                        Navigator.pop(context);
+                      }
+                    },
+                    itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                      const PopupMenuItem(
+                        value: 1,
+                        child: Text('Eliminar cuenta'),
+                      ),
+                    ],
+                    child: const Icon(
+                      Icons.settings,
+                      color: Colors.grey,
+                      size: 40,
+                    ),
+                  ),
+                ),
+              ],
             ),
             SizedBox(
               height: 14,
@@ -196,8 +260,9 @@ class _ProfilePageState extends State<ProfilePage>
             ContainerButtonDanger(
               title: "Logout",
               icon: Icons.logout,
-              onTap: () {
-                BlocProvider.of<AuthCubit>(context).loggedOut();
+              onTap: () async {
+                await BlocProvider.of<AuthCubit>(context).loggedOut();
+                // ignore: use_build_context_synchronously
                 Navigator.pop(context);
               },
             ),

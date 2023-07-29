@@ -4,9 +4,12 @@ abstract class PetLoverRepository {
   Future<void> getCreateCurrentUser(PetLoverEntity user);
   Future<void> forgotPassword(String email);
   Future<bool> isSignIn();
+  Future<bool> isVerified();
   Future<void> signIn(PetLoverEntity user);
   Future<void> signUp(PetLoverEntity user);
+  Future<void> sendVerificationEmail(String email);
   Future<void> signOut();
+  Future<void> deleteAccount();
   Future<void> getUpdateUser(PetLoverEntity user);
   Future<String> getCurrentId();
   Stream<List<PetLoverEntity>> getAllUsers(PetLoverEntity user);

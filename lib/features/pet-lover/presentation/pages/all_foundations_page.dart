@@ -83,7 +83,7 @@ class _AllFoundationsPageState extends State<AllFoundationsPage>
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0 * fem),
                 child: const Text(
-                  'Mascotas extraviadas',
+                  'Fundaciones',
                   style: TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,
@@ -102,143 +102,164 @@ class _AllFoundationsPageState extends State<AllFoundationsPage>
                 } else if (state is FoundationLoaded) {
                   return RefreshIndicator(
                     onRefresh: _onRefresh,
-                    child: ListView(
-                        children: state.foundations.map((foundations) {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: GestureDetector(
-                            onTap: () async {
-                              await Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                  pageBuilder: (context, animation,
-                                          secondaryAnimation) =>
-                                      FoundationProfileView(id: foundations.id),
-                                  transitionsBuilder: (context, animation,
-                                      secondaryAnimation, child) {
-                                    var begin = const Offset(1.0, 0.0);
-                                    var end = Offset.zero;
-                                    var curve = Curves.easeInOut;
-
-                                    var tween = Tween(begin: begin, end: end)
-                                        .chain(CurveTween(curve: curve));
-
-                                    return SlideTransition(
-                                      position: animation.drive(tween),
-                                      child: child,
-                                    );
-                                  },
-                                ),
-                              );
-                              _onReturnFromOtherPage();
-                            },
-                            child: Container(
-                              height: 100,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    spreadRadius: 3,
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 5),
-                                  ),
-                                ],
-                              ),
-                              margin: EdgeInsets.all(8),
+                    child: state.foundations.isNotEmpty
+                        ? ListView(
+                            children: state.foundations.map((foundations) {
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 10.0),
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    SizedBox(
-                                      height: 85,
-                                      width: 85,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(50),
-                                        child: NetworkImageWidget(
-                                          borderRadiusImageFile: 50,
-                                          borderRadiusPlaceHolder: 50.0,
-                                          imageFileBoxFit: BoxFit.cover,
-                                          placeHolderBoxFit: BoxFit.cover,
-                                          networkImageBoxFit: BoxFit.cover,
-                                          imageUrl: foundations.profileUrl,
-                                          progressIndicatorBuilder:
-                                              const Center(
-                                            child: CircularProgressIndicator(),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    await Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        pageBuilder: (context, animation,
+                                                secondaryAnimation) =>
+                                            FoundationProfileView(
+                                                id: foundations.id),
+                                        transitionsBuilder: (context, animation,
+                                            secondaryAnimation, child) {
+                                          var begin = const Offset(1.0, 0.0);
+                                          var end = Offset.zero;
+                                          var curve = Curves.easeInOut;
+
+                                          var tween = Tween(
+                                                  begin: begin, end: end)
+                                              .chain(CurveTween(curve: curve));
+
+                                          return SlideTransition(
+                                            position: animation.drive(tween),
+                                            child: child,
+                                          );
+                                        },
+                                      ),
+                                    );
+                                    _onReturnFromOtherPage();
+                                  },
+                                  child: Container(
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          spreadRadius: 3,
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 5),
+                                        ),
+                                      ],
+                                    ),
+                                    margin: EdgeInsets.all(8),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            height: 85,
+                                            width: 85,
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                              child: NetworkImageWidget(
+                                                borderRadiusImageFile: 50,
+                                                borderRadiusPlaceHolder: 50.0,
+                                                imageFileBoxFit: BoxFit.cover,
+                                                placeHolderBoxFit: BoxFit.cover,
+                                                networkImageBoxFit:
+                                                    BoxFit.cover,
+                                                imageUrl:
+                                                    foundations.profileUrl,
+                                                progressIndicatorBuilder:
+                                                    const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                ),
+                                                placeHolder:
+                                                    "assets/images/profile_default.png",
+                                              ),
+                                            ),
                                           ),
-                                          placeHolder:
-                                              "assets/images/profile_default.png",
-                                        ),
+                                          SizedBox(
+                                            width: 15,
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 5.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Align(
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Text(
+                                                      foundations.name
+                                                          .toString(),
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16,
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5.0,
+                                                  ),
+                                                  Align(
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Text(
+                                                      foundations.location
+                                                          .toString(),
+                                                      style: const TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 12,
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Flexible(
+                                                    child: Text(
+                                                      foundations.info
+                                                          .toString(),
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 12,
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 2,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: 15,
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 5.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                foundations.name.toString(),
-                                                style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 1,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 5.0,
-                                            ),
-                                            Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                foundations.location.toString(),
-                                                style: const TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 12,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 1,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Flexible(
-                                              child: Text(
-                                                foundations.info.toString(),
-                                                style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 12,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 2,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
-                            ),
+                            );
+                          }).toList())
+                        : const Center(
+                            child: Text('No hay fundaciones'),
                           ),
-                        ),
-                      );
-                    }).toList()),
                   );
                 } else if (state is FoundationError) {
                   return Center(

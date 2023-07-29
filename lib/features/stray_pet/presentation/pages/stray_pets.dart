@@ -422,9 +422,7 @@ class _StrayPetsState extends State<StrayPets>
                       ),
                     );
                   } else {
-                    return Container(
-                      child: Text(state.toString()),
-                    );
+                    return Container();
                   }
                 }),
                 Align(

@@ -25,4 +25,8 @@ class SingleUserCubit extends Cubit<SingleUserState> {
       emit(SingleUserFailure());
     }
   }
+
+  Future<void> singleUserDeleted() async {
+    emit(SingleUserDeleted());
+  }
 }

@@ -22,3 +22,22 @@ class UnAuthenticated extends AuthState {
   @override
   List<Object> get props => [];
 }
+
+class Deleted extends AuthState {
+  @override
+  List<Object> get props => [];
+}
+
+class UnVerified extends AuthState {
+  @override
+  List<Object> get props => [];
+}
+
+class Verified extends AuthState {
+  final String uid;
+
+  const Verified({required this.uid});
+
+  @override
+  List<Object> get props => [uid];
+}

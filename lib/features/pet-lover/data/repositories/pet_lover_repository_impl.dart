@@ -34,6 +34,9 @@ class PetLoverRepositoryImpl implements PetLoverRepository {
   Future<bool> isSignIn() async => remoteDataSource.isSignIn();
 
   @override
+  Future<bool> isVerified() async => remoteDataSource.isVerified();
+
+  @override
   Future<void> signIn(PetLoverEntity user) async =>
       remoteDataSource.signIn(user);
 
@@ -41,8 +44,15 @@ class PetLoverRepositoryImpl implements PetLoverRepository {
   Future<void> signOut() async => remoteDataSource.signOut();
 
   @override
+  Future<void> deleteAccount() async => remoteDataSource.deleteAccount();
+
+  @override
   Future<void> signUp(PetLoverEntity user) async =>
       remoteDataSource.signUp(user);
+
+  @override
+  Future<void> sendVerificationEmail(String email) async =>
+      remoteDataSource.sendVerificationEmail(email);
 
   @override
   Stream<List<PetLoverEntity>> getAllFoundations(PetLoverEntity foundation) =>

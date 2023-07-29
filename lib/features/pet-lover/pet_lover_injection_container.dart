@@ -2,6 +2,7 @@ import 'package:pet_keeper_front/features/pet-lover/data/datasources/firebase_da
 import 'package:pet_keeper_front/features/pet-lover/data/datasources/firebase_datasource/pet_lover_firebase_datasource_impl.dart';
 import 'package:pet_keeper_front/features/pet-lover/data/repositories/pet_lover_repository_impl.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/repositories/pet_lover_repository.dart';
+import 'package:pet_keeper_front/features/pet-lover/domain/usecases/delete_account_usercase.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/forgot_password_usecase.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_all_foundations_usecase.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_all_users_usecase.dart';
@@ -11,6 +12,8 @@ import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_single_f
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_single_user_usecase.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_update_user_usecase.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/is_sign_in_usecase.dart';
+import 'package:pet_keeper_front/features/pet-lover/domain/usecases/is_verified_usecase.dart';
+import 'package:pet_keeper_front/features/pet-lover/domain/usecases/send_verification_email_usecase.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/sign_in_usecase.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/sign_out_usecase.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/sign_up_usecase.dart';
@@ -25,9 +28,13 @@ import '../injection_container.dart';
 Future<void> petLoverInjectionContainer() async {
   //Cubit or Bloc
   sl.registerFactory<AuthCubit>(() => AuthCubit(
-      isSignInUseCase: sl.call(),
-      signOutUseCase: sl.call(),
-      getCurrentUIDUseCase: sl.call()));
+        isSignInUseCase: sl.call(),
+        isVerifiedUseCase: sl.call(),
+        signOutUseCase: sl.call(),
+        getCurrentUIDUseCase: sl.call(),
+        sendVerificationEmail: sl.call(),
+        deleteAccountUseCase: sl.call(),
+      ));
 
   sl.registerFactory<SingleUserCubit>(
       () => SingleUserCubit(getSingleUserUseCase: sl.call()));
@@ -74,6 +81,12 @@ Future<void> petLoverInjectionContainer() async {
       () => SignOutUseCase(repository: sl.call()));
   sl.registerLazySingleton<SignUpUseCase>(
       () => SignUpUseCase(repository: sl.call()));
+  sl.registerLazySingleton<IsVerifiedUseCase>(
+      () => IsVerifiedUseCase(repository: sl.call()));
+  sl.registerLazySingleton<SendVerificationEmail>(
+      () => SendVerificationEmail(repository: sl.call()));
+  sl.registerLazySingleton<DeleteAccountUseCase>(
+      () => DeleteAccountUseCase(repository: sl.call()));
 
   //Repository
   sl.registerLazySingleton<PetLoverRepository>(

@@ -23,6 +23,11 @@ class SingleUserLoaded extends SingleUserState {
   List<Object> get props => [currentUser];
 }
 
+class SingleUserDeleted extends SingleUserState {
+  @override
+  List<Object> get props => [];
+}
+
 class SingleUserFailure extends SingleUserState {
   @override
   List<Object> get props => [];

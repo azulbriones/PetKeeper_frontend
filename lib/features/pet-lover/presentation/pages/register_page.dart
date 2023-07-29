@@ -1,11 +1,14 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/email_verify_user_page.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/register_page%20_foundation.dart';
 import 'package:pet_keeper_front/global/common/common.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/credential/credential_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/auth/auth_cubit.dart';
 import 'package:pet_keeper_front/global/pages/main_layout.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -22,6 +25,9 @@ class _RegisterPageState extends State<RegisterPage> {
   late TextEditingController _password2Controller;
   late TextEditingController _emailController;
   late TextEditingController _usernameController;
+  String? _passwordError;
+  String? _emailError;
+  double containerHeight = 520.0;
 
   @override
   void initState() {
@@ -59,6 +65,34 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
+  _launchURL() async {
+    String link = 'https://petkeeperofficial.netlify.app/';
+
+    // ignore: deprecated_member_use
+    if (await canLaunch(link)) {
+      // ignore: deprecated_member_use
+      await launch(link);
+    } else {
+      throw 'No se pudo abrir la URL: $link';
+    }
+  }
+
+  // Método para validar la fortaleza de la contraseña
+  bool _isStrongPassword(String password) {
+    // Aquí puedes implementar tus propias reglas para una contraseña fuerte
+    // Por ejemplo, aquí requerimos que tenga al menos 8 caracteres,
+    // incluya letras mayúsculas y minúsculas, y números.
+    final passwordRegex = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$');
+    return passwordRegex.hasMatch(password);
+  }
+
+// Función para validar el email
+  bool isValidEmail(String email) {
+    // Define la expresión regular para verificar el email
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    return emailRegex.hasMatch(email);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,13 +108,14 @@ class _RegisterPageState extends State<RegisterPage> {
           if (credentialState is CredentialSuccess) {
             return BlocBuilder<AuthCubit, AuthState>(
               builder: (context, authState) {
-                if (authState is Authenticated) {
+                if (authState is Verified) {
                   return MainLayout(
                     uid: authState.uid,
                   );
-                } else {
-                  return _bodyWidget();
+                } else if (authState is UnVerified) {
+                  return const EmailVerifyUserPage();
                 }
+                return _bodyWidget();
               },
             );
           }
@@ -119,8 +154,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(0),
                     topRight: Radius.circular(0),
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(25),
+                    bottomRight: Radius.circular(25),
                   ),
                   child: Image.asset(
                     'assets/images/banner.png',
@@ -128,17 +163,26 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
               ),
-              Container(
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
                 width: 375 * fem,
-                height: 500 * fem,
-                decoration: const BoxDecoration(
-                  color: Color.fromARGB(195, 42, 34, 117),
-                  borderRadius: BorderRadius.only(
+                height: containerHeight * fem,
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(195, 42, 34, 117),
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(0),
                     topRight: Radius.circular(0),
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(25),
+                    bottomRight: Radius.circular(25),
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 3,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3), // desplazamiento hacia abajo
+                    ),
+                  ],
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -215,6 +259,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         controller: _emailController,
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
+                          errorText: _emailError,
+                          errorMaxLines: null,
                           prefixIcon: const Icon(
                             Icons.email,
                             color: Colors.white,
@@ -256,6 +302,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         obscureText: !isPasswordVisible,
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
+                          errorText: _passwordError,
+                          errorMaxLines: 2,
                           prefixIcon: const Icon(
                             Icons.lock,
                             color: Colors.white,
@@ -306,12 +354,14 @@ class _RegisterPageState extends State<RegisterPage> {
                         obscureText: !isPassword2Visible,
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
+                          errorText: _passwordError,
+                          errorMaxLines: 2,
                           prefixIcon: const Icon(
                             Icons.lock,
                             color: Colors.white,
                           ),
                           suffixIcon: GestureDetector(
-                            onTap: togglePasswordVisibility,
+                            onTap: togglePassword2Visibility,
                             child: Icon(
                               isPassword2Visible
                                   ? Icons.visibility_off
@@ -349,7 +399,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                       ),
                       SizedBox(
-                        height: 10,
+                        height: 15,
                       ),
                       RichText(
                         text: TextSpan(
@@ -373,55 +423,109 @@ class _RegisterPageState extends State<RegisterPage> {
                           ],
                         ),
                       ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      RichText(
+                        text: TextSpan(
+                          text: 'Eres una fundación?',
+                          style: const TextStyle(color: Colors.white),
+                          children: [
+                            const WidgetSpan(
+                              child: SizedBox(
+                                  width: 5), // Espacio en blanco como widget
+                            ),
+                            TextSpan(
+                              text: 'Postularse como fundación',
+                              style: TextStyle(
+                                  color: Colors.purple[100],
+                                  fontWeight: FontWeight.bold),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.push(
+                                    context,
+                                    PageRouteBuilder(
+                                      pageBuilder: (context, animation,
+                                              secondaryAnimation) =>
+                                          const RegisterPageFoundation(),
+                                      transitionsBuilder: (context, animation,
+                                          secondaryAnimation, child) {
+                                        var begin = const Offset(1.0, 0.0);
+                                        var end = Offset.zero;
+                                        var curve = Curves.easeInOut;
+
+                                        var tween = Tween(
+                                                begin: begin, end: end)
+                                            .chain(CurveTween(curve: curve));
+
+                                        return SlideTransition(
+                                          position: animation.drive(tween),
+                                          child: child,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
               Positioned(
                 bottom: 0,
-                child: Transform.translate(
-                  offset: const Offset(0, 20),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      toggleLoading();
-                      _submitSignUp();
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        Colors.purple[100]!,
-                      ),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                child: GestureDetector(
+                  onTap: () {
+                    toggleLoading();
+                    _submitSignUp();
+                  },
+                  child: Transform.translate(
+                    offset: const Offset(0, 20),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        toggleLoading();
+                        _submitSignUp();
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          Colors.purple[100]!,
                         ),
-                      ),
-                      elevation: MaterialStateProperty.all<double>(8),
-                      padding: MaterialStateProperty.all<EdgeInsets>(
-                          EdgeInsets.zero),
-                      minimumSize:
-                          MaterialStateProperty.all(const Size(100, 50)),
-                    ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Visibility(
-                          visible: !isLoading,
-                          child: Icon(
-                            Icons.arrow_forward_ios,
-                            size: 30,
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        Visibility(
-                          visible: isLoading,
-                          child: Container(
-                            width: 25,
-                            height: 25,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
+                        elevation: MaterialStateProperty.all<double>(8),
+                        padding: MaterialStateProperty.all<EdgeInsets>(
+                            EdgeInsets.zero),
+                        minimumSize:
+                            MaterialStateProperty.all(const Size(100, 50)),
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Visibility(
+                            visible: !isLoading,
+                            child: const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 30,
                             ),
                           ),
-                        ),
-                      ],
+                          Visibility(
+                            visible: isLoading,
+                            child: const SizedBox(
+                              width: 25,
+                              height: 25,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -436,31 +540,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Text(
-                    'O continúa con',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/images/google.png',
-                        width: 50,
-                        height: 50,
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Image.asset(
-                        'assets/images/fb.png',
-                        width: 50,
-                        height: 50,
-                      ),
-                    ],
-                  ),
                   SizedBox(
                     height: 30,
                   ),
@@ -476,6 +555,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         TextSpan(
                           text: 'Términos y condiciones',
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () => _launchURL(),
                           style: TextStyle(
                               color: Colors.purple[100],
                               fontWeight: FontWeight.bold),
@@ -517,8 +598,42 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
+    // Validar email
+    if (!isValidEmail(_emailController.text)) {
+      setState(() {
+        _emailError = 'Introduce una dirección de correo válida.';
+        containerHeight = 540;
+      });
+      toggleLoading();
+      return;
+    } else {
+      setState(() {
+        _emailError = null;
+        containerHeight = 500;
+      });
+    }
+
+    // Validar la contraseña
+    if (!_isStrongPassword(_passwordController.text)) {
+      setState(() {
+        _passwordError =
+            'La contraseña debe tener al menos 8 caracteres, incluyendo letras mayúsculas y minúsculas, y números.';
+        containerHeight = 580;
+      });
+      toggleLoading();
+      return;
+    } else {
+      setState(() {
+        _passwordError = null;
+        containerHeight = 500;
+      });
+    }
+
     if (_passwordController.text != _password2Controller.text) {
-      toast("both password must be same");
+      setState(() {
+        _passwordError = 'Ambas contraseñas deben ser iguales';
+        containerHeight = 550;
+      });
       toggleLoading();
       return;
     }
@@ -526,9 +641,15 @@ class _RegisterPageState extends State<RegisterPage> {
     BlocProvider.of<CredentialCubit>(context).signUpSubmit(
         user: PetLoverEntity(
       name: _usernameController.text,
-      profileUrl: "",
       email: _emailController.text,
+      profileUrl: "",
+      type: 'petlover',
+      certFile: null,
       password: _passwordController.text,
+      info: '',
+      payInfo: '',
+      address: '',
+      location: '',
     ));
     toggleLoading();
   }

@@ -7,6 +7,7 @@ import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/credentia
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/foundation/foundation_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/user/user_cubit.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/email_verify_user_page.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/login_page.dart';
 import 'package:pet_keeper_front/features/stray_pet/presentation/bloc/stray_pet_bloc.dart';
 import 'package:pet_keeper_front/global/pages/main_layout.dart';
@@ -82,11 +83,15 @@ class MyApp extends StatelessWidget {
           "/": (context) {
             return BlocBuilder<AuthCubit, AuthState>(
               builder: (context, authState) {
-                if (authState is Authenticated) {
+                print('MAIN STATE: $authState');
+                if (authState is Verified) {
                   return MainLayout(uid: authState.uid);
-                } else {
+                } else if (authState is UnAuthenticated) {
                   return const LoginPage();
+                } else if (authState is UnVerified) {
+                  return const EmailVerifyUserPage();
                 }
+                return const LoginPage();
               },
             );
           },

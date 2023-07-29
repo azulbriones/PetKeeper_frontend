@@ -21,8 +21,8 @@ class MainLayout extends StatefulWidget {
 }
 
 class _MainLayoutState extends State<MainLayout> {
-  final PageController _pageController = PageController();
-  int _currentIndex = 2;
+  late PageController _pageController = PageController();
+  late int _currentIndex;
 
   @override
   void initState() {
@@ -30,6 +30,10 @@ class _MainLayoutState extends State<MainLayout> {
         .getSingleUserProfile(user: PetLoverEntity(id: widget.uid));
     BlocProvider.of<UserCubit>(context)
         .getUsers(user: PetLoverEntity(id: widget.uid));
+    _currentIndex = 2;
+    _pageController = PageController(
+      initialPage: 2, // Establecer la página predeterminada en el índice 2
+    );
     //BlocProvider.of<GroupCubit>(context).getGroups();
     super.initState();
   }

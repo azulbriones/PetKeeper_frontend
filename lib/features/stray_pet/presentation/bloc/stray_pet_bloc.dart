@@ -48,17 +48,19 @@ class StrayPetBloc extends Bloc<StrayPetEvent, StrayPetState> {
           emit(LoadedAllStrayPets(allStrayPets: allPets));
           print('LoadAllStrayPets Emitted');
         } catch (e) {
-          emit(StrayError(error: e.toString()));
+          emit(StrayError(
+              error: 'Ha ocurrido un error, intenta de nuevo mas tarde'));
         }
       } else if (event is GetDetailStrayPet) {
         try {
           emit(LoadingDetailStrayPet());
           StrayPet postDetail =
-              await getStrayPetByIdUseCase.execute(event.strayPetId as String);
+              await getStrayPetByIdUseCase.execute(event.strayPetId.toString());
           emit(LoadedDetailStrayPet(strayPet: postDetail));
           print('LoadDetailStrayPet Emitted');
         } catch (e) {
-          emit(StrayError(error: e.toString()));
+          emit(StrayError(
+              error: 'Ha ocurrido un error, intenta de nuevo mas tarde'));
         }
       } else if (event is GetAllUserPostsStrayPet) {
         try {
@@ -69,7 +71,8 @@ class StrayPetBloc extends Bloc<StrayPetEvent, StrayPetState> {
               allUserPostsStrayPets: allUserPostsStrayPets));
           print('LoadAllUserPostsStrayPet Emitted');
         } catch (e) {
-          emit(StrayError(error: e.toString()));
+          emit(StrayError(
+              error: 'Ha ocurrido un error, intenta de nuevo mas tarde'));
         }
       } else if (event is CreateStrayPet) {
         try {

@@ -3,11 +3,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/email_verify_user_page.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/register_page.dart';
 import 'package:pet_keeper_front/global/common/common.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/credential/credential_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/auth/auth_cubit.dart';
 import 'package:pet_keeper_front/global/pages/main_layout.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RegisterPageFoundation extends StatefulWidget {
   const RegisterPageFoundation({super.key});
@@ -20,16 +23,18 @@ class _RegisterPageFoundationState extends State<RegisterPageFoundation> {
   bool isPasswordVisible = false;
   bool isPassword2Visible = false;
   bool isLoading = false;
-  late TextEditingController _passwordController;
-  late TextEditingController _password2Controller;
-  late TextEditingController _emailController;
-  late TextEditingController _usernameController;
-  late TextEditingController _infoController;
-  late TextEditingController _payInfoController;
-  late TextEditingController _addressController;
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _password2Controller = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _infoController = TextEditingController();
+  TextEditingController _payInfoController = TextEditingController();
+  TextEditingController _addressController = TextEditingController();
   String? _locationController;
   String? _cityController;
-  late File _certFile;
+  String? _passwordError;
+  String? _emailError;
+  File _certFile = File('');
 
   List<String> countries = [
     'Chiapas',
@@ -95,6 +100,34 @@ class _RegisterPageFoundationState extends State<RegisterPageFoundation> {
     }
   }
 
+  _launchURL() async {
+    String link = 'https://petkeeperofficial.netlify.app/';
+
+    // ignore: deprecated_member_use
+    if (await canLaunch(link)) {
+      // ignore: deprecated_member_use
+      await launch(link);
+    } else {
+      throw 'No se pudo abrir la URL: $link';
+    }
+  }
+
+  // Método para validar la fortaleza de la contraseña
+  bool _isStrongPassword(String password) {
+    // Aquí puedes implementar tus propias reglas para una contraseña fuerte
+    // Por ejemplo, aquí requerimos que tenga al menos 8 caracteres,
+    // incluya letras mayúsculas y minúsculas, y números.
+    final passwordRegex = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$');
+    return passwordRegex.hasMatch(password);
+  }
+
+// Función para validar el email
+  bool isValidEmail(String email) {
+    // Define la expresión regular para verificar el email
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    return emailRegex.hasMatch(email);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,13 +143,14 @@ class _RegisterPageFoundationState extends State<RegisterPageFoundation> {
           if (credentialState is CredentialSuccess) {
             return BlocBuilder<AuthCubit, AuthState>(
               builder: (context, authState) {
-                if (authState is Authenticated) {
+                if (authState is Verified) {
                   return MainLayout(
                     uid: authState.uid,
                   );
-                } else {
-                  return _bodyWidget();
+                } else if (authState is UnVerified) {
+                  return const EmailVerifyUserPage();
                 }
+                return _bodyWidget();
               },
             );
           }
@@ -155,8 +189,8 @@ class _RegisterPageFoundationState extends State<RegisterPageFoundation> {
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(0),
                     topRight: Radius.circular(0),
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(25),
+                    bottomRight: Radius.circular(25),
                   ),
                   child: Image.asset(
                     'assets/images/banner.png',
@@ -167,14 +201,22 @@ class _RegisterPageFoundationState extends State<RegisterPageFoundation> {
               Container(
                 width: 375 * fem,
                 height: 550 * fem,
-                decoration: const BoxDecoration(
-                  color: Color.fromARGB(195, 42, 34, 117),
-                  borderRadius: BorderRadius.only(
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(195, 42, 34, 117),
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(0),
                     topRight: Radius.circular(0),
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(25),
+                    bottomRight: Radius.circular(25),
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 3,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3), // desplazamiento hacia abajo
+                    ),
+                  ],
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -630,6 +672,8 @@ class _RegisterPageFoundationState extends State<RegisterPageFoundation> {
                               controller: _emailController,
                               style: const TextStyle(color: Colors.white),
                               decoration: InputDecoration(
+                                errorText: _emailError,
+                                errorMaxLines: null,
                                 prefixIcon: const Icon(
                                   Icons.email,
                                   color: Colors.white,
@@ -672,6 +716,8 @@ class _RegisterPageFoundationState extends State<RegisterPageFoundation> {
                               obscureText: !isPasswordVisible,
                               style: const TextStyle(color: Colors.white),
                               decoration: InputDecoration(
+                                errorText: _passwordError,
+                                errorMaxLines: null,
                                 prefixIcon: const Icon(
                                   Icons.lock,
                                   color: Colors.white,
@@ -723,6 +769,8 @@ class _RegisterPageFoundationState extends State<RegisterPageFoundation> {
                               obscureText: !isPassword2Visible,
                               style: const TextStyle(color: Colors.white),
                               decoration: InputDecoration(
+                                errorText: _passwordError,
+                                errorMaxLines: null,
                                 prefixIcon: const Icon(
                                   Icons.lock,
                                   color: Colors.white,
@@ -820,12 +868,32 @@ class _RegisterPageFoundationState extends State<RegisterPageFoundation> {
                                       color: Colors.purple[100],
                                       fontWeight: FontWeight.bold),
                                   recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
+                                    ..onTap = () async {
+                                      Navigator.pop(context);
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const RegisterPageFoundation(),
+                                        PageRouteBuilder(
+                                          pageBuilder: (context, animation,
+                                                  secondaryAnimation) =>
+                                              const RegisterPage(),
+                                          transitionsBuilder: (context,
+                                              animation,
+                                              secondaryAnimation,
+                                              child) {
+                                            var begin = const Offset(1.0, 0.0);
+                                            var end = Offset.zero;
+                                            var curve = Curves.easeInOut;
+
+                                            var tween = Tween(
+                                                    begin: begin, end: end)
+                                                .chain(
+                                                    CurveTween(curve: curve));
+
+                                            return SlideTransition(
+                                              position: animation.drive(tween),
+                                              child: child,
+                                            );
+                                          },
                                         ),
                                       );
                                     },
@@ -841,114 +909,98 @@ class _RegisterPageFoundationState extends State<RegisterPageFoundation> {
               ),
               Positioned(
                 bottom: 0,
-                child: Transform.translate(
-                  offset: const Offset(0, 20),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      toggleLoading();
-                      _submitSignUp();
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        Colors.purple[100]!,
-                      ),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                child: GestureDetector(
+                  onTap: () {
+                    toggleLoading();
+                    _submitSignUp();
+                  },
+                  child: Transform.translate(
+                    offset: const Offset(0, 20),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        toggleLoading();
+                        _submitSignUp();
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          Colors.purple[100]!,
                         ),
-                      ),
-                      elevation: MaterialStateProperty.all<double>(8),
-                      padding: MaterialStateProperty.all<EdgeInsets>(
-                          EdgeInsets.zero),
-                      minimumSize:
-                          MaterialStateProperty.all(const Size(100, 50)),
-                    ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Visibility(
-                          visible: !isLoading,
-                          child: Icon(
-                            Icons.arrow_forward_ios,
-                            size: 30,
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        Visibility(
-                          visible: isLoading,
-                          child: Container(
-                            width: 25,
-                            height: 25,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
+                        elevation: MaterialStateProperty.all<double>(8),
+                        padding: MaterialStateProperty.all<EdgeInsets>(
+                            EdgeInsets.zero),
+                        minimumSize:
+                            MaterialStateProperty.all(const Size(100, 50)),
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Visibility(
+                            visible: !isLoading,
+                            child: const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 30,
                             ),
                           ),
-                        ),
-                      ],
+                          Visibility(
+                            visible: isLoading,
+                            child: const SizedBox(
+                              width: 25,
+                              height: 25,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ],
           ),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(vertical: 50.0),
-          //   child: Padding(
-          //     padding: const EdgeInsets.symmetric(horizontal: 70.0),
-          //     child: Column(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       crossAxisAlignment: CrossAxisAlignment.center,
-          //       children: [
-          //         const Text(
-          //           'O continúa con',
-          //           style: TextStyle(fontSize: 18),
-          //         ),
-          //         SizedBox(
-          //           height: 20,
-          //         ),
-          //         Row(
-          //           mainAxisAlignment: MainAxisAlignment.center,
-          //           children: [
-          //             Image.asset(
-          //               'assets/images/google.png',
-          //               width: 50,
-          //               height: 50,
-          //             ),
-          //             SizedBox(
-          //               width: 20,
-          //             ),
-          //             Image.asset(
-          //               'assets/images/fb.png',
-          //               width: 50,
-          //               height: 50,
-          //             ),
-          //           ],
-          //         ),
-          //         SizedBox(
-          //           height: 30,
-          //         ),
-          //         RichText(
-          //           textAlign: TextAlign.center,
-          //           text: TextSpan(
-          //             text: 'Al continúar, estás de acuerdo con nuestros',
-          //             style: const TextStyle(color: Colors.black),
-          //             children: [
-          //               const WidgetSpan(
-          //                 child: SizedBox(
-          //                     width: 5), // Espacio en blanco como widget
-          //               ),
-          //               TextSpan(
-          //                 text: 'Términos y condiciones',
-          //                 style: TextStyle(
-          //                     color: Colors.purple[100],
-          //                     fontWeight: FontWeight.bold),
-          //               ),
-          //             ],
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 50.0),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 70.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 30,
+                  ),
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      text: 'Al continúar, estás de acuerdo con nuestros',
+                      style: const TextStyle(color: Colors.black),
+                      children: [
+                        const WidgetSpan(
+                          child: SizedBox(
+                              width: 5), // Espacio en blanco como widget
+                        ),
+                        TextSpan(
+                          text: 'Términos y condiciones',
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () => _launchURL(),
+                          style: TextStyle(
+                              color: Colors.purple[100],
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -1011,8 +1063,37 @@ class _RegisterPageFoundationState extends State<RegisterPageFoundation> {
       return;
     }
 
+    // Validar email
+    if (!isValidEmail(_emailController.text)) {
+      setState(() {
+        _emailError = 'Introduce una dirección de correo válida.';
+      });
+      toggleLoading();
+      return;
+    } else {
+      setState(() {
+        _emailError = null;
+      });
+    }
+
+    // Validar la contraseña
+    if (!_isStrongPassword(_passwordController.text)) {
+      setState(() {
+        _passwordError =
+            'La contraseña debe tener al menos 8 caracteres, incluyendo letras mayúsculas y minúsculas, y números.';
+      });
+      toggleLoading();
+      return;
+    } else {
+      setState(() {
+        _passwordError = null;
+      });
+    }
+
     if (_passwordController.text != _password2Controller.text) {
-      toast("both password must be same");
+      setState(() {
+        _passwordError = 'Ambas contraseñas deben ser iguales';
+      });
       toggleLoading();
       return;
     }

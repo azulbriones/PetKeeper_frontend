@@ -270,49 +270,50 @@ class _StrayPostViewState extends State<StrayPostView> {
                         SizedBox(
                           height: 15.0,
                         ),
-                        InkWell(
-                          onTap: () {
-                            print('enviar mensaje');
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            height: 44,
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                              color: greenColor,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 1,
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 5),
-                                ),
-                              ],
-                            ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Enviar mensaje',
-                                  style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white),
-                                ),
-                                SizedBox(
-                                  width: 10.0,
-                                ),
-                                Icon(
-                                  CupertinoIcons.chat_bubble_fill,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                              ],
+                        if (currentUser.id != state.strayPet.ownerId)
+                          InkWell(
+                            onTap: () {
+                              print('enviar mensaje');
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              height: 44,
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                color: greenColor,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 1,
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 5),
+                                  ),
+                                ],
+                              ),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Enviar mensaje',
+                                    style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white),
+                                  ),
+                                  SizedBox(
+                                    width: 10.0,
+                                  ),
+                                  Icon(
+                                    CupertinoIcons.chat_bubble_fill,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
                         SizedBox(
                           height: 15.0,
                         ),

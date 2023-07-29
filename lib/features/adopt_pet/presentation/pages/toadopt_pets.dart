@@ -7,6 +7,7 @@ import 'package:network_image/network_image.dart';
 import 'package:pet_keeper_front/features/adopt_pet/presentation/bloc/adopt_pet_bloc.dart';
 import 'package:pet_keeper_front/features/adopt_pet/presentation/pages/adopt_post.dart';
 import 'package:pet_keeper_front/features/adopt_pet/presentation/pages/adopt_post_view.dart';
+import 'package:pet_keeper_front/features/adopt_pet/presentation/pages/recommend_pet.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 
@@ -413,44 +414,88 @@ class _AdoptPetsState extends State<AdoptPets>
                     return Container();
                   }
                 }),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 15.0),
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 25.0),
-                      child: FloatingActionButton(
-                        heroTag: 'adoptPetsButton',
-                        onPressed: () async {
-                          await Navigator.push(
-                            context,
-                            PageRouteBuilder(
-                              pageBuilder:
-                                  (context, animation, secondaryAnimation) =>
-                                      const AdoptPost(),
-                              transitionsBuilder: (context, animation,
-                                  secondaryAnimation, child) {
-                                var begin = const Offset(1.0, 0.0);
-                                var end = Offset.zero;
-                                var curve = Curves.easeInOut;
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 15.0),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 25.0),
+                          child: FloatingActionButton(
+                            heroTag: 'adoptPetsButton2',
+                            onPressed: () async {
+                              await Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation,
+                                          secondaryAnimation) =>
+                                      const RecommendPet(),
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    var begin = const Offset(1.0, 0.0);
+                                    var end = Offset.zero;
+                                    var curve = Curves.easeInOut;
 
-                                var tween = Tween(begin: begin, end: end)
-                                    .chain(CurveTween(curve: curve));
+                                    var tween = Tween(begin: begin, end: end)
+                                        .chain(CurveTween(curve: curve));
 
-                                return SlideTransition(
-                                  position: animation.drive(tween),
-                                  child: child,
-                                );
-                              },
-                            ),
-                          );
-                          _onReturnFromOtherPage();
-                        },
-                        child: const Icon(Icons.add),
+                                    return SlideTransition(
+                                      position: animation.drive(tween),
+                                      child: child,
+                                    );
+                                  },
+                                ),
+                              );
+                              _onReturnFromOtherPage();
+                            },
+                            child: const Icon(Icons.star),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 15.0),
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 25.0),
+                          child: FloatingActionButton(
+                            heroTag: 'adoptPetsButton',
+                            onPressed: () async {
+                              await Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation,
+                                          secondaryAnimation) =>
+                                      const AdoptPost(),
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    var begin = const Offset(1.0, 0.0);
+                                    var end = Offset.zero;
+                                    var curve = Curves.easeInOut;
+
+                                    var tween = Tween(begin: begin, end: end)
+                                        .chain(CurveTween(curve: curve));
+
+                                    return SlideTransition(
+                                      position: animation.drive(tween),
+                                      child: child,
+                                    );
+                                  },
+                                ),
+                              );
+                              _onReturnFromOtherPage();
+                            },
+                            child: const Icon(Icons.add),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),

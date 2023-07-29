@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/auth/auth_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/credential/credential_cubit.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/email_verify_user_page.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/register_page%20_foundation.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/register_page.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/reset_password_page.dart';
@@ -19,8 +20,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool isPasswordVisible = false;
   bool isLoading = false;
-  late TextEditingController _passwordController;
-  late TextEditingController _emailController;
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -54,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
       body: BlocConsumer<CredentialCubit, CredentialState>(
         builder: (context, credentialState) {
           if (credentialState is CredentialLoading) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
@@ -62,10 +63,12 @@ class _LoginPageState extends State<LoginPage> {
           if (credentialState is CredentialSuccess) {
             return BlocBuilder<AuthCubit, AuthState>(
               builder: (context, authState) {
-                if (authState is Authenticated) {
+                if (authState is Verified) {
                   return MainLayout(
                     uid: authState.uid,
                   );
+                } else if (authState is UnVerified) {
+                  return const EmailVerifyUserPage();
                 } else {
                   return _bodyWidget();
                 }
@@ -107,8 +110,8 @@ class _LoginPageState extends State<LoginPage> {
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(0),
                     topRight: Radius.circular(0),
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(25),
+                    bottomRight: Radius.circular(25),
                   ),
                   child: Image.asset(
                     'assets/images/banner.png',
@@ -119,14 +122,22 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 width: 375 * fem,
                 height: 500 * fem,
-                decoration: const BoxDecoration(
-                  color: Color.fromARGB(195, 42, 34, 117),
-                  borderRadius: BorderRadius.only(
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(195, 42, 34, 117),
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(0),
                     topRight: Radius.circular(0),
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(25),
+                    bottomRight: Radius.circular(25),
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 3,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3), // desplazamiento hacia abajo
+                    ),
+                  ],
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -180,8 +191,25 @@ class _LoginPageState extends State<LoginPage> {
                                 ..onTap = () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(
-                                      builder: (context) => RegisterPage(),
+                                    PageRouteBuilder(
+                                      pageBuilder: (context, animation,
+                                              secondaryAnimation) =>
+                                          const RegisterPage(),
+                                      transitionsBuilder: (context, animation,
+                                          secondaryAnimation, child) {
+                                        var begin = const Offset(1.0, 0.0);
+                                        var end = Offset.zero;
+                                        var curve = Curves.easeInOut;
+
+                                        var tween = Tween(
+                                                begin: begin, end: end)
+                                            .chain(CurveTween(curve: curve));
+
+                                        return SlideTransition(
+                                          position: animation.drive(tween),
+                                          child: child,
+                                        );
+                                      },
                                     ),
                                   );
                                 },
@@ -303,9 +331,28 @@ class _LoginPageState extends State<LoginPage> {
                                     ..onTap = () {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              ResetPasswordPage(),
+                                        PageRouteBuilder(
+                                          pageBuilder: (context, animation,
+                                                  secondaryAnimation) =>
+                                              const ResetPasswordPage(),
+                                          transitionsBuilder: (context,
+                                              animation,
+                                              secondaryAnimation,
+                                              child) {
+                                            var begin = const Offset(1.0, 0.0);
+                                            var end = Offset.zero;
+                                            var curve = Curves.easeInOut;
+
+                                            var tween = Tween(
+                                                    begin: begin, end: end)
+                                                .chain(
+                                                    CurveTween(curve: curve));
+
+                                            return SlideTransition(
+                                              position: animation.drive(tween),
+                                              child: child,
+                                            );
+                                          },
                                         ),
                                       );
                                     },
@@ -335,9 +382,28 @@ class _LoginPageState extends State<LoginPage> {
                                     ..onTap = () {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
+                                        PageRouteBuilder(
+                                          pageBuilder: (context, animation,
+                                                  secondaryAnimation) =>
                                               const RegisterPageFoundation(),
+                                          transitionsBuilder: (context,
+                                              animation,
+                                              secondaryAnimation,
+                                              child) {
+                                            var begin = const Offset(1.0, 0.0);
+                                            var end = Offset.zero;
+                                            var curve = Curves.easeInOut;
+
+                                            var tween = Tween(
+                                                    begin: begin, end: end)
+                                                .chain(
+                                                    CurveTween(curve: curve));
+
+                                            return SlideTransition(
+                                              position: animation.drive(tween),
+                                              child: child,
+                                            );
+                                          },
                                         ),
                                       );
                                     },
@@ -353,114 +419,62 @@ class _LoginPageState extends State<LoginPage> {
               ),
               Positioned(
                 bottom: 0,
-                child: Transform.translate(
-                  offset: const Offset(0, 20),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      toggleLoading();
-                      _submitLogin();
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        Colors.purple[100]!,
-                      ),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                child: GestureDetector(
+                  onTap: () {
+                    toggleLoading();
+                    _submitLogin();
+                  },
+                  child: Transform.translate(
+                    offset: const Offset(0, 20),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        toggleLoading();
+                        _submitLogin();
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          Colors.purple[100]!,
                         ),
-                      ),
-                      elevation: MaterialStateProperty.all<double>(8),
-                      padding: MaterialStateProperty.all<EdgeInsets>(
-                          EdgeInsets.zero),
-                      minimumSize:
-                          MaterialStateProperty.all(const Size(100, 50)),
-                    ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Visibility(
-                          visible: !isLoading,
-                          child: Icon(
-                            Icons.arrow_forward_ios,
-                            size: 30,
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        Visibility(
-                          visible: isLoading,
-                          child: Container(
-                            width: 25,
-                            height: 25,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
+                        elevation: MaterialStateProperty.all<double>(8),
+                        padding: MaterialStateProperty.all<EdgeInsets>(
+                            EdgeInsets.zero),
+                        minimumSize:
+                            MaterialStateProperty.all(const Size(100, 50)),
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Visibility(
+                            visible: !isLoading,
+                            child: const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 30,
                             ),
                           ),
-                        ),
-                      ],
+                          Visibility(
+                            visible: isLoading,
+                            child: const SizedBox(
+                              width: 25,
+                              height: 25,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ],
           ),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(vertical: 50.0),
-          //   child: Padding(
-          //     padding: const EdgeInsets.symmetric(horizontal: 70.0),
-          //     child: Column(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       crossAxisAlignment: CrossAxisAlignment.center,
-          //       children: [
-          //         const Text(
-          //           'O continúa con',
-          //           style: TextStyle(fontSize: 18),
-          //         ),
-          //         SizedBox(
-          //           height: 20,
-          //         ),
-          //         Row(
-          //           mainAxisAlignment: MainAxisAlignment.center,
-          //           children: [
-          //             Image.asset(
-          //               'assets/images/google.png',
-          //               width: 50,
-          //               height: 50,
-          //             ),
-          //             SizedBox(
-          //               width: 20,
-          //             ),
-          //             Image.asset(
-          //               'assets/images/fb.png',
-          //               width: 50,
-          //               height: 50,
-          //             ),
-          //           ],
-          //         ),
-          //         SizedBox(
-          //           height: 30,
-          //         ),
-          //         RichText(
-          //           textAlign: TextAlign.center,
-          //           text: TextSpan(
-          //             text: 'Al continúar, estás de acuerdo con nuestros',
-          //             style: const TextStyle(color: Colors.black),
-          //             children: [
-          //               const WidgetSpan(
-          //                 child: SizedBox(
-          //                     width: 5), // Espacio en blanco como widget
-          //               ),
-          //               TextSpan(
-          //                 text: 'Términos y condiciones',
-          //                 style: TextStyle(
-          //                     color: Colors.purple[100],
-          //                     fontWeight: FontWeight.bold),
-          //               ),
-          //             ],
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );

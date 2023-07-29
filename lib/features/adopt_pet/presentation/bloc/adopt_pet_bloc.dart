@@ -43,7 +43,8 @@ class AdoptPetBloc extends Bloc<AdoptPetEvent, AdoptPetState> {
           emit(LoadedAllPets(allPets: allPets));
           print('LoadAllAdoptPets Emitted');
         } catch (e) {
-          emit(AdoptError(error: e.toString()));
+          emit(AdoptError(
+              error: 'Ha ocurrido un error, intenta de nuevo mas tarde'));
         }
       } else if (event is GetDetailPet) {
         try {
@@ -52,7 +53,8 @@ class AdoptPetBloc extends Bloc<AdoptPetEvent, AdoptPetState> {
           emit(LoadedDetailPet(adoptPet: postDetail));
           print('LoadDetailStrayPet Emitted');
         } catch (e) {
-          emit(AdoptError(error: e.toString()));
+          emit(AdoptError(
+              error: 'Ha ocurrido un error, intenta de nuevo mas tarde'));
         }
       } else if (event is GetAllUserPostsPet) {
         try {
@@ -62,7 +64,8 @@ class AdoptPetBloc extends Bloc<AdoptPetEvent, AdoptPetState> {
           emit(LoadedAllUserPostsPet(allUserPostsPets: allUserPostsPets));
           print('LoadAllUserPostsAdoptPets Emitted');
         } catch (e) {
-          emit(AdoptError(error: e.toString()));
+          emit(AdoptError(
+              error: 'Ha ocurrido un error, intenta de nuevo mas tarde'));
         }
       } else if (event is CreatePet) {
         try {
