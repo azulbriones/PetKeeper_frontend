@@ -21,6 +21,12 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
     final file = File(strayPet.petImage.path);
     await storageRef.putFile(file);
     final imageUrl = await storageRef.getDownloadURL();
+    String reward;
+    if (strayPet.reward == '') {
+      reward = '0';
+    } else {
+      reward = strayPet.reward;
+    }
     final data = {
       'pet_name': strayPet.petName,
       'pet_breed': strayPet.petBreed,
@@ -29,7 +35,7 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
       'location': strayPet.location,
       'address': strayPet.address,
       'status': 'lost',
-      'reward': strayPet.reward,
+      'reward': reward,
       'owner_id': strayPet.ownerId,
       'owner_name': strayPet.ownerName,
       'lost_date': strayPet.lostDate,
