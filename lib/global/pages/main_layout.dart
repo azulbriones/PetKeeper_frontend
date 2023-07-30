@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:network_image/network_image.dart';
 import 'package:pet_keeper_front/features/adopt_pet/presentation/pages/toadopt_pets.dart';
+import 'package:pet_keeper_front/features/chat/chat_home_page.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/user/user_cubit.dart';
@@ -192,7 +193,7 @@ class _MainLayoutState extends State<MainLayout> {
           });
         },
         children: const [
-          HomePage(),
+          ChatHomePage(),
           StrayPets(),
           HomePage(),
           AdoptPets(),

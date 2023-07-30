@@ -35,7 +35,7 @@ class _AllFoundationsPageState extends State<AllFoundationsPage>
   // Función que se ejecutará al realizar la acción de recarga
   Future<void> _onRefresh() async {
     // Simulamos una operación de carga de datos
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
 
     // Una vez finalizada la operación, actualizamos la lista de elementos
     setState(() {
@@ -79,7 +79,7 @@ class _AllFoundationsPageState extends State<AllFoundationsPage>
             height: 50 * fem,
             color: Colors.indigo[400],
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 18.0),
+              padding: const EdgeInsets.symmetric(horizontal: 18.0),
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0 * fem),
                 child: const Text(
@@ -152,7 +152,7 @@ class _AllFoundationsPageState extends State<AllFoundationsPage>
                                         ),
                                       ],
                                     ),
-                                    margin: EdgeInsets.all(8),
+                                    margin: const EdgeInsets.all(8),
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Row(
@@ -182,7 +182,7 @@ class _AllFoundationsPageState extends State<AllFoundationsPage>
                                               ),
                                             ),
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 15,
                                           ),
                                           Expanded(
@@ -211,7 +211,7 @@ class _AllFoundationsPageState extends State<AllFoundationsPage>
                                                       maxLines: 1,
                                                     ),
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 5.0,
                                                   ),
                                                   Align(
@@ -229,7 +229,7 @@ class _AllFoundationsPageState extends State<AllFoundationsPage>
                                                       maxLines: 1,
                                                     ),
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 5,
                                                   ),
                                                   Flexible(
@@ -258,13 +258,28 @@ class _AllFoundationsPageState extends State<AllFoundationsPage>
                             );
                           }).toList())
                         : const Center(
-                            child: Text('No hay fundaciones'),
+                            child: Text('No hay fundaciones en este momento'),
                           ),
                   );
                 } else if (state is FoundationError) {
-                  return Center(
-                    child: Text(state.error,
-                        style: const TextStyle(color: Colors.red)),
+                  return RefreshIndicator(
+                    onRefresh: _onRefresh,
+                    child: ListView(
+                      children: [
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height - 250,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Center(
+                                child: Text(state.error,
+                                    style: const TextStyle(color: Colors.red)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 } else {
                   return Container();

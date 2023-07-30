@@ -56,6 +56,7 @@ class PetLoverModel extends PetLoverEntity {
       "payInfo": payInfo,
       "address": address,
       "location": location,
+      "date_time": DateTime.now(),
     };
   }
 }

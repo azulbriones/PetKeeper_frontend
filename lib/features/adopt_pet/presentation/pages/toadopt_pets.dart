@@ -403,9 +403,18 @@ class _AdoptPetsState extends State<AdoptPets>
                       onRefresh: _onRefresh,
                       child: ListView(
                         children: [
-                          Center(
-                            child: Text(state.error,
-                                style: const TextStyle(color: Colors.red)),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height - 250,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Center(
+                                  child: Text(state.error,
+                                      style:
+                                          const TextStyle(color: Colors.red)),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),

@@ -416,9 +416,22 @@ class _StrayPetsState extends State<StrayPets>
                   } else if (state is StrayError) {
                     return RefreshIndicator(
                       onRefresh: _onRefresh,
-                      child: Center(
-                        child: Text(state.error,
-                            style: const TextStyle(color: Colors.red)),
+                      child: ListView(
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height - 250,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Center(
+                                  child: Text(state.error,
+                                      style:
+                                          const TextStyle(color: Colors.red)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     );
                   } else {
