@@ -462,7 +462,7 @@ class _HomePageState extends State<HomePage>
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 15,
                         ),
                         Expanded(
@@ -546,7 +546,7 @@ class _HomePageState extends State<HomePage>
                                     ),
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 5,
                                 ),
                                 Flexible(
@@ -657,7 +657,7 @@ class _HomePageState extends State<HomePage>
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 15,
                         ),
                         Expanded(
@@ -728,7 +728,7 @@ class _HomePageState extends State<HomePage>
                                     ),
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 5,
                                 ),
                                 Flexible(

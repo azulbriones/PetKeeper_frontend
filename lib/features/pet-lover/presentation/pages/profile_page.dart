@@ -184,7 +184,7 @@ class _ProfilePageState extends State<ProfilePage>
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 14,
             ),
             const Text(
@@ -195,7 +195,7 @@ class _ProfilePageState extends State<ProfilePage>
                 fontWeight: FontWeight.w400,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 28,
             ),
             TextFieldContainer(
@@ -203,7 +203,7 @@ class _ProfilePageState extends State<ProfilePage>
               prefixIcon: Icons.person,
               controller: _nameController,
             ),
-            SizedBox(
+            const SizedBox(
               height: 14,
             ),
             AbsorbPointer(
@@ -213,7 +213,7 @@ class _ProfilePageState extends State<ProfilePage>
                 controller: _emailController,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 28,
             ),
             ContainerButton(
@@ -223,7 +223,7 @@ class _ProfilePageState extends State<ProfilePage>
                 _updateProfile(currentUser.id!);
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 14,
             ),
             ContainerButtonSecondary(
@@ -254,7 +254,7 @@ class _ProfilePageState extends State<ProfilePage>
                 _onReturnFromOtherPage();
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 14,
             ),
             ContainerButtonDanger(

@@ -1,15 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:network_image/network_image.dart';
-import 'package:pet_keeper_front/global/common/common.dart';
 import 'package:pet_keeper_front/global/config/config.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
-import 'package:http/http.dart' as http;
-import 'package:pet_keeper_front/global/widgets/container/container_button.dart';
 
 String apiURL = serverURL;
 
@@ -26,7 +21,12 @@ class _YourBreedsState extends State<YourBreeds> {
   late List<Widget> myWidgetList;
   @override
   void initState() {
-    myWidgetList = widget.razas.map((string) => Text(string)).toList();
+    myWidgetList = widget.razas
+        .map((string) => Text(
+              string,
+              style: const TextStyle(fontSize: 16),
+            ))
+        .toList();
     super.initState();
   }
 
@@ -102,15 +102,16 @@ class _YourBreedsState extends State<YourBreeds> {
             height: 50 * fem,
             color: Colors.indigo[400],
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 18.0),
+              padding: const EdgeInsets.symmetric(horizontal: 18.0),
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0 * fem),
                 child: const Text(
-                  'Encuentra tu mascota ideal',
+                  'Mejores razas de mascotas para ti',
                   style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -121,7 +122,7 @@ class _YourBreedsState extends State<YourBreeds> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: myWidgetList,
             ),
-          )
+          ),
         ],
       ),
     );

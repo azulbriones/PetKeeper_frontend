@@ -102,21 +102,21 @@ class _EmailVerifyUserPageState extends State<EmailVerifyUserPage> {
                             fontWeight: FontWeight.bold,
                             color: Colors.white),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       const Text(
                         'Hemos enviado un correo de verificación al correo que registraste, por favor revisa tu bandeja para confirmar tu cuenta.',
                         style: TextStyle(fontSize: 18.0, color: Colors.white),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       const Text(
                         'Si ya confirmaste tu cuenta mediante el correo que te enviamos, ya puedes iniciar sesión',
                         style: TextStyle(fontSize: 18.0, color: Colors.white),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       RichText(
@@ -132,7 +132,7 @@ class _EmailVerifyUserPageState extends State<EmailVerifyUserPage> {
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       RichText(

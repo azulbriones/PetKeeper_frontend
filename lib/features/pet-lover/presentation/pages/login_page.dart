@@ -163,14 +163,14 @@ class _LoginPageState extends State<LoginPage> {
                             fontWeight: FontWeight.bold,
                             color: Colors.white),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       const Text(
                         'Inicia sesión con tu correo electrónico y contraseña',
                         style: TextStyle(fontSize: 18.0, color: Colors.white),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       RichText(
@@ -217,7 +217,7 @@ class _LoginPageState extends State<LoginPage> {
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       TextField(
@@ -257,7 +257,7 @@ class _LoginPageState extends State<LoginPage> {
                           fillColor: const Color.fromARGB(132, 255, 255, 255),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       TextField(
@@ -307,7 +307,7 @@ class _LoginPageState extends State<LoginPage> {
                           fillColor: const Color.fromARGB(132, 255, 255, 255),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       Column(
@@ -360,7 +360,7 @@ class _LoginPageState extends State<LoginPage> {
                               ],
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 15.0,
                           ),
                           RichText(

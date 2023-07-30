@@ -28,7 +28,6 @@ class _StrayPostViewState extends State<StrayPostView> {
     subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
-      print('La conexion es: $result');
       if (result == ConnectivityResult.wifi) {
         context
             .read<StrayPetBloc>()
@@ -127,7 +126,7 @@ class _StrayPostViewState extends State<StrayPostView> {
                   } else if (state is LoadedDetailStrayPet) {
                     return ListView(
                       children: <Widget>[
-                        SizedBox(
+                        const SizedBox(
                           height: 15.0,
                         ),
                         Container(
@@ -159,7 +158,7 @@ class _StrayPostViewState extends State<StrayPostView> {
                             placeHolder: "assets/images/pet_default2.jpg",
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15.0,
                         ),
                         Container(
@@ -192,7 +191,7 @@ class _StrayPostViewState extends State<StrayPostView> {
                                               fontWeight: FontWeight.bold,
                                               fontSize: 30),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 10.0,
                                         ),
                                         Text(
@@ -211,7 +210,7 @@ class _StrayPostViewState extends State<StrayPostView> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10.0,
                                 ),
                                 Row(
@@ -220,7 +219,7 @@ class _StrayPostViewState extends State<StrayPostView> {
                                       Icons.person,
                                       color: Colors.grey,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 5.0,
                                     ),
                                     Text(
@@ -230,14 +229,14 @@ class _StrayPostViewState extends State<StrayPostView> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10.0,
                                 ),
                                 Text(
                                   state.strayPet.description.toString(),
                                   style: const TextStyle(fontSize: 15),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10.0,
                                 ),
                                 Column(
@@ -267,7 +266,7 @@ class _StrayPostViewState extends State<StrayPostView> {
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15.0,
                         ),
                         if (currentUser.id != state.strayPet.ownerId)
@@ -314,7 +313,7 @@ class _StrayPostViewState extends State<StrayPostView> {
                               ),
                             ),
                           ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15.0,
                         ),
                       ],

@@ -28,7 +28,6 @@ class _StrayPostViewState extends State<AdoptPostView> {
     subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
-      print('La conexion es: $result');
       if (result == ConnectivityResult.wifi) {
         context.read<AdoptPetBloc>().add(GetDetailPet(petId: widget.id));
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -125,7 +124,7 @@ class _StrayPostViewState extends State<AdoptPostView> {
                   } else if (state is LoadedDetailPet) {
                     return ListView(
                       children: <Widget>[
-                        SizedBox(
+                        const SizedBox(
                           height: 15.0,
                         ),
                         Container(
@@ -157,7 +156,7 @@ class _StrayPostViewState extends State<AdoptPostView> {
                             placeHolder: "assets/images/pet_default2.jpg",
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15.0,
                         ),
                         Container(
@@ -333,7 +332,7 @@ class _StrayPostViewState extends State<AdoptPostView> {
                               ),
                             ),
                           ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15.0,
                         ),
                       ],

@@ -205,14 +205,14 @@ class _RegisterPageState extends State<RegisterPage> {
                             fontWeight: FontWeight.bold,
                             color: Colors.white),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       const Text(
                         'Rellena el formulario con tus datos',
                         style: TextStyle(fontSize: 18.0, color: Colors.white),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       TextField(
@@ -252,7 +252,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           fillColor: const Color.fromARGB(132, 255, 255, 255),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       TextField(
@@ -294,7 +294,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           fillColor: const Color.fromARGB(132, 255, 255, 255),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       TextField(
@@ -346,7 +346,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           fillColor: const Color.fromARGB(132, 255, 255, 255),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       TextField(
@@ -398,7 +398,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           fillColor: const Color.fromARGB(132, 255, 255, 255),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       RichText(
@@ -423,7 +423,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       RichText(
@@ -540,7 +540,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
                   RichText(

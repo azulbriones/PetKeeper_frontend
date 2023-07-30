@@ -19,6 +19,7 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  // ignore: prefer_typing_uninitialized_variables
   var roomId;
   @override
   Widget build(BuildContext context) {

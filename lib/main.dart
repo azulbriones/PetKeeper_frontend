@@ -83,7 +83,6 @@ class MyApp extends StatelessWidget {
           "/": (context) {
             return BlocBuilder<AuthCubit, AuthState>(
               builder: (context, authState) {
-                print('MAIN STATE: $authState');
                 if (authState is Verified) {
                   return MainLayout(uid: authState.uid);
                 } else if (authState is UnAuthenticated) {

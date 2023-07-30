@@ -30,7 +30,6 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
     subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
-      print('La conexion es: $result');
       if (result == ConnectivityResult.wifi) {
         BlocProvider.of<FoundationCubit>(context)
             .getSingleFoundation(foundationId: widget.id.toString());
@@ -128,7 +127,7 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                   } else if (state is SingleFoundationLoaded) {
                     return ListView(
                       children: <Widget>[
-                        SizedBox(
+                        const SizedBox(
                           height: 15.0,
                         ),
                         Container(
@@ -160,7 +159,7 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                             placeHolder: "assets/images/pet_default2.jpg",
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15.0,
                         ),
                         Container(
@@ -188,14 +187,14 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                                     fontSize: 24,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10.0,
                                 ),
                                 Text(
                                   state.foundation.info.toString(),
                                   style: const TextStyle(fontSize: 15),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10.0,
                                 ),
                                 Row(
@@ -204,7 +203,7 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                                       Icons.place,
                                       color: Colors.grey,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 10.0,
                                     ),
                                     Expanded(
@@ -216,7 +215,7 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10.0,
                                 ),
                                 Row(
@@ -225,7 +224,7 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                                       Icons.mail,
                                       color: Colors.grey,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 10.0,
                                     ),
                                     Text(
@@ -237,7 +236,7 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10.0,
                                 ),
                                 Row(
@@ -246,7 +245,7 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                                       Icons.payment,
                                       color: Colors.grey,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 10.0,
                                     ),
                                     Text(
@@ -258,7 +257,7 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 15.0,
                                 ),
                                 GestureDetector(
@@ -348,7 +347,7 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15.0,
                         ),
                         if (currentUser.id != state.foundation.id)
@@ -395,7 +394,7 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                               ),
                             ),
                           ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15.0,
                         ),
                       ],

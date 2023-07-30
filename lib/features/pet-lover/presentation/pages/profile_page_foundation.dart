@@ -189,7 +189,7 @@ class _ProfilePageFoundationState extends State<ProfilePageFoundation> {
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 14,
             ),
             const Text(
@@ -199,7 +199,7 @@ class _ProfilePageFoundationState extends State<ProfilePageFoundation> {
                   fontSize: 16,
                   fontWeight: FontWeight.w400),
             ),
-            SizedBox(
+            const SizedBox(
               height: 28,
             ),
             TextFieldContainer(
@@ -207,7 +207,7 @@ class _ProfilePageFoundationState extends State<ProfilePageFoundation> {
               prefixIcon: Icons.person,
               controller: _nameController,
             ),
-            SizedBox(
+            const SizedBox(
               height: 14,
             ),
             AbsorbPointer(
@@ -217,7 +217,7 @@ class _ProfilePageFoundationState extends State<ProfilePageFoundation> {
                 controller: _emailController,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 14,
             ),
             ClipRRect(
@@ -236,7 +236,7 @@ class _ProfilePageFoundationState extends State<ProfilePageFoundation> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 14,
             ),
             ClipRRect(
@@ -256,7 +256,7 @@ class _ProfilePageFoundationState extends State<ProfilePageFoundation> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 14,
             ),
             ClipRRect(
@@ -276,7 +276,7 @@ class _ProfilePageFoundationState extends State<ProfilePageFoundation> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 28,
             ),
             ContainerButton(
@@ -286,7 +286,7 @@ class _ProfilePageFoundationState extends State<ProfilePageFoundation> {
                 _updateProfile(currentUser.id!);
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 14,
             ),
             ContainerButtonSecondary(
@@ -317,7 +317,7 @@ class _ProfilePageFoundationState extends State<ProfilePageFoundation> {
                 _onReturnFromOtherPage();
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 14,
             ),
             ContainerButtonDanger(

@@ -118,7 +118,7 @@ class _AdoptPetsState extends State<AdoptPets>
             height: 50 * fem,
             color: Colors.indigo[400],
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 18.0),
+              padding: const EdgeInsets.symmetric(horizontal: 18.0),
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0 * fem),
                 child: const Text(
@@ -258,7 +258,7 @@ class _AdoptPetsState extends State<AdoptPets>
                                     ),
                                   ],
                                 ),
-                                margin: EdgeInsets.all(8),
+                                margin: const EdgeInsets.all(8),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Row(
@@ -285,7 +285,7 @@ class _AdoptPetsState extends State<AdoptPets>
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                       Expanded(
@@ -370,7 +370,7 @@ class _AdoptPetsState extends State<AdoptPets>
                                                   ),
                                                 ],
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 5,
                                               ),
                                               Flexible(

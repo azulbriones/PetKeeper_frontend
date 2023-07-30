@@ -26,10 +26,10 @@ class TextFieldContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(12)),
       child: TextField(
         obscureText: isObscureText == true ? true : false,
-        keyboardType: keyboardType == null ? TextInputType.text : keyboardType,
+        keyboardType: keyboardType ?? TextInputType.text,
         controller: controller,
         decoration: InputDecoration(
-            prefixIcon: Icon(prefixIcon == null ? Icons.circle : prefixIcon),
+            prefixIcon: Icon(prefixIcon ?? Icons.circle),
             hintText: hintText,
             border: InputBorder.none),
       ),

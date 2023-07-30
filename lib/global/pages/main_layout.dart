@@ -35,7 +35,7 @@ class _MainLayoutState extends State<MainLayout> {
     _pageController = PageController(
       initialPage: 2, // Establecer la página predeterminada en el índice 2
     );
-    //BlocProvider.of<GroupCubit>(context).getGroups();
+
     super.initState();
   }
 

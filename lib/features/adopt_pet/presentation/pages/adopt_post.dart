@@ -186,7 +186,7 @@ class _StrayPostState extends State<AdoptPost> {
               height: 50 * fem,
               color: lightPrimaryColor,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 18.0),
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 15.0 * fem),
                   child: const Text(
@@ -204,7 +204,7 @@ class _StrayPostState extends State<AdoptPost> {
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: ListView(
                   children: <Widget>[
-                    SizedBox(
+                    const SizedBox(
                       height: 15.0,
                     ),
                     if (_image != null)
@@ -225,7 +225,7 @@ class _StrayPostState extends State<AdoptPost> {
                           ),
                         ],
                       ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15.0,
                     ),
                     ContainerButtonSecondary(
@@ -245,7 +245,7 @@ class _StrayPostState extends State<AdoptPost> {
                         });
                       },
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15.0,
                     ),
                     TextField(
@@ -286,7 +286,7 @@ class _StrayPostState extends State<AdoptPost> {
                         fillColor: const Color.fromARGB(132, 255, 255, 255),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15.0,
                     ),
                     TextField(
@@ -331,7 +331,7 @@ class _StrayPostState extends State<AdoptPost> {
                         fillColor: const Color.fromARGB(132, 255, 255, 255),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15.0,
                     ),
                     TextField(
@@ -372,7 +372,7 @@ class _StrayPostState extends State<AdoptPost> {
                         fillColor: const Color.fromARGB(132, 255, 255, 255),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15.0,
                     ),
                     Container(
@@ -388,7 +388,7 @@ class _StrayPostState extends State<AdoptPost> {
                               Icons.place,
                               color: Colors.indigo,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 13.0,
                             ),
                             Expanded(
@@ -444,7 +444,7 @@ class _StrayPostState extends State<AdoptPost> {
                     _locationController != null
                         ? Column(
                             children: [
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               Container(
@@ -462,7 +462,7 @@ class _StrayPostState extends State<AdoptPost> {
                                         Icons.location_city,
                                         color: Colors.indigo,
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 13.0,
                                       ),
                                       Expanded(
@@ -520,7 +520,7 @@ class _StrayPostState extends State<AdoptPost> {
                             ],
                           )
                         : Container(),
-                    SizedBox(
+                    const SizedBox(
                       height: 15.0,
                     ),
                     TextField(
@@ -561,7 +561,7 @@ class _StrayPostState extends State<AdoptPost> {
                         fillColor: const Color.fromARGB(132, 255, 255, 255),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15.0,
                     ),
                     TextField(
@@ -607,7 +607,7 @@ class _StrayPostState extends State<AdoptPost> {
                         fillColor: const Color.fromARGB(132, 255, 255, 255),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15.0,
                     ),
                     InkWell(
@@ -652,7 +652,7 @@ class _StrayPostState extends State<AdoptPost> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 30.0,
                     ),
                   ],

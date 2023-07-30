@@ -667,7 +667,7 @@ class _MyPostsPageState extends State<MyPostsPage>
                                     ),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 15,
                                 ),
                                 Expanded(
@@ -760,7 +760,7 @@ class _MyPostsPageState extends State<MyPostsPage>
                                             ),
                                           ],
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         Flexible(
@@ -1051,7 +1051,7 @@ class _MyPostsPageState extends State<MyPostsPage>
                                     ),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 15,
                                 ),
                                 Expanded(
@@ -1131,7 +1131,7 @@ class _MyPostsPageState extends State<MyPostsPage>
                                             ),
                                           ],
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         Flexible(

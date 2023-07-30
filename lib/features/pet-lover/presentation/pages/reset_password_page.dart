@@ -104,14 +104,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                             fontWeight: FontWeight.bold,
                             color: Colors.white),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       const Text(
                         'Introduzca su correo electrónico para continuar con el proceso de restablecimiento',
                         style: TextStyle(fontSize: 18.0, color: Colors.white),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 30,
                       ),
                       TextField(
@@ -151,7 +151,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                           fillColor: const Color.fromARGB(132, 255, 255, 255),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       RichText(
