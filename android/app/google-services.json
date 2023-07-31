@@ -1,15 +1,16 @@
 {
   "project_info": {
     "project_number": "55402451335",
+    "firebase_url": "https://petkeeper-c0f97-default-rtdb.firebaseio.com",
     "project_id": "petkeeper-c0f97",
     "storage_bucket": "petkeeper-c0f97.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:55402451335:android:0247590946922645e90322",
+        "mobilesdk_app_id": "1:55402451335:android:a428410018c8b7a0e90322",
         "android_client_info": {
-          "package_name": "com.example.pet_keeper_front"
+          "package_name": "com.petkeeperofficial.petKeeper"
         }
       },
       "oauth_client": [
