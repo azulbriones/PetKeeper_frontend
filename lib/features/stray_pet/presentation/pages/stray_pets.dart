@@ -70,7 +70,7 @@ class _StrayPetsState extends State<StrayPets>
   // Función que se ejecutará al realizar la acción de recarga
   Future<void> _onRefresh() async {
     // Simulamos una operación de carga de datos
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
 
     // Una vez finalizada la operación, actualizamos la lista de elementos
     setState(() {

@@ -15,8 +15,8 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
   final FirebaseAuth auth;
   final FirebaseFirestore firestore;
 
-  final StreamController<List<PetLoverEntity>> _userStreamController =
-      StreamController<List<PetLoverEntity>>();
+  StreamController<List<PetLoverEntity>> _userStreamController =
+      StreamController<List<PetLoverEntity>>.broadcast();
   Stream<List<PetLoverEntity>>? _userStream;
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _streamSubscription;
 
@@ -82,6 +82,10 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
     final userCollection = firestore.collection("users");
     // Verificar si ya hay una suscripción activa y cancelarla antes de crear una nueva
     _streamSubscription?.cancel();
+    if (_userStreamController.isClosed) {
+      _userStreamController =
+          StreamController<List<PetLoverEntity>>.broadcast();
+    }
 
     _streamSubscription = userCollection
         .limit(1)
@@ -95,7 +99,7 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
     });
 
     _userStream = _userStreamController.stream;
-    print('USER STREAM $_userStream');
+
     return _userStream!;
   }
 
@@ -146,6 +150,8 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
   @override
   Future<void> signOut() async {
     await auth.signOut();
+    _userStreamController.close();
+    _streamSubscription?.cancel();
   }
 
   @override
@@ -203,6 +209,7 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
         'payInfo': user.payInfo,
         'address': user.address,
         'location': user.location,
+        'date_time': DateTime.now(),
       });
 
       // El documento se creó correctamente
@@ -275,28 +282,51 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
 
       // Obtener las referencias a los documentos que deben ser eliminados
       CollectionReference collection1Ref = firestore.collection('users');
-      // CollectionReference collection2Ref = firestore.collection('adopts_pets');
-      // CollectionReference collection3Ref = firestore.collection('stray_pets');
+      CollectionReference collection2Ref = firestore.collection('adopts_pets');
+      CollectionReference collection3Ref = firestore.collection('stray_pets');
+      CollectionReference collection4Ref = firestore.collection('rooms');
 
       QuerySnapshot querySnapshot1 =
           await collection1Ref.where('id', isEqualTo: uid).get();
-      // QuerySnapshot querySnapshot2 =
-      //     await collection2Ref.where('uid', isEqualTo: uid).get();
-      // QuerySnapshot querySnapshot3 =
-      //     await collection3Ref.where('uid', isEqualTo: uid).get();
+      QuerySnapshot querySnapshot2 =
+          await collection2Ref.where('owner_id', isEqualTo: uid).get();
+      QuerySnapshot querySnapshot3 =
+          await collection3Ref.where('owner_id', isEqualTo: uid).get();
+      QuerySnapshot querySnapshot4 =
+          await collection4Ref.where('users', arrayContains: uid).get();
+
+      // Lista para almacenar las referencias de los documentos a eliminar
+      List<DocumentReference> chatsToDelete = [];
+
+      for (var doc in querySnapshot4.docs) {
+        CollectionReference messagesCollectionRef =
+            doc.reference.collection('messages');
+        QuerySnapshot messagesSnapshot = await messagesCollectionRef.get();
+        chatsToDelete.addAll(
+            messagesSnapshot.docs.map((messageDoc) => messageDoc.reference));
+      }
 
       // Agregar las operaciones de eliminación al lote (batch)
       for (var doc in querySnapshot1.docs) {
         batch.delete(doc.reference);
       }
 
-      // for (var doc in querySnapshot2.docs) {
-      //   batch.delete(doc.reference);
-      // }
+      for (var doc in querySnapshot2.docs) {
+        batch.delete(doc.reference);
+      }
 
-      // for (var doc in querySnapshot3.docs) {
-      //   batch.delete(doc.reference);
-      // }
+      for (var doc in querySnapshot3.docs) {
+        batch.delete(doc.reference);
+      }
+
+      // Agregar las operaciones de eliminación de documentos a la subcolección 'messages' al lote (batch)
+      for (var doc in chatsToDelete) {
+        batch.delete(doc);
+      }
+
+      for (var doc in querySnapshot4.docs) {
+        batch.delete(doc.reference);
+      }
 
       // Ejecutar el lote (batch) para eliminar los documentos
       await batch.commit();

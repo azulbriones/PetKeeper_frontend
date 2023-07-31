@@ -18,11 +18,15 @@ class ChatPage extends StatefulWidget {
   State<ChatPage> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<ChatPage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   // ignore: prefer_typing_uninitialized_variables
   var roomId;
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final firestore = FirebaseFirestore.instance;
     return Scaffold(
       backgroundColor: Colors.indigo,
@@ -120,7 +124,17 @@ class _ChatPageState extends State<ChatPage> {
                             roomId = data.id;
                           }
                           return data == null
-                              ? Container()
+                              ? const SizedBox(
+                                  width: double.infinity,
+                                  child: Center(
+                                      child: Text(
+                                    'No hay mensajes',
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20),
+                                  )),
+                                )
                               : StreamBuilder(
                                   stream: data.reference
                                       .collection('messages')

@@ -8,6 +8,7 @@ import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_en
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/auth/auth_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/user/user_cubit.dart';
+import 'package:pet_keeper_front/features/pet-lover/presentation/pages/login_page.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/my_posts_page.dart';
 import 'package:pet_keeper_front/features/stray_pet/presentation/bloc/stray_pet_bloc.dart';
 import 'package:pet_keeper_front/global/common/common.dart';
@@ -171,7 +172,29 @@ class _ProfilePageFoundationState extends State<ProfilePageFoundation> {
                         // ignore: use_build_context_synchronously
                         BlocProvider.of<AuthCubit>(context).deleteAccount();
                         // ignore: use_build_context_synchronously
-                        Navigator.pop(context);
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    const LoginPage(),
+                            transitionsBuilder: (context, animation,
+                                secondaryAnimation, child) {
+                              var begin = const Offset(-1.0, 0.0);
+                              var end = Offset.zero;
+                              var curve = Curves.easeInOut;
+
+                              var tween = Tween(begin: begin, end: end)
+                                  .chain(CurveTween(curve: curve));
+
+                              return SlideTransition(
+                                position: animation.drive(tween),
+                                child: child,
+                              );
+                            },
+                          ),
+                          (Route<dynamic> route) => false,
+                        );
                       }
                     },
                     itemBuilder: (BuildContext context) => <PopupMenuEntry>[
@@ -325,7 +348,28 @@ class _ProfilePageFoundationState extends State<ProfilePageFoundation> {
               icon: Icons.logout,
               onTap: () {
                 BlocProvider.of<AuthCubit>(context).loggedOut();
-                Navigator.pop(context);
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        const LoginPage(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      var begin = const Offset(-1.0, 0.0);
+                      var end = Offset.zero;
+                      var curve = Curves.easeInOut;
+
+                      var tween = Tween(begin: begin, end: end)
+                          .chain(CurveTween(curve: curve));
+
+                      return SlideTransition(
+                        position: animation.drive(tween),
+                        child: child,
+                      );
+                    },
+                  ),
+                  (Route<dynamic> route) => false,
+                );
               },
             ),
           ],

@@ -68,6 +68,8 @@ class _StrayPostViewState extends State<AdoptPostView> {
   }
 
   Widget _bodyWidget(PetLoverEntity currentUser) {
+    double baseWidth = 375;
+    double fem = MediaQuery.of(context).size.width / baseWidth;
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
@@ -112,6 +114,24 @@ class _StrayPostViewState extends State<AdoptPostView> {
       body: Center(
         child: Column(
           children: [
+            Container(
+              width: 375 * fem,
+              height: 50 * fem,
+              color: Colors.indigo[400],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 15.0 * fem),
+                  child: const Text(
+                    'Mascota en adopción',
+                    style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),

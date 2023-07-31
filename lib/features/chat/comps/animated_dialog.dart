@@ -18,7 +18,11 @@ class AnimatedDialog extends StatefulWidget {
   State<AnimatedDialog> createState() => _AnimatedDialogState();
 }
 
-class _AnimatedDialogState extends State<AnimatedDialog> {
+class _AnimatedDialogState extends State<AnimatedDialog>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final firestore = FirebaseFirestore.instance;
   final controller = TextEditingController();
   String search = '';
@@ -32,6 +36,7 @@ class _AnimatedDialogState extends State<AnimatedDialog> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     if (widget.height != 0) {
       Timer(const Duration(milliseconds: 200), () {
         setState(() {
@@ -107,13 +112,35 @@ class _AnimatedDialogState extends State<AnimatedDialog> {
                                               .format(time.toDate()),
                                           onTap: () {
                                             Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                builder: (context) {
-                                                  return ChatPage(
-                                                    id: data[i].id.toString(),
-                                                    name: data[i]['name'],
-                                                    photoUrl: data[i]
-                                                        ['profileUrl'],
+                                              PageRouteBuilder(
+                                                pageBuilder: (context,
+                                                        animation,
+                                                        secondaryAnimation) =>
+                                                    ChatPage(
+                                                  id: data[i].id.toString(),
+                                                  name: data[i]['name'],
+                                                  photoUrl: data[i]
+                                                      ['profileUrl'],
+                                                ),
+                                                transitionsBuilder: (context,
+                                                    animation,
+                                                    secondaryAnimation,
+                                                    child) {
+                                                  var begin =
+                                                      const Offset(1.0, 0.0);
+                                                  var end = Offset.zero;
+                                                  var curve = Curves.easeInOut;
+
+                                                  var tween = Tween(
+                                                          begin: begin,
+                                                          end: end)
+                                                      .chain(CurveTween(
+                                                          curve: curve));
+
+                                                  return SlideTransition(
+                                                    position:
+                                                        animation.drive(tween),
+                                                    child: child,
                                                   );
                                                 },
                                               ),

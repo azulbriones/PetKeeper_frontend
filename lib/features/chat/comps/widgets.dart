@@ -198,12 +198,13 @@ class ChatWidgets {
     );
   }
 
-  static messageField({required onSubmit}) {
-    final con = TextEditingController();
+  static messageField({required onSubmit, controller}) {
+    final TextEditingController con = TextEditingController();
     return Container(
-      margin: const EdgeInsets.only(left: 5, right: 5, bottom: 10),
+      margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
       decoration: Styles.messageFieldCardStyle(),
-      child: SingleChildScrollView(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxHeight: 80),
         child: TextField(
           controller: con,
           textInputAction: TextInputAction.newline,
@@ -220,7 +221,7 @@ class ChatWidgets {
   }
 
   static searchBar(
-    bool open,
+    open,
   ) {
     return AnimatedDialog(
       height: open ? 400 : 0,
