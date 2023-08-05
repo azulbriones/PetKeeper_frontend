@@ -5,7 +5,7 @@ abstract class StrayPetRemoteDataSource {
   Future<void> createStrayPet(StrayPet strayPet);
   Future<List<StrayPetModel>> getAllStrayPets();
   Future<StrayPetModel> getStrayPetById(String petId);
-  Future<void> updateStrayPet(String strayPetId, String status);
+  Future<void> updateStatusStrayPet(String strayPetId, String status);
   Future<void> deleteStrayPet(String petId);
   Future<List<StrayPetModel>> getStrayPetsByOwnerId(String? ownerId);
   Future<List<StrayPetModel>> getStrayPetsByRescuerId(String rescuerId);

@@ -1,16 +1,11 @@
 import 'dart:async';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:network_image/network_image.dart';
-
 import 'package:pet_keeper_front/features/adopt_pet/presentation/bloc/adopt_pet_bloc.dart';
 import 'package:pet_keeper_front/features/adopt_pet/presentation/pages/adopt_post_view.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
-
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
-
 import 'package:pet_keeper_front/features/stray_pet/presentation/bloc/stray_pet_bloc.dart';
 import 'package:pet_keeper_front/features/stray_pet/presentation/pages/stray_post_view.dart';
 
@@ -40,8 +35,6 @@ class _MyPostsPageState extends State<MyPostsPage>
     'Tuxtla Gutiérrez',
   ];
 
-  late StreamSubscription<ConnectivityResult> subscription;
-
   @override
   void initState() {
     _adoptPetBloc = BlocProvider.of<AdoptPetBloc>(context);
@@ -60,29 +53,7 @@ class _MyPostsPageState extends State<MyPostsPage>
     context
         .read<StrayPetBloc>()
         .add(GetAllUserPostsStrayPet(userId: widget.userId));
-    subscription = Connectivity()
-        .onConnectivityChanged
-        .listen((ConnectivityResult result) {
-      if (result == ConnectivityResult.wifi ||
-          result == ConnectivityResult.mobile) {
-        context
-            .read<AdoptPetBloc>()
-            .add(GetAllUserPostsPet(userId: widget.userId));
-        context
-            .read<StrayPetBloc>()
-            .add(GetAllUserPostsStrayPet(userId: widget.userId));
-        ScaffoldMessenger.of(context).clearSnackBars();
-      } else {
-        const snackBar = SnackBar(
-          content: Text(
-            'No hay internet',
-            style: TextStyle(),
-          ),
-          duration: Duration(days: 365),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
-    });
+
     super.initState();
   }
 
@@ -90,7 +61,7 @@ class _MyPostsPageState extends State<MyPostsPage>
   void dispose() {
     _animationController.dispose();
     _animationController2.dispose();
-    subscription.cancel();
+
     super.dispose();
   }
 
@@ -229,7 +200,7 @@ class _MyPostsPageState extends State<MyPostsPage>
                                     borderRadius: BorderRadius.circular(10.0),
                                     child: const Image(
                                       image: AssetImage(
-                                          'assets/images/lost_pet.jpg'),
+                                          'assets/images/lost_pet.png'),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -248,7 +219,7 @@ class _MyPostsPageState extends State<MyPostsPage>
                                                 child: Align(
                                                   alignment: Alignment.center,
                                                   child: Text(
-                                                    'Mascotas extravíadas',
+                                                    'Mascotas extraviadas',
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontWeight:
@@ -973,7 +944,6 @@ class _MyPostsPageState extends State<MyPostsPage>
                         },
                         background: Container(
                           height: 100,
-                          margin: const EdgeInsets.all(5.0),
                           decoration: BoxDecoration(
                             color: Colors.red,
                             borderRadius: BorderRadius.circular(10),
@@ -994,7 +964,6 @@ class _MyPostsPageState extends State<MyPostsPage>
                         ),
                         secondaryBackground: Container(
                           height: 100,
-                          margin: const EdgeInsets.all(5.0),
                           decoration: BoxDecoration(
                             color: Colors.blue,
                             borderRadius: BorderRadius.circular(10),
@@ -1027,7 +996,6 @@ class _MyPostsPageState extends State<MyPostsPage>
                               ),
                             ],
                           ),
-                          margin: const EdgeInsets.all(5.0),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Row(

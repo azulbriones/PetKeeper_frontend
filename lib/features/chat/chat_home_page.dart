@@ -102,50 +102,92 @@ class _ChatHomePageState extends State<ChatHomePage>
                                 child: CircularProgressIndicator(),
                               );
                             }
-                            return ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: data.length,
-                              itemBuilder: (context, i) {
-                                List users = data[i]['users'];
-                                var friend = users.where((element) =>
-                                    element !=
-                                    FirebaseAuth.instance.currentUser!.uid);
-                                var user = friend.isNotEmpty
-                                    ? friend.first
-                                    : users
-                                        .where((element) =>
-                                            element ==
-                                            FirebaseAuth
-                                                .instance.currentUser!.uid)
-                                        .first;
-                                return FutureBuilder(
-                                    future: firestore
-                                        .collection('users')
-                                        .doc(user)
-                                        .get(),
-                                    builder: (context, AsyncSnapshot snap) {
-                                      return !snap.hasData
-                                          ? Container()
-                                          : ChatWidgets.circleProfile(
-                                              onTap: () {
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                    builder: (context) {
-                                                      return ChatPage(
-                                                        id: user,
-                                                        name: snap.data['name'],
-                                                        photoUrl: snap
-                                                            .data['profileUrl'],
+                            return data.isNotEmpty
+                                ? ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: data.length,
+                                    itemBuilder: (context, i) {
+                                      List users = data[i]['users'];
+                                      var friend = users.where((element) =>
+                                          element !=
+                                          FirebaseAuth
+                                              .instance.currentUser!.uid);
+                                      var user = friend.isNotEmpty
+                                          ? friend.first
+                                          : users
+                                              .where((element) =>
+                                                  element ==
+                                                  FirebaseAuth.instance
+                                                      .currentUser!.uid)
+                                              .first;
+                                      return FutureBuilder(
+                                          future: firestore
+                                              .collection('users')
+                                              .doc(user)
+                                              .get(),
+                                          builder:
+                                              (context, AsyncSnapshot snap) {
+                                            return !snap.hasData
+                                                ? Container()
+                                                : ChatWidgets.circleProfile(
+                                                    onTap: () {
+                                                      Navigator.of(context)
+                                                          .push(
+                                                        PageRouteBuilder(
+                                                          pageBuilder: (context,
+                                                                  animation,
+                                                                  secondaryAnimation) =>
+                                                              ChatPage(
+                                                            id: user,
+                                                            name: snap
+                                                                .data['name'],
+                                                            photoUrl: snap.data[
+                                                                'profileUrl'],
+                                                          ),
+                                                          transitionsBuilder:
+                                                              (context,
+                                                                  animation,
+                                                                  secondaryAnimation,
+                                                                  child) {
+                                                            var begin =
+                                                                const Offset(
+                                                                    1.0, 0.0);
+                                                            var end =
+                                                                Offset.zero;
+                                                            var curve = Curves
+                                                                .easeInOut;
+
+                                                            var tween = Tween(
+                                                                    begin:
+                                                                        begin,
+                                                                    end: end)
+                                                                .chain(CurveTween(
+                                                                    curve:
+                                                                        curve));
+
+                                                            return SlideTransition(
+                                                              position: animation
+                                                                  .drive(tween),
+                                                              child: child,
+                                                            );
+                                                          },
+                                                        ),
                                                       );
                                                     },
-                                                  ),
-                                                );
-                                              },
-                                              name: snap.data['name'],
-                                              photo: snap.data['profileUrl']);
-                                    });
-                              },
-                            );
+                                                    name: snap.data['name'],
+                                                    photo: snap
+                                                        .data['profileUrl']);
+                                          });
+                                    },
+                                  )
+                                : Center(
+                                    child: Text(
+                                    'Nada por aquí',
+                                    style: TextStyle(
+                                        color: Colors.indigo.shade900,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                  ));
                           },
                         ),
                       ),

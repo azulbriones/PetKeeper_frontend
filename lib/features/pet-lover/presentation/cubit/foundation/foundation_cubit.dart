@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/usecases/get_all_foundations_usecase.dart';
@@ -40,7 +40,7 @@ class FoundationCubit extends Cubit<FoundationState> {
       emit(SingleFoundationLoaded(foundation: foundation));
       print('SingleFoundationLoaded Emitted');
     } catch (_) {
-      emit(FoundationError(error: "Foundation not found"));
+      emit(const FoundationError(error: "Foundation not found"));
       emit(FoundationFailure());
     }
   }

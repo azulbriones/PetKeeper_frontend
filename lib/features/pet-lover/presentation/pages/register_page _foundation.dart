@@ -249,7 +249,7 @@ class _RegisterPageFoundationState extends State<RegisterPageFoundation> {
                       const SizedBox(
                         height: 10,
                       ),
-                      Container(
+                      SizedBox(
                         height: 240 * fem,
                         child: ListView(
                           children: [

@@ -4,7 +4,7 @@ abstract class StrayPetRepository {
   Future<void> createStrayPet(StrayPet strayPet);
   Future<List<StrayPet>> getAllStrayPets();
   Future<StrayPet> getStrayPetById(String petId);
-  Future<void> updateStrayPet(String strayPetId, String status);
+  Future<void> updateStatusStrayPet(String strayPetId, String status);
   Future<void> deleteStrayPet(String petId);
   Future<List<StrayPet>> getStrayPetsByOwnerId(String? ownerId);
   Future<List<StrayPet>> getStrayPetsByRescuerId(String rescuerId);

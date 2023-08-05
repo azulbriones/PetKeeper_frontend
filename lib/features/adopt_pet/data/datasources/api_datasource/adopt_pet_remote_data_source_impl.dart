@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'package:pet_keeper_front/features/adopt_pet/data/datasources/api_datasource/adopt_pet_remote_data_source.dart';
 import 'package:pet_keeper_front/features/adopt_pet/data/models/adopt_pet_model.dart';
@@ -20,7 +21,13 @@ class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
     final file = File(adoptPet.petImage.path);
     await storageRef.putFile(file);
     final imageUrl = await storageRef.getDownloadURL();
+
+    // Generar un nuevo documento con un ID automático
+    final newDocumentRef =
+        FirebaseFirestore.instance.collection('adopt_pets').doc();
+
     final data = {
+      'id': newDocumentRef.id, // Agregar el valor del ID generado
       'pet_name': adoptPet.petName,
       'pet_breed': adoptPet.petBreed,
       'age': adoptPet.age,
@@ -32,75 +39,55 @@ class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
       'owner_name': adoptPet.ownerName,
       'payment': '0',
       'pet_image': imageUrl,
+      'created_at': DateTime.now(),
     };
 
-    var request =
-        http.MultipartRequest('POST', Uri.http(apiURL, '/adoptPets/'));
-    request = jsonToFormData(request, data);
+    // Establecer los datos en el documento recién creado
+    await newDocumentRef.set(data);
 
-    final response = await request.send();
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      toastOk('Adopt Pet Post created successfully');
-    } else {
-      throw Exception();
-    }
-  }
-
-  jsonToFormData(http.MultipartRequest request, Map<String, dynamic> data) {
-    for (var key in data.keys) {
-      request.fields[key] = data[key].toString();
-    }
-    return request;
+    // Notifica que se creó correctamente el post de Adopt Pet
+    toastOk('Adopt Pet Post created successfully');
   }
 
   @override
   Future<void> deleteAdoptPet(String petId) async {
-    var url = Uri.http(apiURL, '/adoptPets/$petId');
+    try {
+      final firestore = FirebaseFirestore.instance;
+      final DocumentReference docRef =
+          firestore.collection('adopt_pets').doc(petId);
 
-    final response = await http.delete(url);
-    if (response.statusCode == 200 ||
-        response.statusCode == 201 ||
-        response.statusCode == 500) {
-      toastOk('Adopt pet deleted succesfully');
-    } else {
-      throw Exception();
+      // Elimina el documento de la colección "adopt_pets"
+      await docRef.delete();
+
+      toastOk("Adopt Pet deleted successfully");
+    } catch (e) {
+      throw Exception('Failed to delete Adopt Pet');
     }
   }
 
   @override
   Future<List<AdoptPetModel>> getAllAdoptPets() async {
-    var url = Uri.http(apiURL, '/adoptPets/');
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('adopt_pets')
+        .orderBy('created_at', descending: true)
+        .get();
 
-    var response = await http.get(url);
+    List<AdoptPetModel> adoptPets = snapshot.docs
+        .map((DocumentSnapshot doc) =>
+            AdoptPetModel.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      // Decodifica el JSON de la respuesta y crea una lista de objetos AdoptPetModel
-      List<dynamic> jsonData = jsonDecode(response.body);
-
-      List<AdoptPetModel> adoptPets =
-          jsonData.map((json) => AdoptPetModel.fromJson(json)).toList();
-
-      return adoptPets;
-    } else {
-      throw Exception('Failed to load Adopt pets');
-    }
+    return adoptPets;
   }
 
   @override
   Future<AdoptPetModel> getAdoptPetById(String petId) async {
-    var url = Uri.http(apiURL, '/adoptPets/$petId');
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('adopt_pets')
+        .doc(petId)
+        .get();
 
-    var response = await http.get(url);
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      // Decodifica el JSON de la respuesta y crea un objeto SAdoptPetModel
-      Map<String, dynamic> jsonData = jsonDecode(response.body);
-      AdoptPetModel adoptPet = AdoptPetModel.fromJson(jsonData);
-
-      return adoptPet;
-    } else {
-      throw Exception('Failed to load Adopt pet by ID');
-    }
+    return AdoptPetModel.fromJson(snapshot.data() as Map<String, dynamic>);
   }
 
   @override
@@ -124,19 +111,16 @@ class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
 
   @override
   Future<List<AdoptPetModel>> getAdoptPetsByOwnerId(String? ownerId) async {
-    var url = Uri.http(apiURL, '/adoptPets/petsByOwner/$ownerId');
-    var response = await http.get(url);
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('adopt_pets')
+        .where('owner_id', isEqualTo: ownerId)
+        .get();
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      // Decodifica el JSON de la respuesta y crea una lista de AdoptPetModel
-      List<dynamic> jsonData = jsonDecode(response.body);
-      List<AdoptPetModel> adoptPets =
-          jsonData.map((data) => AdoptPetModel.fromJson(data)).toList();
+    List<AdoptPetModel> adoptPets = snapshot.docs.map((doc) {
+      return AdoptPetModel.fromJson(doc.data() as Map<String, dynamic>);
+    }).toList();
 
-      return adoptPets;
-    } else {
-      throw Exception('Failed to load Adopt pets by owner ID');
-    }
+    return adoptPets;
   }
 
   @override
@@ -235,32 +219,13 @@ class AdoptPetRemoteDataSourceImpl implements AdoptPetRemoteDataSource {
 
   @override
   Future<void> updateStatusAdoptPet(String adoptPetId, String status) async {
-    AdoptPetModel adoptPetModel = await getAdoptPetById(adoptPetId);
-
-    final data = {
-      'pet_name': adoptPetModel.petName,
-      'pet_breed': adoptPetModel.petBreed,
-      'age': adoptPetModel.age,
-      'description': adoptPetModel.description,
-      'location': adoptPetModel.location,
-      'address': adoptPetModel.address,
-      'status': status,
-      'owner_id': adoptPetModel.ownerId,
-      'owner_name': adoptPetModel.ownerName,
-      'payment': '0',
-      'adopt_date': DateTime.now().toString(),
-    };
-
-    var request = http.MultipartRequest(
-        'PUT', Uri.http(apiURL, '/adoptPets/$adoptPetId'));
-    request = jsonToFormData(request, data);
-
-    final response = await request.send();
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      toastOk('Adopt Pet Post updated successfully');
-    } else {
-      throw Exception();
+    try {
+      await FirebaseFirestore.instance
+          .collection('adopt-pets')
+          .doc(adoptPetId)
+          .update({'status': status});
+    } catch (e) {
+      throw Exception('Failed to update status of Adopt pet: $e');
     }
   }
 }

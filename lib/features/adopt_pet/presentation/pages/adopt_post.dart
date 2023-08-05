@@ -216,11 +216,13 @@ class _StrayPostState extends State<AdoptPost> {
                               child: CircularProgressIndicator(),
                             ),
                           ),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(12.0),
-                            child: Image.file(
-                              _image!,
-                              fit: BoxFit.cover,
+                          Center(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12.0),
+                              child: Image.file(
+                                _image!,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ],

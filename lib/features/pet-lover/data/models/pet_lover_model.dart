@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 
 class PetLoverModel extends PetLoverEntity {
-  PetLoverModel({
+  const PetLoverModel({
     String? name,
     String? email,
     String? id,

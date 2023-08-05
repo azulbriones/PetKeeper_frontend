@@ -22,7 +22,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
   Widget build(BuildContext context) {
     return Container(
       height: 50,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: primaryColor,
       ),
       child: Row(

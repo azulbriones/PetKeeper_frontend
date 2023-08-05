@@ -16,9 +16,9 @@ class ContainerButtonDanger extends StatelessWidget {
         alignment: Alignment.center,
         height: 44,
         width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: redColor,
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          borderRadius: BorderRadius.all(Radius.circular(10)),
         ),
         child: icon != null
             ? Row(

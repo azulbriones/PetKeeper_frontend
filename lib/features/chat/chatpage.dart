@@ -47,7 +47,12 @@ class _ChatPageState extends State<ChatPage>
                         networkImageBoxFit: BoxFit.cover,
                         imageUrl: widget.photoUrl,
                         progressIndicatorBuilder: const Center(
-                          child: CircularProgressIndicator(),
+                          child: SizedBox(
+                              width: 25,
+                              height: 25,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                              )),
                         ),
                         placeHolder: "assets/images/profile_default.png",
                       ),
@@ -78,14 +83,27 @@ class _ChatPageState extends State<ChatPage>
                         ? Container()
                         : Align(
                             alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Last seen: ${DateFormat('hh:mm a').format(snapshot.data!['date_time'].toDate())}',
-                              style: Styles.h1().copyWith(
-                                fontSize: 12,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.white70,
-                              ),
-                            ),
+                            child: DateFormat('dd/MM/yyyy').format(snapshot
+                                        .data?['date_time']
+                                        ?.toDate()) !=
+                                    DateFormat('dd/MM/yyyy')
+                                        .format(DateTime.now())
+                                ? Text(
+                                    'Última conexión: ${DateFormat('dd/MM/yyyy').format(snapshot.data!['date_time'].toDate())} ${DateFormat('hh:mm a').format(snapshot.data!['date_time'].toDate())}',
+                                    style: Styles.h1().copyWith(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.white70,
+                                    ),
+                                  )
+                                : Text(
+                                    'Última conexión: Hoy ${DateFormat('hh:mm a').format(snapshot.data!['date_time'].toDate())}',
+                                    style: Styles.h1().copyWith(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.white70,
+                                    ),
+                                  ),
                           );
                   },
                 ),

@@ -211,7 +211,7 @@ class _ProfilePageState extends State<ProfilePage>
               height: 14,
             ),
             const Text(
-              'Remove profile photo',
+              'Eliminar foto de perfil',
               style: TextStyle(
                 color: Colors.blue,
                 fontSize: 16,
@@ -240,7 +240,7 @@ class _ProfilePageState extends State<ProfilePage>
               height: 28,
             ),
             ContainerButton(
-              title: "Update Profile",
+              title: "Actualizar perfil",
               icon: Icons.update,
               onTap: () {
                 _updateProfile(currentUser.id!);
@@ -250,7 +250,7 @@ class _ProfilePageState extends State<ProfilePage>
               height: 14,
             ),
             ContainerButtonSecondary(
-              title: "My posts",
+              title: "Mis publicaciones",
               icon: Icons.post_add,
               onTap: () async {
                 await Navigator.push(
@@ -281,7 +281,7 @@ class _ProfilePageState extends State<ProfilePage>
               height: 14,
             ),
             ContainerButtonDanger(
-              title: "Logout",
+              title: "Cerrar sesión",
               icon: Icons.logout,
               onTap: () async {
                 await BlocProvider.of<AuthCubit>(context).loggedOut();

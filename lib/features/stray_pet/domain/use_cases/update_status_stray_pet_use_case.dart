@@ -5,6 +5,6 @@ class UpdateStrayPetUseCase {
 
   UpdateStrayPetUseCase(this.strayPetRepository);
   Future<void> execute(String strayPetId, String status) async {
-    return await strayPetRepository.updateStrayPet(strayPetId, status);
+    return await strayPetRepository.updateStatusStrayPet(strayPetId, status);
   }
 }

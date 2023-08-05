@@ -263,6 +263,8 @@ class _LoginPageState extends State<LoginPage> {
                       TextField(
                         controller: _passwordController,
                         obscureText: !isPasswordVisible,
+                        enableSuggestions: false,
+                        autocorrect: false,
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           prefixIcon: const Icon(

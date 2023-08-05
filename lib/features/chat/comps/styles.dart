@@ -13,10 +13,17 @@ class Styles {
             topLeft: Radius.circular(15), topRight: Radius.circular(15)));
   }
 
-  static messagesCardStyle(check) {
+  static messagesCardStyle() {
     return BoxDecoration(
       borderRadius: BorderRadius.circular(10),
-      color: check ? Colors.indigo.shade300 : Colors.grey.shade300,
+      color: Colors.indigo.shade300,
+    );
+  }
+
+  static messagesCardStyle2() {
+    return BoxDecoration(
+      borderRadius: BorderRadius.circular(10),
+      color: Colors.grey.shade300,
     );
   }
 
@@ -30,7 +37,7 @@ class Styles {
   static messageTextFieldStyle({required Function() onSubmit}) {
     return InputDecoration(
       border: InputBorder.none,
-      hintText: 'Enter Message',
+      hintText: 'Escribir mensaje',
       contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
       suffixIcon: IconButton(
         onPressed: onSubmit,

@@ -52,7 +52,8 @@ class StrayPetRepositoryImpl implements StrayPetRepository {
   }
 
   @override
-  Future<void> updateStrayPet(String strayPetId, String status) async {
-    return await strayPetRemoteDataSource.updateStrayPet(strayPetId, status);
+  Future<void> updateStatusStrayPet(String strayPetId, String status) async {
+    return await strayPetRemoteDataSource.updateStatusStrayPet(
+        strayPetId, status);
   }
 }

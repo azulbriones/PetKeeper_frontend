@@ -1,10 +1,9 @@
-import 'dart:async';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:network_image/network_image.dart';
+import 'package:pet_keeper_front/features/chat/chatpage.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/pages/profile_page.dart';
@@ -20,36 +19,15 @@ class StrayPostView extends StatefulWidget {
 }
 
 class _StrayPostViewState extends State<StrayPostView> {
-  late StreamSubscription<ConnectivityResult> subscription;
-
   @override
   void initState() {
     context.read<StrayPetBloc>().add(GetDetailStrayPet(strayPetId: widget.id));
-    subscription = Connectivity()
-        .onConnectivityChanged
-        .listen((ConnectivityResult result) {
-      if (result == ConnectivityResult.wifi) {
-        context
-            .read<StrayPetBloc>()
-            .add(GetDetailStrayPet(strayPetId: widget.id));
-        ScaffoldMessenger.of(context).clearSnackBars();
-      } else {
-        const snackBar = SnackBar(
-          content: Text(
-            'Se perdió la conectividad Wi-Fi',
-            style: TextStyle(),
-          ),
-          duration: Duration(days: 365),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
-    });
+
     super.initState();
   }
 
   @override
   void dispose() {
-    subscription.cancel();
     super.dispose();
   }
 
@@ -291,8 +269,35 @@ class _StrayPostViewState extends State<StrayPostView> {
                         ),
                         if (currentUser.id != state.strayPet.ownerId)
                           InkWell(
-                            onTap: () {
-                              print('enviar mensaje');
+                            onTap: () async {
+                              var profileUrl = await getProfileUrlByUid(
+                                  state.strayPet.ownerId.toString());
+                              // ignore: use_build_context_synchronously
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation,
+                                          secondaryAnimation) =>
+                                      ChatPage(
+                                    id: state.strayPet.ownerId.toString(),
+                                    name: state.strayPet.ownerName.toString(),
+                                    photoUrl: profileUrl.toString(),
+                                  ),
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    var begin = const Offset(1.0, 0.0);
+                                    var end = Offset.zero;
+                                    var curve = Curves.easeInOut;
+
+                                    var tween = Tween(begin: begin, end: end)
+                                        .chain(CurveTween(curve: curve));
+
+                                    return SlideTransition(
+                                      position: animation.drive(tween),
+                                      child: child,
+                                    );
+                                  },
+                                ),
+                              );
                             },
                             child: Container(
                               alignment: Alignment.center,
@@ -355,5 +360,30 @@ class _StrayPostViewState extends State<StrayPostView> {
         ),
       ),
     );
+  }
+
+  Future<String?> getProfileUrlByUid(String uid) async {
+    try {
+      // Referencia a la colección "usuarios"
+      CollectionReference usersCollection =
+          FirebaseFirestore.instance.collection('usuarios');
+
+      // Obtener el documento que coincida con el uid proporcionado
+      DocumentSnapshot userSnapshot = await usersCollection.doc(uid).get();
+
+      // Verificar si el documento existe
+      if (userSnapshot.exists) {
+        // Obtener el valor del campo "profileUrl"
+        String? profileUrl = userSnapshot.get('profileUrl');
+        return profileUrl;
+      } else {
+        // Si no se encuentra el documento con el uid proporcionado, retornar null o manejar el caso como prefieras
+        return '';
+      }
+    } catch (e) {
+      // Manejar cualquier error que pueda ocurrir durante la operación
+      print('Error al obtener el perfil del usuario: $e');
+      return '';
+    }
   }
 }

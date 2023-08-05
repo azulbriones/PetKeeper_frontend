@@ -17,7 +17,7 @@ class UserLoading extends UserState {
 class UserLoaded extends UserState {
   final List<PetLoverEntity> users;
 
-  UserLoaded({required this.users});
+  const UserLoaded({required this.users});
 
   @override
   List<Object> get props => [users];
@@ -31,9 +31,8 @@ class UserFailure extends UserState {
 class ErrorUser extends UserState {
   final String error;
 
-  ErrorUser({required this.error});
+  const ErrorUser({required this.error});
 
   @override
-  // TODO: implement props
-  List<Object?> get props => throw UnimplementedError();
+  List<Object> get props => [];
 }

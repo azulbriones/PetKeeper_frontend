@@ -107,7 +107,7 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
   Future<void> getUpdateUser(PetLoverEntity user) async {
     final userCollection = firestore.collection("users");
 
-    Map<String, dynamic> userInformation = Map();
+    Map<String, dynamic> userInformation = {};
 
     if (user.profileUrl != null && user.profileUrl != "") {
       userInformation['profileUrl'] = user.profileUrl;
@@ -174,9 +174,6 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
         password: user.password!,
       );
 
-      User? userV = FirebaseAuth.instance.currentUser;
-      userV!.sendEmailVerification();
-
       if (user.certFile != null) {
         // Subir el archivo a Firebase Storage
         String filePath =
@@ -211,6 +208,8 @@ class PetLoverFirebaseDataSourceImpl implements PetLoverFirebaseDataSource {
         'location': user.location,
         'date_time': DateTime.now(),
       });
+
+      sendVerificationEmail(user.email.toString());
 
       // El documento se creó correctamente
 

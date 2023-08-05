@@ -17,7 +17,7 @@ class FoundationLoading extends FoundationState {
 class FoundationLoaded extends FoundationState {
   final List<PetLoverEntity> foundations;
 
-  FoundationLoaded({required this.foundations});
+  const FoundationLoaded({required this.foundations});
 
   @override
   List<Object?> get props => [foundations];
@@ -31,7 +31,7 @@ class SingleFoundationLoading extends FoundationState {
 class SingleFoundationLoaded extends FoundationState {
   final PetLoverEntity foundation;
 
-  SingleFoundationLoaded({required this.foundation});
+  const SingleFoundationLoaded({required this.foundation});
 
   @override
   List<Object?> get props => [foundation];
@@ -45,7 +45,7 @@ class FoundationFailure extends FoundationState {
 class FoundationError extends FoundationState {
   final String error;
 
-  FoundationError({required this.error});
+  const FoundationError({required this.error});
 
   @override
   List<Object?> get props => [error];

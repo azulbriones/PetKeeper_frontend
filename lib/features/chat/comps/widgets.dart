@@ -32,7 +32,12 @@ class ChatWidgets {
                         networkImageBoxFit: BoxFit.cover,
                         imageUrl: photo,
                         progressIndicatorBuilder: const Center(
-                          child: CircularProgressIndicator(),
+                          child: SizedBox(
+                              width: 25,
+                              height: 25,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                              )),
                         ),
                         placeHolder: "assets/images/profile_default.png",
                       ),
@@ -40,7 +45,13 @@ class ChatWidgets {
                   ),
           ),
           title: Text(title),
-          subtitle: subtitle != null ? Text(subtitle) : null,
+          subtitle: subtitle != null
+              ? Text(
+                  subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                )
+              : null,
           trailing: Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: Text(time),
@@ -78,7 +89,12 @@ class ChatWidgets {
                         networkImageBoxFit: BoxFit.cover,
                         imageUrl: photo,
                         progressIndicatorBuilder: const Center(
-                          child: CircularProgressIndicator(),
+                          child: SizedBox(
+                              width: 25,
+                              height: 25,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                              )),
                         ),
                         placeHolder: "assets/images/profile_default.png",
                       ),
@@ -127,11 +143,11 @@ class ChatWidgets {
                     Container(
                       margin: const EdgeInsets.all(5),
                       padding: const EdgeInsets.all(10),
-                      decoration: Styles.messagesCardStyle(check),
+                      decoration: Styles.messagesCardStyle2(),
                       child: Text(
                         '$message',
-                        style: TextStyle(
-                          color: check ? Colors.white : Colors.black,
+                        style: const TextStyle(
+                          color: Colors.black,
                         ),
                       ),
                     ),
@@ -160,11 +176,11 @@ class ChatWidgets {
                     Container(
                       margin: const EdgeInsets.all(5),
                       padding: const EdgeInsets.all(10),
-                      decoration: Styles.messagesCardStyle(check),
+                      decoration: Styles.messagesCardStyle(),
                       child: Text(
                         '$message',
-                        style: TextStyle(
-                          color: check ? Colors.white : Colors.black,
+                        style: const TextStyle(
+                          color: Colors.white,
                         ),
                       ),
                     ),

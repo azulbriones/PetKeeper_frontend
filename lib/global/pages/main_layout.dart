@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:network_image/network_image.dart';
@@ -24,23 +27,89 @@ class MainLayout extends StatefulWidget {
 class _MainLayoutState extends State<MainLayout> {
   late PageController _pageController = PageController();
   late int _currentIndex;
+  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
+  String _connectionStatus = 'Desconocido';
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _checkConnection();
+  }
 
   @override
   void initState() {
+    _checkConnection();
     BlocProvider.of<SingleUserCubit>(context)
         .getSingleUserProfile(user: PetLoverEntity(id: widget.uid));
     BlocProvider.of<UserCubit>(context)
         .getUsers(user: PetLoverEntity(id: widget.uid));
     _currentIndex = 2;
     _pageController = PageController(
-      initialPage: 2, // Establecer la página predeterminada en el índice 2
+      initialPage: 2,
     );
 
     super.initState();
   }
 
+  Future<void> _checkConnection() async {
+    // Verificar el estado de la conexión al iniciar la app
+    var connectivityResult = await Connectivity().checkConnectivity();
+    _updateConnectionStatus(connectivityResult);
+
+    _connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      _updateConnectionStatus(result);
+    });
+  }
+
+  void _updateConnectionStatus(ConnectivityResult result) {
+    SnackBar snackBar;
+    switch (result) {
+      case ConnectivityResult.wifi:
+        ScaffoldMessenger.of(context).clearSnackBars();
+        break;
+      case ConnectivityResult.mobile:
+        ScaffoldMessenger.of(context).clearSnackBars();
+        break;
+      case ConnectivityResult.none:
+        ScaffoldMessenger.of(context).clearSnackBars();
+        _connectionStatus = 'Sin conexión';
+        snackBar = SnackBar(
+          content: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(
+                width: 10,
+                height: 10,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Text(
+                _connectionStatus,
+                style: const TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+          duration: const Duration(days: 365),
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+          dismissDirection: DismissDirection.down,
+          backgroundColor: Colors.redAccent,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        break;
+      default:
+        _connectionStatus = 'Desconocido';
+        break;
+    }
+  }
+
   @override
   void dispose() {
+    _connectivitySubscription?.cancel();
     _pageController.dispose();
     super.dispose();
   }
@@ -173,7 +242,12 @@ class _MainLayoutState extends State<MainLayout> {
                         networkImageBoxFit: BoxFit.cover,
                         imageUrl: currentUser.profileUrl,
                         progressIndicatorBuilder: const Center(
-                          child: CircularProgressIndicator(),
+                          child: SizedBox(
+                              width: 25,
+                              height: 25,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                              )),
                         ),
                         placeHolder: "assets/images/profile_default.png",
                       ),

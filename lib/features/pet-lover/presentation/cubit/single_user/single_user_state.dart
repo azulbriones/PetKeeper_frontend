@@ -17,7 +17,7 @@ class SingleUserLoading extends SingleUserState {
 class SingleUserLoaded extends SingleUserState {
   final PetLoverEntity currentUser;
 
-  SingleUserLoaded({required this.currentUser});
+  const SingleUserLoaded({required this.currentUser});
 
   @override
   List<Object> get props => [currentUser];

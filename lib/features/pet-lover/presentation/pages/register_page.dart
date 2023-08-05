@@ -79,7 +79,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // Método para validar la fortaleza de la contraseña
   bool _isStrongPassword(String password) {
-    // Aquí puedes implementar tus propias reglas para una contraseña fuerte
     // Por ejemplo, aquí requerimos que tenga al menos 8 caracteres,
     // incluya letras mayúsculas y minúsculas, y números.
     final passwordRegex = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$');

@@ -303,7 +303,7 @@ class _ProfilePageFoundationState extends State<ProfilePageFoundation> {
               height: 28,
             ),
             ContainerButton(
-              title: "Update Profile",
+              title: "Actualizar perfil",
               icon: Icons.update,
               onTap: () {
                 _updateProfile(currentUser.id!);
@@ -313,7 +313,7 @@ class _ProfilePageFoundationState extends State<ProfilePageFoundation> {
               height: 14,
             ),
             ContainerButtonSecondary(
-              title: "My posts",
+              title: "Mis publicaciones",
               icon: Icons.post_add,
               onTap: () async {
                 await Navigator.push(
@@ -344,7 +344,7 @@ class _ProfilePageFoundationState extends State<ProfilePageFoundation> {
               height: 14,
             ),
             ContainerButtonDanger(
-              title: "Logout",
+              title: "Cerrar sesión",
               icon: Icons.logout,
               onTap: () {
                 BlocProvider.of<AuthCubit>(context).loggedOut();

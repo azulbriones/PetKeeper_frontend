@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:network_image/network_image.dart';
@@ -35,35 +33,15 @@ class _AdoptPetsState extends State<AdoptPets>
     'Tuxtla Gutiérrez',
   ];
 
-  late StreamSubscription<ConnectivityResult> subscription;
-
   @override
   void initState() {
     context.read<AdoptPetBloc>().add(GetAllPets());
-    subscription = Connectivity()
-        .onConnectivityChanged
-        .listen((ConnectivityResult result) {
-      if (result == ConnectivityResult.wifi ||
-          result == ConnectivityResult.mobile) {
-        context.read<AdoptPetBloc>().add(GetAllPets());
-        ScaffoldMessenger.of(context).clearSnackBars();
-      } else {
-        const snackBar = SnackBar(
-          content: Text(
-            'No hay internet',
-            style: TextStyle(),
-          ),
-          duration: Duration(days: 365),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
-    });
+
     super.initState();
   }
 
   @override
   void dispose() {
-    subscription.cancel();
     super.dispose();
   }
 
@@ -209,195 +187,238 @@ class _AdoptPetsState extends State<AdoptPets>
                       child: CircularProgressIndicator(),
                     );
                   } else if (state is LoadedAllPets) {
-                    return RefreshIndicator(
-                      onRefresh: _onRefresh,
-                      child: ListView(
-                          children: state.allPets.map((pets) {
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: GestureDetector(
-                              onTap: () async {
-                                await Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    pageBuilder: (context, animation,
-                                            secondaryAnimation) =>
-                                        AdoptPostView(id: pets.id),
-                                    transitionsBuilder: (context, animation,
-                                        secondaryAnimation, child) {
-                                      var begin = const Offset(1.0, 0.0);
-                                      var end = Offset.zero;
-                                      var curve = Curves.easeInOut;
+                    return state.allPets.isNotEmpty
+                        ? RefreshIndicator(
+                            onRefresh: _onRefresh,
+                            child: ListView(
+                                children: state.allPets.map((pets) {
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 10.0),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0),
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      await Navigator.push(
+                                        context,
+                                        PageRouteBuilder(
+                                          pageBuilder: (context, animation,
+                                                  secondaryAnimation) =>
+                                              AdoptPostView(id: pets.id),
+                                          transitionsBuilder: (context,
+                                              animation,
+                                              secondaryAnimation,
+                                              child) {
+                                            var begin = const Offset(1.0, 0.0);
+                                            var end = Offset.zero;
+                                            var curve = Curves.easeInOut;
 
-                                      var tween = Tween(begin: begin, end: end)
-                                          .chain(CurveTween(curve: curve));
+                                            var tween = Tween(
+                                                    begin: begin, end: end)
+                                                .chain(
+                                                    CurveTween(curve: curve));
 
-                                      return SlideTransition(
-                                        position: animation.drive(tween),
-                                        child: child,
+                                            return SlideTransition(
+                                              position: animation.drive(tween),
+                                              child: child,
+                                            );
+                                          },
+                                        ),
                                       );
+                                      _onReturnFromOtherPage2();
                                     },
+                                    child: Container(
+                                      height: 100,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(10),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.5),
+                                            spreadRadius: 3,
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 5),
+                                          ),
+                                        ],
+                                      ),
+                                      margin: const EdgeInsets.all(8),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          children: [
+                                            SizedBox(
+                                              height: 85,
+                                              width: 85,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                                child: NetworkImageWidget(
+                                                  borderRadiusImageFile: 50,
+                                                  imageFileBoxFit: BoxFit.cover,
+                                                  placeHolderBoxFit:
+                                                      BoxFit.cover,
+                                                  networkImageBoxFit:
+                                                      BoxFit.cover,
+                                                  imageUrl: pets.petImage,
+                                                  progressIndicatorBuilder:
+                                                      const Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  ),
+                                                  placeHolder:
+                                                      "assets/images/pet_default2.jpg",
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 15,
+                                            ),
+                                            Expanded(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 5.0),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .centerLeft,
+                                                            child: Text(
+                                                              pets.petName
+                                                                  .toString(),
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 16,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .centerRight,
+                                                            child: Text(
+                                                              pets.location
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .indigo
+                                                                    .shade400,
+                                                                fontSize: 12,
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              maxLines: 1,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Expanded(
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .centerLeft,
+                                                            child: Text(
+                                                              pets.ownerName
+                                                                  .toString(),
+                                                              style:
+                                                                  const TextStyle(
+                                                                color:
+                                                                    Colors.grey,
+                                                                fontSize: 14,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .centerRight,
+                                                            child: Text(
+                                                              pets.address
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .indigo
+                                                                    .shade400,
+                                                                fontSize: 12,
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              maxLines: 1,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Flexible(
+                                                      child: Text(
+                                                        pets.description
+                                                            .toString(),
+                                                        style: const TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 12,
+                                                        ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 2,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                );
-                                _onReturnFromOtherPage2();
-                              },
-                              child: Container(
-                                height: 100,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.5),
-                                      spreadRadius: 3,
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 5),
+                                ),
+                              );
+                            }).toList()),
+                          )
+                        : RefreshIndicator(
+                            onRefresh: _onRefresh,
+                            child: ListView(children: [
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height - 300,
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Center(
+                                      child: Text(
+                                        'No hay mascotas en adopción',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey),
+                                      ),
                                     ),
                                   ],
                                 ),
-                                margin: const EdgeInsets.all(8),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        height: 85,
-                                        width: 85,
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          child: NetworkImageWidget(
-                                            borderRadiusImageFile: 50,
-                                            imageFileBoxFit: BoxFit.cover,
-                                            placeHolderBoxFit: BoxFit.cover,
-                                            networkImageBoxFit: BoxFit.cover,
-                                            imageUrl: pets.petImage,
-                                            progressIndicatorBuilder:
-                                                const Center(
-                                              child:
-                                                  CircularProgressIndicator(),
-                                            ),
-                                            placeHolder:
-                                                "assets/images/pet_default2.jpg",
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 15,
-                                      ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5.0),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: Align(
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      child: Text(
-                                                        pets.petName.toString(),
-                                                        style: const TextStyle(
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 16,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Align(
-                                                      alignment:
-                                                          Alignment.centerRight,
-                                                      child: Text(
-                                                        pets.location
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                          color: Colors
-                                                              .indigo.shade400,
-                                                          fontSize: 12,
-                                                        ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    child: Align(
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      child: Text(
-                                                        pets.ownerName
-                                                            .toString(),
-                                                        style: const TextStyle(
-                                                          color: Colors.grey,
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Align(
-                                                      alignment:
-                                                          Alignment.centerRight,
-                                                      child: Text(
-                                                        pets.address.toString(),
-                                                        style: TextStyle(
-                                                          color: Colors
-                                                              .indigo.shade400,
-                                                          fontSize: 12,
-                                                        ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 5,
-                                              ),
-                                              Flexible(
-                                                child: Text(
-                                                  pets.description.toString(),
-                                                  style: const TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 12,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 2,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
                               ),
-                            ),
-                          ),
-                        );
-                      }).toList()),
-                    );
+                            ]),
+                          );
                   } else if (state is AdoptError) {
                     return RefreshIndicator(
                       onRefresh: _onRefresh,
@@ -460,7 +481,7 @@ class _AdoptPetsState extends State<AdoptPets>
                               );
                               _onReturnFromOtherPage();
                             },
-                            child: const Icon(Icons.star),
+                            child: const Icon(Icons.question_mark),
                           ),
                         ),
                       ),

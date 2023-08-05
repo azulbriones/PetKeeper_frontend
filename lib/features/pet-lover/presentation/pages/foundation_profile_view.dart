@@ -1,10 +1,8 @@
-import 'dart:async';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:network_image/network_image.dart';
+import 'package:pet_keeper_front/features/chat/chatpage.dart';
 import 'package:pet_keeper_front/features/pet-lover/domain/entities/pet_lover_entity.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/foundation/foundation_cubit.dart';
 import 'package:pet_keeper_front/features/pet-lover/presentation/cubit/single_user/single_user_cubit.dart';
@@ -21,36 +19,16 @@ class FoundationProfileView extends StatefulWidget {
 }
 
 class _FoundationProfileViewState extends State<FoundationProfileView> {
-  late StreamSubscription<ConnectivityResult> subscription;
-
   @override
   void initState() {
     BlocProvider.of<FoundationCubit>(context)
         .getSingleFoundation(foundationId: widget.id.toString());
-    subscription = Connectivity()
-        .onConnectivityChanged
-        .listen((ConnectivityResult result) {
-      if (result == ConnectivityResult.wifi) {
-        BlocProvider.of<FoundationCubit>(context)
-            .getSingleFoundation(foundationId: widget.id.toString());
-        ScaffoldMessenger.of(context).clearSnackBars();
-      } else {
-        const snackBar = SnackBar(
-          content: Text(
-            'Se perdió la conectividad Wi-Fi',
-            style: TextStyle(),
-          ),
-          duration: Duration(days: 365),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
-    });
+
     super.initState();
   }
 
   @override
   void dispose() {
-    subscription.cancel();
     super.dispose();
   }
 
@@ -132,9 +110,9 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                         ),
                         Container(
                           width: double.infinity,
-                          height: 250,
+                          height: 300,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Colors.grey,
                             borderRadius: BorderRadius.circular(12.0),
                             boxShadow: [
                               BoxShadow(
@@ -248,11 +226,13 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                                     const SizedBox(
                                       width: 10.0,
                                     ),
-                                    Text(
-                                      state.foundation.payInfo.toString(),
-                                      style: const TextStyle(
-                                        fontSize: 15,
-                                        color: Colors.grey,
+                                    Expanded(
+                                      child: Text(
+                                        state.foundation.payInfo.toString(),
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.grey,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -353,7 +333,32 @@ class _FoundationProfileViewState extends State<FoundationProfileView> {
                         if (currentUser.id != state.foundation.id)
                           InkWell(
                             onTap: () {
-                              print('enviar mensaje');
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation,
+                                          secondaryAnimation) =>
+                                      ChatPage(
+                                    id: state.foundation.id.toString(),
+                                    name: state.foundation.name.toString(),
+                                    photoUrl:
+                                        state.foundation.profileUrl.toString(),
+                                  ),
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    var begin = const Offset(1.0, 0.0);
+                                    var end = Offset.zero;
+                                    var curve = Curves.easeInOut;
+
+                                    var tween = Tween(begin: begin, end: end)
+                                        .chain(CurveTween(curve: curve));
+
+                                    return SlideTransition(
+                                      position: animation.drive(tween),
+                                      child: child,
+                                    );
+                                  },
+                                ),
+                              );
                             },
                             child: Container(
                               alignment: Alignment.center,

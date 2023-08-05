@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'package:pet_keeper_front/features/stray_pet/data/datasources/api_datasource/stray_pet_remote_data_source.dart';
 import 'package:pet_keeper_front/features/stray_pet/data/models/stray_pet_model.dart';
@@ -21,12 +22,18 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
     final file = File(strayPet.petImage.path);
     await storageRef.putFile(file);
     final imageUrl = await storageRef.getDownloadURL();
+
     String reward;
     if (strayPet.reward == '') {
       reward = '0';
     } else {
       reward = strayPet.reward;
     }
+
+    // Generar un nuevo documento con un ID automático
+    final newDocumentRef =
+        FirebaseFirestore.instance.collection('stray_pets').doc();
+
     final data = {
       'pet_name': strayPet.petName,
       'pet_breed': strayPet.petBreed,
@@ -41,77 +48,55 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
       'lost_date': strayPet.lostDate,
       'payment': '0',
       'pet_image': imageUrl,
+      'created_at': DateTime.now(),
     };
 
-    var request =
-        http.MultipartRequest('POST', Uri.http(apiURL, '/strayPets/'));
-    request = jsonToFormData(request, data);
+    // Establecer los datos en el documento recién creado
+    await newDocumentRef.set(data);
 
-    final response = await request.send();
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      toastOk('Stray Pet Post created successfully');
-    } else {
-      throw Exception();
-    }
-  }
-
-  jsonToFormData(http.MultipartRequest request, Map<String, dynamic> data) {
-    for (var key in data.keys) {
-      request.fields[key] = data[key].toString();
-    }
-    return request;
+    // Notifica que se creó correctamente el post de Adopt Pet
+    toastOk('Adopt Pet Post created successfully');
   }
 
   @override
   Future<void> deleteStrayPet(String petId) async {
-    var url = Uri.http(apiURL, '/strayPets/$petId');
+    try {
+      final firestore = FirebaseFirestore.instance;
+      final DocumentReference docRef =
+          firestore.collection('stray_pets').doc(petId);
 
-    final response = await http.delete(url);
+      // Elimina el documento de la colección "adopt_pets"
+      await docRef.delete();
 
-    if (response.statusCode == 200 ||
-        response.statusCode == 201 ||
-        response.statusCode == 500) {
-      toastOk("StrayPet deleted successfully");
-    } else {
-      throw Exception();
+      toastOk("Stray Pet deleted successfully");
+    } catch (e) {
+      throw Exception('Failed to delete Stray Pet');
     }
   }
 
   @override
   Future<List<StrayPetModel>> getAllStrayPets() async {
-    var url = Uri.http(apiURL, '/strayPets/');
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('stray_pets')
+        .orderBy('created_at', descending: true)
+        .get();
 
-    var response = await http.get(url);
+    List<StrayPetModel> strayPets = snapshot.docs
+        .map((DocumentSnapshot doc) =>
+            StrayPetModel.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      // Decodifica el JSON de la respuesta y crea una lista de objetos StrayPetModel
-      List<dynamic> jsonData = jsonDecode(response.body);
-
-      List<StrayPetModel> strayPets =
-          jsonData.map((json) => StrayPetModel.fromJson(json)).toList();
-
-      return strayPets;
-    } else {
-      throw Exception('Failed to load stray pets');
-    }
+    return strayPets;
   }
 
   @override
   Future<StrayPetModel> getStrayPetById(String petId) async {
-    var url = Uri.http(apiURL, '/strayPets/$petId');
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('stray_pets')
+        .doc(petId)
+        .get();
 
-    var response = await http.get(url);
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      // Decodifica el JSON de la respuesta y crea un objeto StrayPetModel
-      Map<String, dynamic> jsonData = jsonDecode(response.body);
-      StrayPetModel strayPet = StrayPetModel.fromJson(jsonData);
-
-      return strayPet;
-    } else {
-      throw Exception('Failed to load stray pet by ID');
-    }
+    return StrayPetModel.fromJson(snapshot.data() as Map<String, dynamic>);
   }
 
   @override
@@ -134,20 +119,16 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
 
   @override
   Future<List<StrayPetModel>> getStrayPetsByOwnerId(String? ownerId) async {
-    var url = Uri.http(apiURL, '/strayPets/petsByOwner/$ownerId');
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('stray_pets')
+        .where('owner_id', isEqualTo: ownerId)
+        .get();
 
-    var response = await http.get(url);
+    List<StrayPetModel> strayPets = snapshot.docs.map((doc) {
+      return StrayPetModel.fromJson(doc.data() as Map<String, dynamic>);
+    }).toList();
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      // Decodifica el JSON de la respuesta y crea una lista de StrayPetModel
-      List<dynamic> jsonData = jsonDecode(response.body);
-      List<StrayPetModel> strayPets =
-          jsonData.map((data) => StrayPetModel.fromJson(data)).toList();
-
-      return strayPets;
-    } else {
-      throw Exception('Failed to load stray pets by owner ID');
-    }
+    return strayPets;
   }
 
   @override
@@ -219,36 +200,48 @@ class StrayPetRemoteDataSourceImpl implements StrayPetRemoteDataSource {
     }
   }
 
+  // @override
+  // Future<void> updateStrayPet(String strayPetId, String status) async {
+  //   StrayPetModel strayPetModel = await getStrayPetById(strayPetId);
+
+  //   final data = {
+  //     'pet_name': strayPetModel.petName,
+  //     'pet_breed': strayPetModel.petBreed,
+  //     'age': strayPetModel.age,
+  //     'description': strayPetModel.description,
+  //     'location': strayPetModel.location,
+  //     'address': strayPetModel.address,
+  //     'reward': strayPetModel.reward,
+  //     'status': status,
+  //     'owner_id': strayPetModel.ownerId,
+  //     'owner_name': strayPetModel.ownerName,
+  //     'payment': '0',
+  //     'lost_date': DateTime.now().toString(),
+  //   };
+
+  //   var request = http.MultipartRequest(
+  //       'PUT', Uri.http(apiURL, '/strayPets/$strayPetId'));
+  //   request = jsonToFormData(request, data);
+
+  //   final response = await request.send();
+  //   print(response.statusCode);
+
+  //   if (response.statusCode == 200 || response.statusCode == 201) {
+  //     toastOk('Stray Pet Post updated successfully');
+  //   } else {
+  //     throw Exception();
+  //   }
+  // }
+
   @override
-  Future<void> updateStrayPet(String strayPetId, String status) async {
-    StrayPetModel strayPetModel = await getStrayPetById(strayPetId);
-
-    final data = {
-      'pet_name': strayPetModel.petName,
-      'pet_breed': strayPetModel.petBreed,
-      'age': strayPetModel.age,
-      'description': strayPetModel.description,
-      'location': strayPetModel.location,
-      'address': strayPetModel.address,
-      'reward': strayPetModel.reward,
-      'status': status,
-      'owner_id': strayPetModel.ownerId,
-      'owner_name': strayPetModel.ownerName,
-      'payment': '0',
-      'lost_date': DateTime.now().toString(),
-    };
-
-    var request = http.MultipartRequest(
-        'PUT', Uri.http(apiURL, '/strayPets/$strayPetId'));
-    request = jsonToFormData(request, data);
-
-    final response = await request.send();
-    print(response.statusCode);
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      toastOk('Stray Pet Post updated successfully');
-    } else {
-      throw Exception();
+  Future<void> updateStatusStrayPet(String strayPetId, String status) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('stray_pets')
+          .doc(strayPetId)
+          .update({'status': status});
+    } catch (e) {
+      throw Exception('Failed to update status of Adopt pet: $e');
     }
   }
 }
